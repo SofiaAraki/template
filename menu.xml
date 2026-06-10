@@ -1,4 +1,482 @@
 <menu>
+
+    <menuitem label="Aluno">
+        <icon>fas:graduation-cap fa-fw</icon>
+        <menu>
+        <menuitem label="Atendimento e-Ticket">
+            <action>TicketFormListAluno</action>
+            <icon>fas:headset fa-fw</icon>
+        </menuitem>
+        <menuitem label="Boletim">
+            <action>BoletimNovoList</action>
+            <icon>fas:calculator fa-fw</icon>
+        </menuitem>
+        <menuitem label="Cadastro Wi-Fi">
+            <action>WifiCadastroFormList</action>
+            <icon>fas:wifi fa-fw</icon>
+        </menuitem>
+        <menuitem label="Carteirinha Escolar">
+            <action>CarteiraAluno</action>
+            <icon>far:id-card fa-fw</icon>
+        </menuitem>
+        <menuitem label="Carteirinha Veículos">
+            <action>CadastroVeiculoList</action>
+            <icon>fas:car-alt fa-fw</icon>
+        </menuitem>
+        <menuitem label="Contrato Financeiro">
+            <action>ContratoDadosAlunoList</action>
+            <icon>fas:file-alt fa-fw</icon>
+        </menuitem>
+        <menuitem label="Atividade Complementar">
+            <action>AtividadeComplementarAlunoFormList</action>
+            <icon>fas:clipboard-list fa-fw</icon>
+        </menuitem>
+        <menuitem label="Estágio">
+            <action>EstagioAlunoFormList</action>
+            <icon>fas:clipboard-list fa-fw</icon>
+        </menuitem>
+        <menuitem label="Meu Cadastro">
+            <action>DadosCadastraisView</action>
+            <icon>far:address-card fa-fw</icon>
+        </menuitem>
+        <menuitem label="Meu Curso">
+            <action>MeuCursoViewAluno</action>
+            <icon>fas:user-graduate fa-fw</icon>
+        </menuitem>
+        <menuitem label="Minhas Disciplinas">
+            <action>AtividadeAlunoDisciplinasList</action>
+            <icon>fas:user-graduate fa-fw</icon>
+        </menuitem>
+        <menuitem label="NAP">
+            <icon>fas:hand-holding-heart fa-fw</icon>
+            <action>AtendimentoPsicopedagogicoDatasList</action>
+        </menuitem>
+        <menuitem label="Requerimento Bolsa">
+            <icon>fas:file-alt fa-fw</icon>
+            <menu>
+            <menuitem label="Edital Renovação Ens. Superior 2023">
+                <action>EditalBolsaPDFView</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Novo">
+                <action>ReqBolsaAlunoDialogQuestionView</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Realizados">
+                <action>ReqBolsaAlunoList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Tutorial">
+                <icon>far:circle fa-fw</icon>
+                <menu>
+                <menuitem label="PDF">
+                    <action>TutorialRequerimentoConnextPDFView</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                <menuitem label="Vídeo">
+                    <action>TutorialRequerimento</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                </menu>
+            </menuitem>
+            </menu>
+        </menuitem>
+        </menu>
+    </menuitem>
+
+    <menuitem label="Professor">
+        <icon>fas:chalkboard-teacher fa-fw</icon>
+        <menu>
+        <menuitem label="Atendimento e-Ticket">
+            <icon>fas:headset fa-fw</icon>
+            <menu>
+            <menuitem label="Novo e-Ticket">
+                <action>TicketFormListProf</action>
+                <icon>fas:headset fa-fw</icon>
+            </menuitem>
+            <menuitem label="Listar e-Tickets">
+                <action>TicketListProf</action>
+                <icon>fas:headset fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Cadastro Wi-Fi">
+            <action>WifiCadastroFormListProfessor</action>
+            <icon>fas:wifi fa-fw</icon>
+        </menuitem>
+        <menuitem label="Carteirinha Veículos">
+            <action>CadastroVeiculoListProf</action>
+            <icon>fas:car-alt fa-fw</icon>
+        </menuitem>
+        <menuitem label="Agendar Equipamento">
+            <action>AgendamentoEquipamentoList</action>
+            <icon>fas:laptop fa-fw</icon>
+        </menuitem>
+        <menuitem label="Diário de Classe">
+            <action>HorarioAulasList</action>
+            <icon>far:check-square fa-fw</icon>
+        </menuitem>
+        <menuitem label="Enviar Provas e Anexos">
+            <action>AgendamentoProvaListProfessor</action>
+            <icon>fas:paperclip fa-fw</icon>
+        </menuitem>
+        <menuitem label="Lançamento de Notas">
+            <action>ApontamentoBimestral</action>
+            <icon>fas:pen fa-fw</icon>
+        </menuitem>
+        <menuitem label="Atividade Complementar">
+            <icon>fas:clipboard-list fa-fw</icon>
+            <menu>
+            <menuitem label="Pendentes">
+                <action>AtividadeComplementarPendenteProfessorList</action>
+                <icon>fas:clipboard-list fa-fw</icon>
+            </menuitem>
+            <menuitem label="Analisadas">
+                <action>AtividadeComplementarAnalisadaProfessorList</action>
+                <icon>fas:clipboard-check fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>       
+        <menuitem label="Estágio">
+            <icon>fas:clipboard-list fa-fw</icon>
+            <menu>
+            <menuitem label="Pendentes">
+                <action>EstagioPendenteProfessorList</action>
+                <icon>fas:clipboard-list fa-fw</icon>
+            </menuitem>
+            <menuitem label="Analisados">
+                <action>EstagioAnalisadoProfessorList</action>
+                <icon>fas:clipboard-check fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Meu Cadastro">
+            <action>DadosCadastraisProfessorView</action>
+            <icon>fas:address-card fa-fw</icon>
+        </menuitem>
+        <menuitem label="Meu Curso">
+            <action>MeuCursoViewProfessor</action>
+            <icon>fas:graduation-cap fa-fw</icon>
+        </menuitem>
+        <menuitem label="Minhas Disciplinas">
+            <action>AtividadeProfessorDisciplinasList</action>
+            <icon>fas:graduation-cap fa-fw</icon>
+        </menuitem>
+        <menuitem label="Plano de Ensino">
+            <action>ProgramaEnsinoDisciplinaList</action>
+            <icon>fas:book fa-fw</icon>
+        </menuitem>
+        <menuitem label="Solicitação Marketing">
+            <action>MarketingBriefingFormList</action>
+            <icon>fas:camera fa-fw</icon>
+        </menuitem>
+        </menu>
+    </menuitem>
+    <menuitem label="Secretaria">
+        <icon>fas:university fa-fw</icon>
+        <menu>
+        <menuitem label="Atendimento">
+            <icon>far:circle fa-fw</icon>
+            <menu>
+            <menuitem label="Listagem Geral">
+                <action>TicketList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Meus Tickets">
+                <action>TicketParticipanteList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Email Turma">
+                <action>EmailTurmaFormList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Atividade Complementar">
+            <action>AtividadeComplementarSecretariaList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Carteirinha Veículos">
+            <icon>far:circle fa-fw</icon>
+            <menu>
+            <menuitem label="Cadastrar">
+                <action>CadastroVeiculoListSecretaria</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Análise">
+                <action>CadastroVeiculoAnaliseList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Todos">
+                <action>CadastroVeiculoListAll</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Conteúdo Programático">
+            <action>ConteudoProgramaticoListAll</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Equipamentos">
+            <icon>far:circle fa-fw</icon>
+            <menu>
+            <menuitem label="Agendamentos">
+                <action>AgendamentoEquipamentoListSecretaria</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Cadastros">
+                <action>AgendamentoEquipamentoItemFormList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Enviar Provas e Anexos">
+            <action>AgendamentoProvaList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Enviar Email Turma">
+            <action>EmailTurmaFormList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Estágio">
+            <action>EstagioSecretariaList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Info Página Inicial">
+            <action>NoticiasFormList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Meu Curso">
+            <action>MeuCursoView</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="NAP">
+            <icon>far:circle fa-fw</icon>
+            <menu>
+            <menuitem label="Cadastrar Datas">
+                <action>AtendimentoPsicopedagogicoDatasFormList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Todos">
+                <action>AtendimentoPsicopedagogicoDatasListAll</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Plano de Ensino">
+            <action>ProgramaEnsinoDisciplinaListAll</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Secretaria Digital">
+            <icon>far:circle fa-fw</icon>
+            <menu>
+            <menuitem label="Configurações">
+                <icon>far:circle fa-fw</icon>
+                <menu>
+                <menuitem label="Versões XSD">
+                    <action>DiplomaVersaoFormList</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                <menuitem label="Ativ. Compl">
+                    <action>AtividadeComplementarCategoriaFormList</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                <menuitem label="Etiquetas">
+                    <action>EtiquetaFormList</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                </menu>
+            </menuitem>
+            <menuitem label="Cadastros">
+                <icon>far:circle fa-fw</icon>
+                <menu>
+                <menuitem label="Mantenedora">
+                    <action>DiplomaMantenedoraFormList</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                <menuitem label="Emissora">
+                    <action>DiplomaEmissoraList</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                <menuitem label="Curso">
+                    <action>DiplomaCursoList</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                <menuitem label="Aluno">
+                    <action>DiplomaDiplomadoList</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                </menu>
+            </menuitem>
+            <menuitem label="Currículos">
+                <action>CurriculoList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Históricos">
+                <icon>far:circle fa-fw</icon>
+                <menu>
+                <menuitem label="Automáticos">
+                    <action>HistoricoAutomaticoList</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                <menuitem label="Manuais">
+                    <action>HistoricoManualList</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                <menuitem label="Conferência">
+                    <action>DadoshistoricoalunoList</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                </menu>
+            </menuitem>
+            <menuitem label="Documentações">
+                <action>DiplomaDocumentacaoList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Diplomas">
+                <action>DiplomaRegistradoList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Solicitação Marketing">
+            <action>MarketingBriefingFormList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        </menu>
+    </menuitem>
+    <menuitem label="Administrativo">
+        <icon>fas:building fa-fw</icon>
+        <menu>
+        <menuitem label="Atendimento E-Ticket">
+            <icon>fas:headset fa-fw</icon>
+            <menu>
+            <menuitem label="Novo e-Ticket">
+                <action>TicketList</action>
+                <icon>fas:headset fa-fw</icon>
+            </menuitem>
+            <menuitem label="Listar e-Ticket">
+                <action>TicketParticipanteListAdm</action>
+                <icon>fas:headset fa-fw</icon>
+            </menuitem>
+            <menuitem label="Requerimentos">
+                <icon>far:circle fa-fw</icon>
+                <menu>
+                <menuitem label="Matrícula Connext">
+                    <action>ReqMatriculaAlunoListConnext</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                </menu>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Requerimentos">
+            <icon>far:circle fa-fw</icon>
+            <menu>
+            <menuitem label="Matrícula Connext">
+                <action>ReqMatriculaAlunoListConnext</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Marketing">
+            <icon>fas:circle fa-fw</icon>
+            <menu>
+            <menuitem label="Listar Solicitações">
+                <action>MarketingBriefingList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Avaliar Solicitações">
+                <action>MarketingBriefingFormList_MKT</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Assist. Social">
+            <icon>far:circle fa-fw</icon>
+            <menu>
+            <menuitem label="Req de Bolsa">
+                <icon>far:circle fa-fw</icon>
+                <menu>
+                <menuitem label="Analisar">
+                    <action>ReqBolsaAlunoListGestor</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                <menuitem label="Todos">
+                    <action>ReqBolsaAlunoListAll</action>
+                    <icon>far:circle fa-fw</icon>
+                </menuitem>
+                <menuitem label="Configuração">
+                    <icon>far:circle fa-fw</icon>
+                    <menu>
+                    <menuitem label="Período">
+                        <action>ReqBolsaAlunoPeriodoFormList</action>
+                        <icon>far:circle fa-fw</icon>
+                    </menuitem>
+                    <menuitem label="Analisar">
+                        <action>ReqBolsaAlunoListAdmin</action>
+                        <icon>far:circle fa-fw</icon>
+                    </menuitem>
+                    <menuitem label="Comunicado">
+                        <action>ComunicadoBolsaFormList</action>
+                        <icon>far:circle fa-fw</icon>
+                    </menuitem>
+                    </menu>
+                </menuitem>
+                </menu>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <menuitem label="Contratos">
+            <icon>far:circle fa-fw</icon>
+            <menu>
+            <menuitem label="Cadastrar Valores">
+                <action>ContratoFinanceiroFormList</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Cadastrar Contratos">
+                <action>ContratoFinanceiroAdm</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Assinado pelo Aluno">
+                <action>ContratoAlunoListSecretaria</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            <menuitem label="Digitalização">
+                <action>ContratoAlunoListDigitalizacao</action>
+                <icon>far:circle fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        </menu>
+    </menuitem>
+    <menuitem label="Diretores">
+        <icon>fas:circle fa-fw</icon>
+        <menu>
+        <menuitem label="Solicitação Marketing">
+            <action>MarketingBriefingFormList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Relatório E-Ticket">
+            <action>RelatorioTickets</action>
+            <icon>fas:ticket-alt fa-fw</icon>
+        </menuitem>
+        </menu>
+    </menuitem>
+    <menuitem label="Coordenador">
+        <icon>far:circle fa-fw</icon>
+        <menu>
+        <menuitem label="Solicitação Marketing">
+            <action>MarketingBriefingFormList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Plano de Ensino">
+            <action>ProgramaEnsinoDisciplinaListCoordenador</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        </menu>
+    </menuitem>
+
     <menuitem label='_t{Administration}'>
         <icon>fas:sliders fa-fw</icon>
         <menu>

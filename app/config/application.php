@@ -24,8 +24,8 @@ return [
           'de' => 'Deutsch',
           'it' => 'Italiano',
         ],
-        'multi_database' => '0',
-        'validate_strong_pass' => '1',
+        'multi_database' => '1',
+        'validate_strong_pass' => '0',
         'notification_login' => '0',
         'welcome_message' => 'Have a great jorney!',
         'request_log_service' => 'SystemRequestLogService',
@@ -67,7 +67,7 @@ return [
     ],
     'template' => [
         'navbar' => [
-            'has_program_search' => '1',
+            'has_program_search' => '0',
             'has_notifications' => '1',
             'has_messages' => '1',
             'has_docs' => '1',

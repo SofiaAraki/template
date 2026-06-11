@@ -64,7 +64,7 @@ class ApplicationAuthenticationService
             
             TSession::setValue('userunitid',   $unit_id );
             TSession::setValue('userunitname', SystemUnit::findInTransaction('permission', $unit_id)->name);
-            TSession::setValue('userunitcustomcode', SystemUnit::findInTransaction('permission', $unit_id)->custom_code);
+            TSession::setValue('userunitcustomcode', SystemUnit::findInTransaction('permission', $unit_id)->systemuser_codlegado);
             
             if (!empty($ini['general']['multi_database']) and $ini['general']['multi_database'] == '1')
             {
@@ -110,7 +110,7 @@ class ApplicationAuthenticationService
         TSession::setValue('userroles', $user->getSystemUserRoleCodes());
         TSession::setValue('username', $user->name);
         TSession::setValue('usermail', $user->email);
-        TSession::setValue('usercustomcode', $user->custom_code);
+        TSession::setValue('usercustomcode', $user->systemuser_codlegado);
         TSession::setValue('frontpage', '');
         TSession::setValue('programs',$programs);
         TSession::setValue('methods', $user->getMethods());
@@ -119,7 +119,7 @@ class ApplicationAuthenticationService
         {
             TSession::setValue('userunitid',$user->unit->id);
             TSession::setValue('userunitname', $user->unit->name);
-            TSession::setValue('userunitcustomcode', $user->unit->custom_code);
+            TSession::setValue('userunitcustomcode', $user->unit->systemuser_codlegado);
         }
         
         if ($open_transaction)

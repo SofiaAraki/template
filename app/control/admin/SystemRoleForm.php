@@ -37,12 +37,12 @@ class SystemRoleForm extends TStandardForm
         // create the form fields
         $id = new TEntry('id');
         $name = new TEntry('name');
-        $custom_code = new TEntry('custom_code');
+        $systemuser_codlegado = new TEntry('systemuser_codlegado');
         
         // add the fields
         $this->form->addFields( [new TLabel('Id')], [$id] );
         $this->form->addFields( [new TLabel(_t('Name'))], [$name] );
-        $this->form->addFields( [new TLabel(_t('Custom code'))], [$custom_code] );
+        $this->form->addFields( [new TLabel(_t('Custom code'))], [$systemuser_codlegado] );
         
         $id->setEditable(FALSE);
         $id->setSize('30%');

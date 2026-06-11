@@ -1,0 +1,55 @@
+<?php
+/**
+ * TicketParticipante Active Record
+ * @author  <your-name-here>
+ */
+class TicketParticipante extends TRecord
+{
+    const TABLENAME = 'ticket_participante';
+    const PRIMARYKEY= 'id';
+    const IDPOLICY =  'max'; // {max, serial}
+    
+    use SystemChangeLogTrait;
+    
+    private $system_user;
+
+    /**
+     * Constructor method
+     */
+    public function __construct($id = NULL, $callObjectLoad = TRUE)
+    {
+        parent::__construct($id, $callObjectLoad);
+        parent::addAttribute('ticket_id');
+        parent::addAttribute('system_user_id');
+    }
+
+    
+    /**
+     * Method set_system_user
+     * Sample of usage: $ticket_participante->system_user = $object;
+     * @param $object Instance of SystemUser
+     */
+    public function set_system_user(SystemUser $object)
+    {
+        $this->system_user = $object;
+        $this->system_user_id = $object->id;
+    }
+    
+    /**
+     * Method get_system_user
+     * Sample of usage: $ticket_participante->system_user->attribute;
+     * @returns SystemUser instance
+     */
+    public function get_system_user()
+    {
+        // loads the associated object
+        if (empty($this->system_user))
+            $this->system_user = new SystemUser($this->system_user_id);
+    
+        // returns the associated object
+        return $this->system_user;
+    }
+    
+
+
+}

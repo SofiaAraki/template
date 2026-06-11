@@ -51,7 +51,7 @@ class SystemUserForm extends TPage
             $about         = new TEntry('about');
         }
         
-        $custom_code   = new TEntry('custom_code');
+        $systemuser_codlegado   = new TEntry('systemuser_codlegado');
         
         $password->disableAutoComplete();
         $repassword->disableAutoComplete();
@@ -90,7 +90,7 @@ class SystemUserForm extends TPage
         
         $this->form->addFields( [new TLabel(_t('Main unit'))], [$unit_id],  [new TLabel(_t('Front page'))], [$frontpage_id] );
         $this->form->addFields( [new TLabel(_t('Password'))], [$password],  [new TLabel(_t('Password confirmation'))], [$repassword] );
-        $this->form->addFields( [new TLabel(_t('Custom code'))], [$custom_code] );
+        $this->form->addFields( [new TLabel(_t('Custom code'))], [$systemuser_codlegado] );
         
         $subform = new BootstrapFormBuilder('form_System_user_subform');
         $subform->setFieldSizes('100%');

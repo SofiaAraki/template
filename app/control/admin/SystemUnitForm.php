@@ -37,7 +37,7 @@ class SystemUnitForm extends TStandardForm
         // create the form fields
         $id = new TEntry('id');
         $name = new TEntry('name');
-        $custom_code = new TEntry('custom_code');
+        $systemuser_codlegado = new TEntry('systemuser_codlegado');
         
         // add the fields
         $this->form->addFields( [new TLabel('Id')], [$id] );
@@ -51,7 +51,7 @@ class SystemUnitForm extends TStandardForm
             $database->setSize('100%');
         }
         
-        $this->form->addFields( [new TLabel(_t('Custom code'))], [$custom_code] );
+        $this->form->addFields( [new TLabel(_t('Custom code'))], [$systemuser_codlegado] );
         
         $id->setEditable(FALSE);
         $id->setSize('30%');

@@ -65,7 +65,7 @@ class SystemUnitList extends TStandardList
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'center', 50);
         $column_name = new TDataGridColumn('name', _t('Name'), 'left');
-        $column_custom = new TDataGridColumn('custom_code', _t('Custom code'), 'left');
+        $column_custom = new TDataGridColumn('systemuser_codlegado', _t('Custom code'), 'left');
         
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);

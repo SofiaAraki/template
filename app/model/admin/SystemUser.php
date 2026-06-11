@@ -44,7 +44,7 @@ class SystemUser extends TRecord
         parent::addAttribute('accepted_term_policy');
         parent::addAttribute('accepted_term_policy_at');
         parent::addAttribute('accepted_term_policy_data');
-        parent::addAttribute('custom_code');
+        parent::addAttribute('systemuser_codlegado');
         parent::addAttribute('otp_secret');
     }
     
@@ -324,7 +324,7 @@ class SystemUser extends TRecord
         {
             foreach ($roles as $role)
             {
-                $roleids[] = $role->custom_code;
+                $roleids[] = $role->systemuser_codlegado;
             }
         }
         
@@ -444,12 +444,12 @@ class SystemUser extends TRecord
     }
     
     /**
-     * Returns a SystemUser object based on its custom_code
-     * @param $login String with user custom_code
+     * Returns a SystemUser object based on its systemuser_codlegado
+     * @param $login String with user systemuser_codlegado
      */
-    static public function newFromCustomCode($custom_code)
+    static public function newFromCustomCode($systemuser_codlegado)
     {
-        return SystemUser::where('custom_code', '=', $custom_code)->first();
+        return SystemUser::where('systemuser_codlegado', '=', $systemuser_codlegado)->first();
     }
     
     /**

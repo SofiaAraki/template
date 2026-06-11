@@ -25,7 +25,7 @@ class LoginForm extends TPage
         
         // creates the form
         $this->form = new TModalForm('form_login');
-        $this->form->setFormTitle('Login');
+        $this->form->setFormTitle('Acesso - Acadêmico FE');
         
         if (!empty($ini['login']['logo']))
         {

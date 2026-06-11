@@ -24,6 +24,6 @@ class SystemUnit extends TRecord
         parent::__construct($id, $callObjectLoad);
         parent::addAttribute('name');
         parent::addAttribute('connection_name');
-        parent::addAttribute('systemuser_codlegado');
+        parent::addAttribute('custom_code');
     }
 }

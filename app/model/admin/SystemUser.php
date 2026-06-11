@@ -324,7 +324,7 @@ class SystemUser extends TRecord
         {
             foreach ($roles as $role)
             {
-                $roleids[] = $role->systemuser_codlegado;
+                $roleids[] = $role->custom_code;
             }
         }
         

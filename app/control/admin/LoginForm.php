@@ -120,6 +120,7 @@ class LoginForm extends TPage
         try
         {
             TTransaction::open('permission');
+            TTransaction::setLogger(new TLoggerSTD);
             
             $user = SystemUser::newFromLogin( $param['login'] );
             if ($user instanceof SystemUser)

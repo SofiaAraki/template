@@ -297,24 +297,35 @@ class AtividadeComplementarAnaliseProfessorForm extends TWindow
     {
         try
         {
-            TTransaction::open('Felabs_DB');
-            
-            $atividade_id = $param['cadastro_atividade_id'];
-            
-            $cadastro_atividade  = new AtividadeComplementarCadastro($atividade_id);
-            
-            $obj = new StdClass;
-            $obj->tipo_atividade = $cadastro_atividade->nome;
+            // Verifica se o parâmetro foi enviado e se não está vazio
+            if (!empty($param['cadastro_atividade_id']))
+            {
+                TTransaction::open('Felabs_DB');
                 
-            TForm::sendData('form_AtividadeComplementar', $obj);
-            
-            TTransaction::close();
+                $atividade_id = $param['cadastro_atividade_id'];
+                
+                $cadastro_atividade  = new AtividadeComplementarCadastro($atividade_id);
+                
+                $obj = new StdClass;
+                $obj->tipo_atividade = $cadastro_atividade->nome;
+                    
+                TForm::sendData('form_AtividadeComplementar', $obj);
+                
+                TTransaction::close();
+            }
+            else
+            {
+                // Caso esteja vazio, limpa o campo hidden auxiliar se necessário
+                $obj = new StdClass;
+                $obj->tipo_atividade = '';
+                TForm::sendData('form_AtividadeComplementar', $obj);
+            }
         }
         catch (Exception $e)
         {
-            new TMessage('error', $e->getMessage());  
+            new TMessage('error', $e->getMessage());   
             TTransaction::rollback();
-        }            
+        }                    
     }
     
 

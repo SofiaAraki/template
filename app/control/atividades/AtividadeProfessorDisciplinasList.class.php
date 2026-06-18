@@ -1,14 +1,10 @@
 <?php
-
 class AtividadeProfessorDisciplinasList extends TPage
 {
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
-    private $loaded;
-    private $deleteButton;
-    
+    private $loaded;    
 
     public function __construct()
     {
@@ -133,32 +129,6 @@ class AtividadeProfessorDisciplinasList extends TPage
         //parent::add($cabecalho);
         parent::add($container);
     }
-    
-    /*public function onInlineEdit($param)
-    {
-        try
-        {
-            // get the parameter $key
-            $field = $param['field'];
-            $key   = $param['key'];
-            $value = $param['value'];
-            
-            TTransaction::open('dados_fei'); // open a transaction with database
-            $object = new VwProfessordisciplinassemestre($key); // instantiates the Active Record
-            $object->{$field} = $value;
-            $object->store(); // update the object in the database
-            TTransaction::close(); // close the transaction
-            
-            $this->onReload($param); // reload the listing
-            new TMessage('info', "Record Updated");
-        }
-        catch (Exception $e) // in case of exception
-        {
-            new TMessage('error', $e->getMessage()); // shows the exception error message
-            TTransaction::rollback(); // undo all pending operations
-        }
-    }*/
-    
 
     public function onSearch()
     {
@@ -217,8 +187,7 @@ class AtividadeProfessorDisciplinasList extends TPage
         $param['offset']    =0;
         $param['first_page']=1;
         $this->onReload($param);
-    }
-    
+    }  
 
     public function onReload($param = NULL)
     {
@@ -348,41 +317,6 @@ class AtividadeProfessorDisciplinasList extends TPage
         }
     }
     
-
-    public function onDelete($param)
-    {
-        $action = new TAction(array($this, 'Delete'));
-        $action->setParameters($param);
-        
-        new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
-    }
-    
-
-    public function Delete($param)
-    {
-        try
-        {
-            $key = $param['key'];
-            
-            TTransaction::open('dados_fei');
-            
-            $object = new VwProfessordisciplinassemestre($key, FALSE); 
-            $object->delete();
-            
-            TTransaction::close(); 
-            
-            $this->onReload( $param );
-            new TMessage('info', AdiantiCoreTranslator::translate('Record deleted'));
-        }
-        catch (Exception $e)
-        {
-            new TMessage('error', $e->getMessage());
-            TTransaction::rollback();
-        }
-    }
-
-
-
     public function onCarregaDados($param)
     {
         TSession::setValue('sessao_prof', array('coddisciplina' => $param['CodDisciplina'],'codturmaetapa'  => $param['CodTurmaetapa']));
@@ -390,7 +324,6 @@ class AtividadeProfessorDisciplinasList extends TPage
         TApplication::loadPage('AtividadeList','onReload'); //PÁGINA DA DISCIPLINA
     }
     
-
     public function show()
     {
         if (!$this->loaded AND (!isset($_GET['method']) OR !(in_array($_GET['method'],  array('onReload', 'onSearch')))) )

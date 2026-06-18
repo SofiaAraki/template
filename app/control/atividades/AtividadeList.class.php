@@ -49,8 +49,8 @@ class AtividadeList extends TPage
 
         if($user->funcao_legado == "Professor") //PROF
         {
-            $this->form->addAction('Enviar Arquivo', new TAction(['AtividadeForm', 'mostrar']), 'bs:plus-sign green');
-            $this->form->addAction('Voltar', new TAction(['AtividadeProfessorDisciplinasList', 'onReload']), 'far:arrow-alt-circle-left blue');  
+            $this->form->addAction('Voltar', new TAction(['AtividadeProfessorDisciplinasList', 'onReload']), 'far:arrow-alt-circle-left blue');
+            $this->form->addAction('Adicionar Conteudo', new TAction(['AtividadeForm', 'mostrar']), 'fa:plus green');
         }
         elseif($user->funcao_legado == "Aluno") //ALUNO
         {

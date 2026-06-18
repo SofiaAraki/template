@@ -174,6 +174,9 @@ class Estagio extends TRecord
         
         $atividades = $repository->load($criteria); 
         
+        // CORREÇÃO: Inicializa o array vazio para evitar NULL caso não existam registros
+        $horas = [];
+        
         foreach($atividades as $atividade)
         {
             $horas[] = $atividade->carga_horaria;
@@ -202,6 +205,9 @@ class Estagio extends TRecord
         
         $atividades = $repository->load($criteria); 
         
+        // CORREÇÃO: Inicializa o array vazio para evitar NULL caso não existam registros
+        $horas = [];
+        
         foreach($atividades as $atividade)
         {
             $horas[] = $atividade->carga_horaria;
@@ -217,5 +223,5 @@ class Estagio extends TRecord
         {
             return $this->CalcularHorasPendentes;
         }
-    }   
+    } 
 }

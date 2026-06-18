@@ -264,7 +264,7 @@ class VwPapeletaReport extends TPage
             }
             else
             {
-                new TMessage('info', 'NÃO EXISTEM NOTAS OU ALUNOS PARA ESTA DISCIPLINA NESTE BIMESTRE!');
+                new TMessage('waring', 'NÃO EXISTEM NOTAS OU ALUNOS PARA ESTA DISCIPLINA NESTE BIMESTRE!');
             }
     
             $this->form->setData($formdata);

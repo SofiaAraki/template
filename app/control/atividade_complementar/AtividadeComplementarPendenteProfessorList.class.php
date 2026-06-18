@@ -106,7 +106,6 @@ class AtividadeComplementarPendenteProfessorList extends TPage
         // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';
-        //$container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         $container->add(TPanelGroup::pack('', $this->datagrid, $this->pageNavigation));
         
@@ -327,40 +326,6 @@ class AtividadeComplementarPendenteProfessorList extends TPage
         }
     }
     
-
-    /*public static function onDelete($param)
-    {
-        $action = new TAction([__CLASS__, 'Delete']);
-        $action->setParameters($param);
-        
-        new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
-    }*/
-    
-
-    /*public static function Delete($param)
-    {
-        try
-        {
-            $key = $param['key']; 
-            
-            TTransaction::open('Felabs_DB'); 
-            
-            $object = new AtividadeComplementar($key, FALSE); 
-            $object->delete(); 
-            
-            TTransaction::close(); 
-            
-            $pos_action = new TAction([__CLASS__, 'onReload']);
-            new TMessage('info', AdiantiCoreTranslator::translate('Record deleted'), $pos_action);
-        }
-        catch (Exception $e) 
-        {
-            new TMessage('error', $e->getMessage()); 
-            TTransaction::rollback(); 
-        }
-    }*/
-    
-
     public function show()
     {
         if (!$this->loaded AND (!isset($_GET['method']) OR !(in_array($_GET['method'],  array('onReload', 'onSearch')))) )

@@ -4,7 +4,7 @@ class CarteiraAluno extends TPage
 {
     public function __construct()
     {
-        parent::__construct($id);
+        parent::__construct();
 
         TTransaction::open('Felabs_DB');
 

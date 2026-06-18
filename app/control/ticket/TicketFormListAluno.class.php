@@ -57,7 +57,7 @@ class TicketFormListAluno extends TPage
         $loggedUnit = TSession::getValue('userunitid');
 
         $criteria = new TCriteria;
-        $criteria->add( new TFilter(departamento_id, '=', $loggedUnit));
+        $criteria->add( new TFilter('departamento_id', '=', $loggedUnit));
         
         //$categorias = TicketCategoria::getObjects($criteria);
         $colaboradores = SystemUser::getObjects();
@@ -84,7 +84,7 @@ class TicketFormListAluno extends TPage
 
 
         //$system_user_id->setMinLength(5);
-        $descricao->setSize('100%',100);
+        $descricao->setSize('100%');
         $id->setEditable(FALSE);
 
         //$deptoItems = [];
@@ -95,11 +95,11 @@ class TicketFormListAluno extends TPage
         $this->form->addQuickField('Id', $id, '50%');
         $this->form->addQuickField('Departamento', $departamento, '50%');
         $this->form->addQuickField('Solicitante (aluno)', $system_user_id, '50%');
-        $this->form->addQuickField('Categoria', $categoria, '50%', new TRequiredValidator);
+        $this->form->addQuickField('Categoria', $categoria, '60%', new TRequiredValidator);
         //$this->form->addQuickField('Título', $titulo, '100%');
-        $this->form->addQuickField('Descrição', $descricao, '100%', new TRequiredValidator);
+        $this->form->addQuickField('Descrição', $descricao, '60%', new TRequiredValidator);
         $this->form->addQuickField('Adicionar participante', $destino_user_id, '50%');
-        $this->form->addQuickField('Anexar arquivo(s)', $anexo, '50%');
+        $this->form->addQuickField('Anexar arquivo(s)', $anexo, '60%');
         $this->form->addQuickField('Status', $status, '100%');        
         $this->form->addQuickField('Data Reg', $data_reg, '100%');
 
@@ -137,6 +137,14 @@ class TicketFormListAluno extends TPage
         $column_ultima_edicao = new TDataGridColumn('ultima_edicao', 'Última edição', 'left');
         $column_quem_abriu = new TDataGridColumn('gestor->name', 'Quem abriu', 'left');
 
+        $column_ultima_edicao->setTransformer(function($value, $object, $row) {
+            if ($value) {
+                $horario = substr($value, 11, 8);
+                $dataUs = TDate::date2br($value);
+                return "$dataUs $horario";
+            }
+            return '';
+        });
 
         //add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
@@ -193,17 +201,17 @@ class TicketFormListAluno extends TPage
         
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
         $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         if ($loggedUnit == 12) {
             $container->add(new TAlert('danger', '<p><strong>Taxas de Serviços:</strong></p>
-    <ul>
-        <li>Declarações (exceto declaração de conclusão de curso): R$ 10,00;</li>
-        <li>Segunda via de histórico escolar (conclusão ou transferência): R$ 100,00;</li>
-        <li>Segunda via de diploma: R$ 250,00.</li>
-    </ul>
-    <p><strong>Pagamento Identificado - Chave PIX 16 99978 0496 - Bradesco - Fundação Educacional de Ituverava</strong></p>
-    <p>Após o pagamento, por gentileza, envie uma foto do comprovante para o n.º <strong>16 3729 9058</strong>, para agilizarmos a identificação e a liberação da emissão do documento solicitado junto à Secretaria.</p>
+            <ul>
+                <li>Declarações (exceto declaração de conclusão de curso): R$ 10,00;</li>
+                <li>Segunda via de histórico escolar (conclusão ou transferência): R$ 100,00;</li>
+                <li>Segunda via de diploma: R$ 250,00.</li>
+            </ul>
+            <p><strong>Pagamento Identificado - Chave PIX 16 99978 0496 - Bradesco - Fundação Educacional de Ituverava</strong></p>
+            <p>Após o pagamento, por gentileza, envie uma foto do comprovante para o n.º <strong>16 3729 9058</strong>, para agilizarmos a identificação e a liberação da emissão do documento solicitado junto à Secretaria.</p>
             '));
         }
         $container->add(TPanelGroup::pack('Novo Ticket', $this->form));
@@ -287,7 +295,7 @@ class TicketFormListAluno extends TPage
             {
                 foreach ($objects as $object)
                 {
-                    $horario = substr($object-> data_reg,11,19);
+                    $horario = substr($object-> data_reg,11,8);
                     $dataUs = TDate::date2br($object->data_reg);
                     $object->data_reg = "$dataUs"." "."$horario";
 

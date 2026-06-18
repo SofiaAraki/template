@@ -29,7 +29,7 @@ class CadastroVeiculoList extends TPage
 
 
         // set sizes
-        $placa->setSize('25%');
+        $placa->setSize('30%');
         $placa->forceUpperCase();
         $placa->setMask('SSS-9999');
 
@@ -129,7 +129,7 @@ class CadastroVeiculoList extends TPage
 
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
         $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         $container->add(TPanelGroup::pack('Meus cadastros', $this->datagrid, $this->pageNavigation));

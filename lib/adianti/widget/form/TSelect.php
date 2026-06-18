@@ -320,7 +320,7 @@ class TSelect extends TField implements AdiantiWidgetInterface
                         $option->{'title'} = $item;  // define the title
                     }
                     $option->{'titside'} = 'left';  // define the title side
-                    $option->add(htmlspecialchars($item));      // add the item label
+                    $option->add(htmlspecialchars( (string) $item));      // add the item label
                     
                     // verify if this option is selected
                     if ( (is_array($this->value)  AND @in_array($chave, $this->value)) OR

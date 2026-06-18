@@ -1,14 +1,10 @@
 <?php
-
 class DadosCadastraisAlunoControleList extends TPage
 {
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
     private $loaded;
-    private $deleteButton;
-    
 
     public function __construct()
     {
@@ -119,7 +115,6 @@ class DadosCadastraisAlunoControleList extends TPage
         // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';
-        // $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         $container->add(TPanelGroup::pack('', $this->datagrid, $this->pageNavigation));
         

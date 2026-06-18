@@ -20,7 +20,7 @@ class TutorialRequerimento extends TPage
         
         $cards->setTitleAttribute('title');
         
-        $cards->setItemTemplate('<iframe width="100%" height="300px" src="https://www.youtube.com/embed/{source}""></iframe>');
+        $cards->setItemTemplate('<iframe width="100%" height="100%" src="https://www.youtube.com/embed/{source}""></iframe>');
         
         $action = new TAction([$this, 'onGotoVideo'], ['source'=>'{source}']);
         $cards->addAction($action, 'Assista no Youtube', 'far:play-circle red');
@@ -29,7 +29,6 @@ class TutorialRequerimento extends TPage
         // wrap the page content using vertical box
         $vbox = new TVBox;
         $vbox->style = 'width: 100%';
-        //$vbox->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $vbox->add($cards);
         parent::add($vbox);
     }
@@ -41,4 +40,3 @@ class TutorialRequerimento extends TPage
         TScript::create("window.open('https://www.youtube.com/watch?v={$source}')");
     }
 }
-

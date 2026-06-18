@@ -8,9 +8,7 @@ class ContratoDadosAlunoList extends TPage
     private $form; // form
     private $datagrid; // listing
     private $pageNavigation;
-    private $formgrid;
     private $loaded;
-    private $deleteButton;
     
     /**
      * Class constructor
@@ -34,8 +32,6 @@ class ContratoDadosAlunoList extends TPage
         $this->form->addFields( [ new TLabel('Cod. Aluno') ], [ $Codaluno ] );
         $this->form->addFields( [ new TLabel('CPF') ], [ $CPF ] );
 
-        //echo $_SERVER['REMOTE_ADDR'];
-
 
         // set sizes
         $Codaluno->setSize('100%');
@@ -45,16 +41,11 @@ class ContratoDadosAlunoList extends TPage
         // keep the form filled during navigation with session data
         $this->form->setData( TSession::getValue(__CLASS__ . '_filter_data') );
         
-        // add the search form actions
-        //$btn = $this->form->addAction(_t('Find'), new TAction([$this, 'onSearch']), 'fa:search');
-        //$btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addActionLink(_t('New'), new TAction(['', 'onEdit']), 'fa:plus green');
-        
+
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
-        // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
         
 
         // creates the datagrid columns
@@ -65,8 +56,6 @@ class ContratoDadosAlunoList extends TPage
         $column_AnoMatricula = new TDataGridColumn('AnoMatricula', 'Ano Matrícula', 'left');
         $column_SemestreMatricula = new TDataGridColumn('SemestreMatricula', 'Semestre', 'left');
         $column_EtapaMatricula = new TDataGridColumn('EtapaMatricula', 'Etapa', 'left');
-        //$column_CodEntidade = new TDataGridColumn('CodEntidade', 'IES', 'right');
-        //$column_DataRegistro = new TDataGridColumn('DataRegistro', 'Registrado em', 'left');
         $column_Status = new TDataGridColumn('StatusContrato', 'Status', 'left');
 
 
@@ -78,8 +67,6 @@ class ContratoDadosAlunoList extends TPage
         $this->datagrid->addColumn($column_AnoMatricula);
         $this->datagrid->addColumn($column_SemestreMatricula);
         $this->datagrid->addColumn($column_EtapaMatricula);
-        //$this->datagrid->addColumn($column_CodEntidade);
-        //$this->datagrid->addColumn($column_DataRegistro);
         $this->datagrid->addColumn($column_Status);
 
 
@@ -95,7 +82,6 @@ class ContratoDadosAlunoList extends TPage
         $this->datagrid->createModel();
 
         
-        
         // creates the page navigation
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction([$this, 'onReload']));
@@ -106,10 +92,6 @@ class ContratoDadosAlunoList extends TPage
         $pagestep->addItem('Assinatura Digital');
         $pagestep->addItem('Enviar Documento de Indentificação');
         $pagestep->select('Selecionar');
-        
-        //$back_action = new TAction(array('MultiStepRegistration1View', 'loadPage'));
-        //$back = new TActionLink('Back', $back_action, 'black', null, null, 'far:arrow-alt-circle-left red');
-        //$back->addStyleClass('btn btn-default btn-sm');
         
         $vbox = new TVBox;
         $vbox->style = 'width: 100%';
@@ -153,7 +135,6 @@ class ContratoDadosAlunoList extends TPage
                 TTransaction::open('Felabs_DB'); // open a transaction
                 $object = new ContratoDadosAlunoDoc($id); // instantiates the Active Record
 
-
                 
                // if ($object->system_user_id == TSession::getValue('userid') OR TSession::getValue('login') === 'admin')
                // {
@@ -191,15 +172,13 @@ class ContratoDadosAlunoList extends TPage
             $logged  = SystemUser::newFromLogin(TSession::getValue('login'));
             $loggedUnit = TSession::getValue('userunitid'); 
 
-           // var_dump($loggedUnit);
-
             // creates a repository for ContratoDadosAluno
             $repository = new TRepository('ContratoDadosAluno');
             $limit = 10;
             // creates a criteria
             $criteria = new TCriteria;
-            $criteria->add( new TFilter(Codaluno, '=', $logged->systemuser_codlegado));
-            $criteria->add( new TFilter(CodEntidade, '=', $loggedUnit));
+            $criteria->add( new TFilter('Codaluno', '=', $logged->systemuser_codlegado));
+            $criteria->add( new TFilter('CodEntidade', '=', $loggedUnit));
             
             // default order
             if (empty($param['order']))
@@ -283,11 +262,6 @@ class ContratoDadosAlunoList extends TPage
     {
         // get the parameter and shows the message
        $key = $param['key'];
-        //var_dump($param);
-        //die();
-        // get the course description
-        //var_dump($this->datagrid->getItems());
-        //die();
         
         foreach ($this->datagrid->getItems() as $object)
         {
@@ -295,7 +269,6 @@ class ContratoDadosAlunoList extends TPage
             {
                 //Limpa variável para garantir integridade
                 TSession::setValue('sessao_contrato', NULL);
-                
                 TSession::setValue('sessao_contrato', array('NomeAluno'           => $object->NomeAluno,
                                                             'CPF'                 => $object->CPF,
                                                             'key'                 => $object->id,
@@ -347,13 +320,8 @@ class ContratoDadosAlunoList extends TPage
                                                             'DataFinalContrato'   => $object->DataFinalContrato
                                                         )
                                    );
-        
             }
         }
-        
-       //var_dump(TSession::getValue('sessao_contrato'));
-       //die();
-
         TApplication::loadPage('MultiStepRegistration1View');
     }
 

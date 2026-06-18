@@ -65,7 +65,7 @@ class BoletimNovoList extends TPage
         $vbox = new TVBox;
         $vbox->style = 'width: 100%';
         $vbox->add(new TXMLBreadCrumb('menu.xml', 'BoletimNovoList'));
-        $vbox->add( TPanelGroup::pack('', $this->datagrid, $back ) );
+        $vbox->add( TPanelGroup::pack('', $this->datagrid ) );
         
         // wrap the page content
         parent::add($vbox);
@@ -170,9 +170,9 @@ class BoletimNovoList extends TPage
                 //echo $criteria->dump();
 
                 $criteria6 = new TCriteria;
-                $criteria6->add( new TFilter(Codaluno, '=', $user->systemuser_codlegado));
-                $criteria6->add( new TFilter(CodEntidade, '=', 12));
-                $criteria6->add( new TFilter(CodCurso, '=', 139));
+                $criteria6->add( new TFilter('Codaluno', '=', $user->systemuser_codlegado));
+                $criteria6->add( new TFilter('CodEntidade', '=', 12));
+                $criteria6->add( new TFilter('CodCurso', '=', 139));
                 //echo $criteria6->dump();
                                 
                 $criteria = new TCriteria;

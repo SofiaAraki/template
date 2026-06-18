@@ -143,7 +143,7 @@ class DespesaProfessorList extends TPage
 
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
         $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add(new TAlert('warning', 'Atenção: A realização do lançamento das despensas deverá ser realizado até o ÚLTIMO DIA do mês corrente. Não será mais possível realizar lançamentos após essa data. Por exemplo: despesas do mês de Abril deverão ser lançadas até o dia 30 de Abril. '));
         $container->add(TPanelGroup::pack('Relatório Indivual de Despesas', $this->form));

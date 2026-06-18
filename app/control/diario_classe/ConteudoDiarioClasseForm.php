@@ -59,7 +59,6 @@ class ConteudoDiarioClasseForm extends TPage
         $id->setSize('100%');
         $data_aula->setSize('100%');
         $data_aula->setMask('dd/mm/yyyy');
-        $data_aula->setValue($Hoje);
         $conteudo->setSize('100%');
 
 

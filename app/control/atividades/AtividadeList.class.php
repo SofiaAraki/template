@@ -1,5 +1,4 @@
 <?php
-
 class AtividadeList extends TPage
 {
     private $form; 
@@ -8,32 +7,27 @@ class AtividadeList extends TPage
     private $formgrid;
     private $loaded;
     private $deleteButton;
-    
 
     public function __construct()
     {
         parent::__construct();
 
-        
         // creates the form
         $this->form = new BootstrapFormBuilder('form_search_Atividade');      
         $this->form->setFormTitle('Página da Disciplina');
 
-
         TTransaction::open('dados_fei');
 
         $teste = TSession::getValue('sessao_prof');
-
         $disciplina = new FiDisciplina($teste['coddisciplina']);
 
         TTransaction::close();
        
+        $label1 = new TLabel('Disciplina:', '', '15px', '');
+        $text1  = new TTextDisplay($disciplina->Nomeusual, '', '15px', '');          
 
-        $label1 = new TLabel('Disciplina:', '#333333', '15px', '');
+        $this->form->addFields([$label1],[$text1]);
 
-        $text1  = new TTextDisplay($disciplina->Nomeusual, '#333333', '15px', '');          
-
-        $this->form->addFields([$label1],[$text1]);
         // create the form fields
         $id = new TEntry('id');
         $coddisciplina = new TEntry('coddisciplina');
@@ -48,58 +42,27 @@ class AtividadeList extends TPage
         $system_user_id = new TEntry('system_user_id');
         $ordem = new TEntry('ordem');
 
-
-        // add the fields
-        //$this->form->addQuickField('Id', $id,  '100%' );
-        //$this->form->addQuickField('Coddisciplina', $coddisciplina,  '100%' );
-        //$this->form->addQuickField('Codturmaetapa', $codturmaetapa,  '100%' );
-        //$this->form->addQuickField('Tipo', $tipo,  '100%' );
-        //$this->form->addQuickField('Nome', $nome,  '80%' );
-        //$this->form->addQuickField('Descrição', $descricao,  '80%' );
-        //$this->form->addQuickField('Anexo', $anexo,  '100%' );
-        //$this->form->addQuickField('Valor Nota', $valor_nota,  '100%' );
-        //$this->form->addQuickField('Data Prazo', $data_prazo,  '100%' );
-        //$this->form->addQuickField('Data Reg', $data_reg,  '100%' );
-        //$this->form->addQuickField('System User Id', $system_user_id,  '100%' );
-        //$this->form->addQuickField('Ordem', $ordem,  '100%' );
-
-        
-        // keep the form filled during navigation with session data
-        //$this->form->setData( TSession::getValue('Atividade_filter_data') );
-
-
-        // add the search form actions
-        //$btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
-        //$btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addQuickAction('Nova Atividade',  new TAction(array('AtividadeForm', 'mostrar')), 'bs:plus-sign green');
-
-
         TTransaction::open('Felabs_DB');
 
-        //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
         $userid = TSession::getValue('userid');
         $user = new SystemUser($userid);
-
 
         if($user->funcao_legado == "Professor") //PROF
         {
             $this->form->addAction('Enviar Arquivo', new TAction(['AtividadeForm', 'mostrar']), 'bs:plus-sign green');
-            $this->form->addAction('Voltar', new TAction(['AtividadeProfessorDisciplinasList', 'onReload']), 'far:arrow-alt-circle-left blue');
-           
+            $this->form->addAction('Voltar', new TAction(['AtividadeProfessorDisciplinasList', 'onReload']), 'far:arrow-alt-circle-left blue');  
         }
         elseif($user->funcao_legado == "Aluno") //ALUNO
         {
             $this->form->addAction('Voltar', new TAction(['AtividadeAlunoDisciplinasList', 'onReload']), 'far:arrow-alt-circle-left blue');
         }
         
-
         // creates a Datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid = new BootstrapDatagridWrapper($this->datagrid);
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
         
-
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'right');
         $column_coddisciplina = new TDataGridColumn('coddisciplina', 'Coddisciplina', 'left');
@@ -114,7 +77,6 @@ class AtividadeList extends TPage
         $column_system_user_id = new TDataGridColumn('system_user_id', 'System User Id', 'left');
         $column_ordem = new TDataGridColumn('ordem', 'Ordem', 'left');
 
-
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
         //$this->datagrid->addColumn($column_coddisciplina);
@@ -128,7 +90,6 @@ class AtividadeList extends TPage
         $this->datagrid->addColumn($column_data_reg);
         //$this->datagrid->addColumn($column_system_user_id);
         //$this->datagrid->addColumn($column_ordem);
-
 
         // create VER ATIVIDADE action
         $action_verativ = new TDataGridAction(array($this, 'goAtividadeAlunoList'));
@@ -150,7 +111,6 @@ class AtividadeList extends TPage
             $action_edit->setImage('far:edit blue fa-lg');
             $action_edit->setField('id');
             $this->datagrid->addAction($action_edit);
-    
     
             // create DELETE action
             $action_del = new TDataGridAction(array($this, 'onDelete'));
@@ -176,9 +136,8 @@ class AtividadeList extends TPage
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
 
-        // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
 
         if ($user->funcao_legado == 'Professor' ) //PROF
         {
@@ -190,9 +149,6 @@ class AtividadeList extends TPage
             $container->add(new TXMLBreadCrumb('menu.xml', 'AtividadeAlunoDisciplinasList'));
         }
 
-
-
-        // $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         $container->add(TPanelGroup::pack('Conteúdo da Disciplina', $this->datagrid));
         
@@ -356,20 +312,15 @@ class AtividadeList extends TPage
         {
             TTransaction::open('Felabs_DB');
             
-            //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
             $userid = TSession::getValue('userid');
             $user = new SystemUser($userid);
-
             $sessaoProf = TSession::getValue('sessao_prof');
-            
-
             $repository = new TRepository('Atividade');
             $limit = 1000;
 
             $criteria = new TCriteria;
-            $criteria->add( new TFilter(coddisciplina, '=', $sessaoProf['coddisciplina'])); //CODIGO DA DISCIPLINA
-            $criteria->add( new TFilter(codturmaetapa, '=', $sessaoProf['codturmaetapa'])); //CÓDIGO DA MATRICULA DA ETAPA ATUAL 
-            
+            $criteria->add( new TFilter('coddisciplina', '=', $sessaoProf['coddisciplina'])); //CODIGO DA DISCIPLINA
+            $criteria->add( new TFilter('codturmaetapa', '=', $sessaoProf['codturmaetapa'])); //CÓDIGO DA MATRICULA DA ETAPA ATUAL 
 
             if (empty($param['order']))
             {

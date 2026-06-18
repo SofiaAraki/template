@@ -47,7 +47,7 @@ class SystemUserForm extends TPage
         {
             $phone         = new TEntry('phone');
             $address       = new TEntry('address');
-            $function_name = new TEntry('function_name');
+            $function_name = new TEntry('funcao_legado');
             $about         = new TEntry('about');
         }
         

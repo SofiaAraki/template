@@ -238,7 +238,7 @@ class MeuCursoViewProfessor extends TPage
 
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
         //$container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($vbox);
         $container->add($vbox1);
@@ -266,7 +266,8 @@ class MeuCursoViewProfessor extends TPage
         //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
         $userid = TSession::getValue('userid');
         $user = new SystemUser($userid);
-        
+        
+
         $criteria = new TCriteria;
         $criteria->add( new TFilter(curso_id, '=', $param['curso']));
         $criteria->setProperty('order', 'tipo, id asc');

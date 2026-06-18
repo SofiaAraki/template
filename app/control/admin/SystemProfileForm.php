@@ -34,7 +34,7 @@ class SystemProfileForm extends TPage
         {
             $address = new TEntry('address');
             $phone = new TEntry('phone');
-            $function_name = new TEntry('function_name');
+            $function_name = new TEntry('funcao_legado');
             $about = new TEntry('about');
         }
         

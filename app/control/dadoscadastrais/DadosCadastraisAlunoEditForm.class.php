@@ -1,38 +1,11 @@
 <?php
-
 class DadosCadastraisAlunoEditForm extends TPage
 {
     protected $form; 
-    
 
     public function __construct( $param )
     {
-        parent::__construct();
-        
-        
-        /*try
-        {
-            TTransaction::open('Felabs_DB');
-            
-            $userid = TSession::getValue('userid');
-            $user = new SystemUser($userid);
-            
-            TTransaction::close();
-            
-            
-            TTransaction::open('dados_fei');
-            
-            $aluno = new FiAluno($user->systemuser_codlegado);
-            $cidade = new FiCidade($aluno->CodCidade);
-            
-            TTransaction::close();
-        }
-        catch (Exception $e) 
-        {
-            new TMessage('error', $e->getMessage()); 
-            TTransaction::rollback(); 
-        }*/
-            
+        parent::__construct();          
         
         // creates the form
         $this->form = new BootstrapFormBuilder('form_ContatoAluno');
@@ -91,78 +64,6 @@ class DadosCadastraisAlunoEditForm extends TPage
         
         $uf->addItems($combo_uf);
         
-
-        //Campos apenas para exibição, não serão salvos no banco
-        /*$Nome = new TEntry('Nome');
-        $Datanascimento = new TEntry('Datanascimento');
-        $Sexo = new TEntry('Sexo');
-        $Naturalidade = new TEntry('Naturalidade');
-        $NaturalidadeUF = new TEntry('NaturalidadeUF');
-        $Nacionalidade = new TEntry('Nacionalidade');
-        $NomePai = new TEntry('NomePai');
-        $NomeMae = new TEntry('NomeMae');
-        $Rg = new TEntry('Rg');
-        $RgOrgaoExpedidor = new TEntry('RgOrgaoExpedidor');
-        $CPF = new TEntry('CPF');
-        $Profissao = new TEntry('Profissao');
-        $CorRaca = new TEntry('CorRaca');
-        $EstadoCivil = new TEntry('EstadoCivil');
-
-
-        $text1  = new TTextDisplay($aluno->Nome, '#333333', '14px', '');
-        $text2  = new TTextDisplay(TDate::date2br($aluno->Datanascimento), '#333333', '14px', '');
-        $text3  = new TTextDisplay($aluno->Sexo, '#333333', '14px', '');
-        $text4  = new TTextDisplay($aluno->Nacionalidade, '#333333', '14px', '');
-        $text5  = new TTextDisplay($aluno->Naturalidade, '#333333', '14px', '');
-        $text6  = new TTextDisplay($aluno->NaturalidadeUF, '#333333', '14px', '');
-        $text7  = new TTextDisplay($aluno->Rg, '#333333', '14px', '');
-        $text8  = new TTextDisplay($aluno->RgOrgaoExpedidor, '#333333', '14px', '');
-        $text9  = new TTextDisplay($aluno->CPF, '#333333', '14px', '');
-        $text10  = new TTextDisplay($aluno->Profissao, '#333333', '14px', '');
-        $text11  = new TTextDisplay($aluno->EstadoCivil, '#333333', '14px', '');
-        $text12  = new TTextDisplay($aluno->CorRaca, '#333333', '14px', '');        
-        $text13  = new TTextDisplay($aluno->NomePai, '#333333', '14px', '');
-        $text14  = new TTextDisplay($aluno->NomeMae, '#333333', '14px', '');
-        
-        
-        $this->form->addFields( [new TFormSeparator('Informações gerais')] );
-        
-        $row = $this->form->addFields( [ new TLabel('Nome'), $text1 ],
-                                       [ new TLabel('Data de nascimento'), $text2 ],
-                                       [ new TLabel('Sexo'), $text3 ] );
-        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
-        
-        $this->form->addContent( ['<br>'] );
-        
-        $row = $this->form->addFields( [ new TLabel('Nacionalidade'), $text4 ],
-                                       [ new TLabel('Naturalidade'), $text5 ],
-                                       [ new TLabel('UF'), $text6 ] );
-        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
-        
-        $this->form->addContent( ['<br>'] );
-        
-        $row = $this->form->addFields( [ new TLabel('RG'), $text7 ],
-                                       [ new TLabel('Órgão expeditor'), $text8 ],
-                                       [ new TLabel('CPF'), $text9 ] );
-        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
-        
-        $this->form->addContent( ['<br>'] );
-        
-        $row = $this->form->addFields( [ new TLabel('Profissão'), $text10 ],
-                                       [ new TLabel('Estado civil'), $text11 ], 
-                                       [ new TLabel('Cor/raça'), $text12 ] );
-        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
-        
-        $this->form->addContent( ['<br>'] );
-        
-        $row = $this->form->addFields( [ new TLabel('Nome do pai'), $text13 ],
-                                       [ new TLabel('Nome da mãe'), $text14 ] );
-        $row->layout = ['col-sm-4', 'col-sm-4'];
-      
-        $this->form->addContent( ['<br>'] );*/  
-      
-        ///////////////////////////////////////////////////////////////////////////////
-      
         // add the fields
         $label_explicacao = '<center><p style="font-size: 18px; vertical-align: middle;">Prezado(a) aluno(a), manter seus dados sempre atualizados em nosso cadastro é
                             muito importante, pois através deles nosso contato será mais ágil!</p></center>';        
@@ -245,10 +146,9 @@ class DadosCadastraisAlunoEditForm extends TPage
         
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
-        // $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $container->style = 'width: 100%';
         $container->add($this->form);
-        
+
         parent::add($container);
     }
 

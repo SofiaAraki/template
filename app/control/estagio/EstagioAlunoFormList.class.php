@@ -1,5 +1,4 @@
 <?php
-
 class EstagioAlunoFormList extends TPage
 {
     protected $form; 
@@ -7,12 +6,9 @@ class EstagioAlunoFormList extends TPage
     protected $pageNavigation;
     protected $loaded;
     
-
     public function __construct( $param )
     {
         parent::__construct();
-        
-        
         try
         {
             TTransaction::open('Felabs_DB');
@@ -34,9 +30,6 @@ class EstagioAlunoFormList extends TPage
                 
                 $criteria1 = new TCriteria;
                 $criteria1->add(new TFilter('id', 'IN', $array_ffcl_fajob));
-                
-                //new TMessage('info', 'Lançamento dos estágios realizado pela secretaria acadêmica');
-                //die;
             }
                   
             //Critério para carregar combo professor responsável pela aprovação na FAFRAM (quem vai lançar os estágios é a secretaria) 
@@ -51,9 +44,6 @@ class EstagioAlunoFormList extends TPage
                 
                 $criteria1 = new TCriteria;
                 $criteria1->add(new TFilter('id', 'IN', $array_fafram));
-                
-                //new TMessage('info', 'Lançamento dos estágios realizado pela secretaria acadêmica');
-                //die;
             }
             
     

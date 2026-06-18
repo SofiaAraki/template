@@ -170,7 +170,7 @@ class ConteudoProgramaticoForm extends TPage
         
         // create the page container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
         $container->add(new TXMLBreadCrumb('menu.xml', 'ConteudoProgramaticoList'));
         $container->add($this->form);
         parent::add($container);

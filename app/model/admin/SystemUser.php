@@ -36,7 +36,7 @@ class SystemUser extends TRecord
         parent::addAttribute('email');
         parent::addAttribute('phone');
         parent::addAttribute('address');
-        parent::addAttribute('function_name');
+        parent::addAttribute('funcao_legado');
         parent::addAttribute('about');
         parent::addAttribute('frontpage_id');
         parent::addAttribute('system_unit_id');

@@ -79,7 +79,7 @@ class DadosCadastraisProfessorView extends TPage
         $div = new TElement('div');
         $div->add($a = $container);
 
-        $a->style = 'width:90%;';
+        $a->style = 'width:100%;';
         
         parent::add($div);
     }  

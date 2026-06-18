@@ -155,7 +155,7 @@ class ConteudoProgramaticoList extends TPage
 
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
         $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add(TPanelGroup::pack('Listagem - Conteúdo Programático', $this->form));
         $container->add(TPanelGroup::pack('', $this->datagrid, $this->pageNavigation));

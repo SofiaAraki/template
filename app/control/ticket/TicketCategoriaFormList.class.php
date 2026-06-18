@@ -1,12 +1,10 @@
 <?php
-
 class TicketCategoriaFormList extends TPage
 {
     protected $form; 
     protected $datagrid; 
     protected $pageNavigation;
     protected $loaded;
-    
 
     public function __construct( $param )
     {
@@ -17,13 +15,11 @@ class TicketCategoriaFormList extends TPage
         $this->form = new BootstrapFormWrapper($this->form);
         $this->form->style = 'display: table;width:100%'; 
         $this->form->setFormTitle('TicketCategoria');
-        
 
         $id = new TEntry('id');
         $departamento_id = new TCombo('departamento_id');
         $nome = new TEntry('nome');
         $exemplo_msg = new TText('exemplo_msg');
-        
 
         $deptoItems = [];
         //$deptoItems[1] = 'Secretaria CNSC';
@@ -34,15 +30,12 @@ class TicketCategoriaFormList extends TPage
         $deptoItems[13] = 'Atendimento - Professor';
         $deptoItems[14] = 'Departamento Financeiro';
         $deptoItems[15] = 'Departamento Comercial';
-        
 
         $departamento_id->addItems($deptoItems);
-        
         
         $id->setEditable(FALSE);
         $departamento_id->setValue(1);
         $exemplo_msg->setSize('100%',100);
-
 
         // add the fields
         $this->form->addQuickField('Id', $id, '50%');
@@ -50,20 +43,15 @@ class TicketCategoriaFormList extends TPage
         $this->form->addQuickField('Nome', $nome, '100%', new TRequiredValidator);
         $this->form->addQuickField('Mensagem pré-definida', $exemplo_msg, '100%');
 
-
         // create the form actions
         $btn = $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save');
         $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addQuickAction(_t('New'),  new TAction(array($this, 'onClear')), 'bs:plus-sign green');
         $btn = $this->form->addQuickAction('Voltar', new TAction(array('TicketList', 'onReload')), 'far:arrow-alt-circle-left blue');
-        
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid = new BootstrapDatagridWrapper($this->datagrid);
-        $this->datagrid->style = 'width: 100%';
-        //$this->datagrid->datatable = 'true';
-        
+        $this->datagrid->style = 'width: 100%';        
 
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'left');
@@ -71,55 +59,43 @@ class TicketCategoriaFormList extends TPage
         $column_nome = new TDataGridColumn('nome', 'Nome', 'left');
         $column_exemplo_msg = new TDataGridColumn('exemplo_msg', 'Mensagem pré-definida', 'left');
 
-
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
         $this->datagrid->addColumn($column_departamento_id);
         $this->datagrid->addColumn($column_nome);
         $this->datagrid->addColumn($column_exemplo_msg);
 
-        
         // creates two datagrid actions
         $action1 = new TDataGridAction(array($this, 'onEdit'));
-        //$action1->setUseButton(TRUE);
-        //$action1->setButtonClass('btn btn-default');
         $action1->setLabel(_t('Edit'));
         $action1->setImage('far:edit blue fa-lg');
         $action1->setField('id');
         
         $action2 = new TDataGridAction(array($this, 'onDelete'));
-        //$action2->setUseButton(TRUE);
-        //$action2->setButtonClass('btn btn-default');
         $action2->setLabel(_t('Delete'));
         $action2->setImage('far:trash-alt red fa-lg');
         $action2->setField('id');
         
-        
         // add the actions to the datagrid
         $this->datagrid->addAction($action1);
-       // $this->datagrid->addAction($action2);
-        
+        // $this->datagrid->addAction($action2);
         
         // create the datagrid model
         $this->datagrid->createModel();
-        
         
         // creates the page navigation
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
-        
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
-        // $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $container->style = 'width: 100%';
         $container->add(TPanelGroup::pack('Configurar Categorias', $this->form));
         $container->add(TPanelGroup::pack('', $this->datagrid, $this->pageNavigation));
         
         parent::add($container);
     }
-
 
     public function onReload($param = NULL)
     {

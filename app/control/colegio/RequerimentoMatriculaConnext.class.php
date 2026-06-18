@@ -252,7 +252,7 @@ class RequerimentoMatriculaConnext extends TPage
         
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
         //$container->add(new TXMLBreadCrumb('menu.xml', 'ReqMatriculaAlunoList'));
         $container->add($this->form);
         
@@ -319,7 +319,8 @@ class RequerimentoMatriculaConnext extends TPage
 
                 $object->Datanascimento = TDate::date2br($object->Datanascimento);  
 
-                $this->form->setData($object);
+                $this->form->setData($object);
+
                 $data = $this->form->getData();
 
             }

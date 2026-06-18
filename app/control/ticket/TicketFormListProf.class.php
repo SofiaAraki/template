@@ -25,7 +25,7 @@ class TicketFormListProf extends TPage
         $loggedUnit = TSession::getValue('userunitid');
 
         $criteria = new TCriteria;
-        $criteria->add( new TFilter(departamento_id, '=', 13));
+        $criteria->add( new TFilter('departamento_id', '=', 13));
         
         //$categorias = TicketCategoria::getObjects($criteria);
         $colaboradores = SystemUser::getObjects();
@@ -66,7 +66,7 @@ class TicketFormListProf extends TPage
         $this->form->addQuickField('Solicitante (Prof)', $system_user_id, '50%');
         $this->form->addQuickField('Categoria', $categoria, '50%', new TRequiredValidator);
         //$this->form->addQuickField('Título', $titulo, '100%');
-        $this->form->addQuickField('Descrição', $descricao, '100%', new TRequiredValidator);
+        $this->form->addQuickField('Descrição', $descricao, '50%', new TRequiredValidator);
         $this->form->addQuickField('Adicionar participante', $destino_user_id, '50%');
         $this->form->addQuickField('Anexar arquivo(s)', $anexo, '50%');
         $this->form->addQuickField('Status', $status, '100%');        
@@ -105,6 +105,14 @@ class TicketFormListProf extends TPage
         $column_ultima_edicao = new TDataGridColumn('ultima_edicao', 'Última edição', 'left');
         $column_quem_abriu = new TDataGridColumn('gestor->name', 'Quem abriu', 'left');
 
+        $column_ultima_edicao->setTransformer(function($value, $object, $row) {
+            if ($value) {
+                $horario = substr($value, 11, 8);
+                $dataUs = TDate::date2br($value);
+                return "$dataUs $horario";
+            }
+            return '';
+        });
 
         //add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
@@ -161,7 +169,7 @@ class TicketFormListProf extends TPage
         
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
         $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add(TPanelGroup::pack('Novo Ticket', $this->form));
         $container->add(TPanelGroup::pack('Meus Tickets', $this->datagrid, $this->pageNavigation));
@@ -242,7 +250,7 @@ class TicketFormListProf extends TPage
             {
                 foreach ($objects as $object)
                 {
-                    $horario = substr($object-> data_reg,11,19);
+                    $horario = substr($object-> data_reg,11,8);
                     $dataUs = TDate::date2br($object->data_reg);
                     $object->data_reg = "$dataUs"." "."$horario";
 

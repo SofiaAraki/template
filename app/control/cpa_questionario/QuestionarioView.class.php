@@ -138,7 +138,7 @@ class QuestionarioView extends TPage
         
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
 
 
         if($periodoInfo->mostra_disciplina == "S")

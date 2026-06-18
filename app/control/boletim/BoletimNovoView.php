@@ -145,7 +145,7 @@ class BoletimNovoView extends TPage
                 $container = new TVBox;
                 $container->style = 'width: 100%';
         
-                $anoSemBread = $NomeAluno.'BOLETIM ESCOLAR - '.$IdentificacaoMatricula;
+                $anoSemBread = 'BOLETIM ESCOLAR - '.$IdentificacaoMatricula;
                 $avisoBoletim = new TLabel("<i>Caro (a) aluno (a), os dados constantes neste boletim não são oficiais, portanto, estão sujeitos à alteração. No caso de
                 dados irregulares (faltantes ou divergentes), procure a Secretaria, com uma cópia do mesmo, para a devida regularização. Ao imprimir, escolha o formato 
                 paisagem (horizontal).
@@ -171,12 +171,12 @@ class BoletimNovoView extends TPage
                 TTransaction::open('dados_fei');
                 //Trasação para verificar se tem matrícula no semestre (falta parametrizar dinamicamente)
                 $criteria1 = new TCriteria;
-                $criteria1->add( new TFilter(CodMatriculaEtapa, '=', $CodMatriculaEtapa));
-                //$criteria1->add( new TFilter(CodTurmaetapa, '=', $CodTurmaetapa));
+                $criteria1->add( new TFilter('CodMatriculaEtapa', '=', $CodMatriculaEtapa));
+                //$criteria1->add( new TFilter('CodTurmaetapa', '=', $CodTurmaetapa));
         
                 $criteria2 = new TCriteria;
-                $criteria2->add( new TFilter(Dispensa, '<>', 'S'), TExpression::OR_OPERATOR);
-                $criteria2->add( new TFilter(Dispensa, 'is', NULL), TExpression::OR_OPERATOR);
+                $criteria2->add( new TFilter('Dispensa', '<>', 'S'), TExpression::OR_OPERATOR);
+                $criteria2->add( new TFilter('Dispensa', 'is', NULL), TExpression::OR_OPERATOR);
                 
                 $criteria_matricula = new TCriteria;
                 $criteria_matricula->add($criteria1, TExpression::AND_OPERATOR);

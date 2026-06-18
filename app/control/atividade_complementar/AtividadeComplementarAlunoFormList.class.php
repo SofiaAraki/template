@@ -1,5 +1,4 @@
 <?php
-
 class AtividadeComplementarAlunoFormList extends TPage
 {
     protected $form;
@@ -7,16 +6,15 @@ class AtividadeComplementarAlunoFormList extends TPage
     protected $pageNavigation;
     protected $loaded;
     
-
     public function __construct( $param )
     {
         parent::__construct();
-        
-        
         try
         {
             TTransaction::open('Felabs_DB');
-                    
+            
+            $criteria1 = null;
+
             $loggedUnit = TSession::getValue('userunitid');
             $loggedId = TSession::getValue('userid');        
             $user = new SystemUser($loggedId);   
@@ -32,12 +30,8 @@ class AtividadeComplementarAlunoFormList extends TPage
                 $array_ffcl_fajob['1852'] = '1852'; //Lisangela - Letras
                 $array_ffcl_fajob['59'] = '59'; //Wesley - Estudos Sociais
                 
-                
                 $criteria1 = new TCriteria;
                 $criteria1->add(new TFilter('id', 'IN', $array_ffcl_fajob));
-            
-                //new TMessage('info', 'Lançamento das atividades complementares realizado pela secretaria acadêmica');
-                //die;
             }
                   
             //Critério para carregar combo professor responsável pela aprovação na FAFRAM
@@ -52,9 +46,6 @@ class AtividadeComplementarAlunoFormList extends TPage
                 
                 $criteria1 = new TCriteria;
                 $criteria1->add(new TFilter('id', 'IN', $array_fafram));
-                
-                //new TMessage('info', 'Lançamento das atividades complementares realizado pela secretaria acadêmica');
-                //die;
             }
         
             if($loggedUnit == 1 OR $loggedUnit == 8 OR $loggedUnit == 12)
@@ -71,6 +62,10 @@ class AtividadeComplementarAlunoFormList extends TPage
             TTransaction::rollback();
         }    
         
+        if (is_null($criteria1)) {
+            $criteria1 = new TCriteria;
+            $criteria1->add(new TFilter('id', '<', '0'));
+        }
         
         //Filtro para evitar pré-carregamento da combo categoria
         $criteria_categoria = new TCriteria;
@@ -134,14 +129,11 @@ class AtividadeComplementarAlunoFormList extends TPage
             if($dados_aluno)
             {
                 $cursos = [];
-    
                 foreach($dados_aluno as $dado_aluno)
                 {
                     $cursos[$dado_aluno->CodCurso] = $dado_aluno->NomeCurso;
                 }
-    
                 $codCursos = array_unique($cursos); //Agrupa códigos iguais
-    
                 $cod_curso->addItems($codCursos);
             }
             
@@ -316,8 +308,6 @@ class AtividadeComplementarAlunoFormList extends TPage
 
 
         $action1 = new TDataGridAction([$this, 'onDelete']);
-        //$action1->setUseButton(TRUE);
-        //$action1->setButtonClass('btn btn-default');
         $action1->setLabel(_t('Delete'));
         $action1->setImage('far:trash-alt red fa-lg');
         $action1->setField('id');
@@ -325,8 +315,6 @@ class AtividadeComplementarAlunoFormList extends TPage
         
 
         $action2 = new TDataGridAction([$this, 'onDownload']);
-        //$action2->setUseButton(TRUE);
-        //$action2->setButtonClass('btn btn-default');
         $action2->setLabel('Download');
         $action2->setImage('fas:cloud-download-alt blue fa-lg');
         $action2->setField('id');
@@ -334,8 +322,6 @@ class AtividadeComplementarAlunoFormList extends TPage
 
         //Só exibe as informações da atividade, sem ação nenhuma, então não tem problema exibir formview do professor
         $action3 = new TDataGridAction(['AtividadeComplementarAnalisadaProfessorFormView', 'onEdit'], ['id'=>'{id}']);
-        //$action3->setUseButton(TRUE);
-        //$action3->setButtonClass('btn btn-default');
         $action3->setLabel('Ver detalhes');
         $action3->setImage('fa:search green');
         $action3->setField('id');
@@ -360,7 +346,6 @@ class AtividadeComplementarAlunoFormList extends TPage
         // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';
-        // $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         $container->add(TPanelGroup::pack('', $this->datagrid, $this->pageNavigation));
         
@@ -788,219 +773,7 @@ class AtividadeComplementarAlunoFormList extends TPage
             new TMessage('error', $e->getMessage());
             TTransaction::rollback();
         }
-    }
-    
-
-    /*public function onSaveAnterior( $param )
-    {
-        try
-        {
-            TTransaction::open('dados_fei');
-            
-            $cod_curso = $param['cod_curso'];
-            
-            $curso = new FiCurso($cod_curso);
-            
-            
-            //Confirma se a etapa em que o aluno estava matriculado quando realizou a atividade está correta
-            $criteria_matricula = new TCriteria;
-            $criteria_matricula->add(new TFilter('Codaluno', '=', $param['cod_aluno']));
-            $criteria_matricula->add(new TFilter('CodCurso', '=', $param['cod_curso']));
-            $criteria_matricula->add(new TFilter('AnoMatricula', '=', $param['ano']));
-            $criteria_matricula->add(new TFilter('SemestreMatricula', '=', $param['semestre']));
-            
-            $matricula = VwAlunoMatriculaEtapa::getObjects($criteria_matricula);
-            
-            //Se tiver matrícula e no formulário estiver diferente do que consta no BD, barra. Caso contrário, deixa salvar (ex: casos de transferência)
-            if((!empty($matricula)) AND ($matricula[0]->EtapaMatricula <> $param['etapa']))
-            {
-                throw new Exception("Verifique a etapa em que o aluno estava matriculado quando realizou a atividade");
-            }
-            
-            TTransaction::close();
-            
-            
-            TTransaction::open('Felabs_DB'); 
-            
-            $this->form->validate();
-            $data = $this->form->getData(); 
-            
-            $object = new AtividadeComplementar; 
-            $object->fromArray( (array) $data); 
-            
-            
-            //Verifica se o ano contém 4 dígitos
-            $count = strlen($object->ano);
-            
-            if($count <> 4)
-            {
-                throw new Exception("O campo Ano (em que realizou a atividade) precisa ter 4 dígitos");
-            }
-            
-            
-            //Data de término não pode ser anterior à de início
-            if($object->data_termino < $object->data_inicio){
-
-                throw new Exception("A data de término não pode ser anterior à data de início");
-            }
-            
-                        
-            $source_file = 'tmp/' . $object->arquivo;
-              
-            if (file_exists($source_file))
-            {
-                $filepdf = fopen($source_file, 'r');
-                $line_first = fgets($filepdf);               
-                $valid = false;
-                
-
-                //Verifica se arquivo não está assinado, pois se estiver não é possível fazer conversão para PDF/A posteriormente
-                while (($buffer = fgets($filepdf)) !== false) 
-                {
-                    if (strpos($buffer, 'adbe.pkcs7.detached') !== false)  
-                    {
-                        $valid = TRUE;
-                        break; 
-                    }      
-                }
-                
-                fclose($filepdf);
-
-                if($valid === true)
-                {
-                    unlink($source_file);
-                    
-                    throw new Exception("O arquivo a ser anexado não pode estar assinado com certificado digital");
-                }
-                else
-                {                                   
-                    $target_path  = 'secretaria/atividades_complementares/aluno_' . $object->cod_aluno;
-                    
-                    //Se não existir diretório, cria
-                    if (!file_exists($target_path))
-                    {
-                        if (!@mkdir($target_path, 0777, true))
-                        {
-                            throw new Exception(_t('Permission denied'). ': '. $target_path);
-                        }
-                    }
-                
-                    //Se diretório foi criado, salva arquivo já renomeado
-                    if (file_exists($target_path))
-                    {                     
-                        $datetime = date("YmdHis");
-                        $extensao = pathinfo('tmp/' . $object->arquivo, PATHINFO_EXTENSION);
-                                                   
-                                                   
-                        //Renomeia o arquivo na própria pasta tmp para não ter problemas com caracteres especiais na hora de usar o ghostscript                        
-                        $nome_tmp = 'tmp/' . 'comprovante_atividade_' . $object->cod_aluno . '_' . $object->cod_curso . '_' . $datetime . '.' . $extensao;
-                        rename($source_file, $nome_tmp);
-
-                                                
-                        //Ghostscript usa o caminho absoluto
-                        $caminho_absoluto_tmp = realpath($nome_tmp);                                                
-                        $caminho_absoluto_target = realpath($target_path);   
-                        $caminho_absoluto_pdf = $caminho_absoluto_target . '/comprovante_atividade_' . $object->cod_aluno . '_' . $object->cod_curso . '_' . $datetime . '.' . $extensao;
-
-                        
-                        //Sobe arquivo independentemente de versão (sem ghostscript, estava apresentando erro em versões maiores que 1.4)
-                        shell_exec('gswin32c -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=' . $caminho_absoluto_pdf . ' ' . $caminho_absoluto_tmp);                         
-                    }
-                }
-                
-                //Se arquivo foi salvo                                              
-                if(file_exists($caminho_absoluto_pdf))
-                {
-                    //Apaga arquivo da pasta tmp
-                    if($nome_tmp)
-                    {
-                        unlink($nome_tmp);    
-                    }
-                    
-                    if($object->status_atividade == NULL)
-                    {
-                        $object->status_atividade = "Aguardando aprovação";
-                    }                        
-                           
-                    $object->tipo_entrada = "Atividade Complementar";
-                    $object->nome_curso = $curso->Nome;
-                    $object->arquivo = 'comprovante_atividade_' . $object->cod_aluno . '_' . $object->cod_curso . '_' . $datetime . '.' . $extensao;
-                    $object->caminho_arquivo = $target_path;
-                    $object->status_pdfa = 0;
-                    $object->status_assinatura = 0;
-                    $object->system_user_id = TSession::getValue('userid');
-                    $object->data_reg = date('Y-m-d H:i:s');  
-
-                    $object->store();
-                            
-                           
-                    //Dispara notificação para coordenador no acadêmico
-                    $cod_responsavel = $object->cod_prof_responsavel;
-                            
-                    $repository_user = new TRepository('SystemUser');
-                            
-                    //Garante que a notificação não vai para aluno que possa ter o mesmo código do coordenador
-                    $criteria1 = new TCriteria;
-                    $criteria1->add(new TFilter('login', '=', $cod_responsavel), TExpression::OR_OPERATOR);
-                    $criteria1->add(new TFilter('systemuser_codlegado', '=', $cod_responsavel), TExpression::OR_OPERATOR);
-                            
-                    $criteria2 = new TCriteria;
-                    $criteria2->add(new TFilter('funcao_legado', '=', "Professor"));
-                            
-                    $criteria = new TCriteria;
-                    $criteria->add($criteria1);
-                    $criteria->add($criteria2);            
-                            
-                    $dados_user = $repository_user->load($criteria);
-                            
-                    $user = new SystemUser($dados_user[0]->id);
-               
-                    SystemNotification::register(
-                                                 $user->id,
-                                                 'Nova atividade complementar pendente',
-                                                 "Uma nova atividade complementar foi enviada e aguarda sua análise",
-                                                 "class=AtividadeComplementarPendenteCoordenadorList",
-                                                 'Ver atividade',
-                                                 'far fa-list-alt green'
-                                                 );                            
-                    
-                    $data->id = $object->id;
-            
-                    $this->form->setData($data);
-                    TTransaction::close();
-                    
-                    new TMessage('info', AdiantiCoreTranslator::translate('Record saved'));
-                    
-                    
-                    //Limpa o formulário depois de salvar, mas mantém o código e nome do aluno preenchido
-                    $this->form->clear();
-                                
-                    $obj = new StdClass;
-                    $obj->cod_aluno = $object->cod_aluno;
-                    $obj->nome_aluno = $param['nome_aluno'];
-                    
-                    TForm::sendData('form_AtividadeComplementar', $obj);
-                    
-                    $this->onReload();
-                }
-                else
-                {
-                    throw new Exception("Erro ao fazer upload do arquivo. Por favor, reinicie o processo");
-                }
-            }
-            else
-            {
-                throw new Exception("É necessário anexar o comprovante em PDF");
-            }            
-        }
-        catch (Exception $e)
-        {
-            new TMessage('error', $e->getMessage());
-            $this->form->setData( $this->form->getData() );
-            TTransaction::rollback();
-        }
-    }*/
-    
+    } 
     
     public function onSave( $param )
     {

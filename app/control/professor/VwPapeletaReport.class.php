@@ -1,7 +1,7 @@
 <?php
 /**
  * VwPapeletaReport Report
- * @author  <your name here>
+ * @author  FEI Team
  */
 class VwPapeletaReport extends TPage
 {
@@ -18,14 +18,12 @@ class VwPapeletaReport extends TPage
         
         // creates the form
         $this->form = new TQuickForm('form_VwPapeleta_report');
-        $this->form->class = 'tform'; // change CSS class
+        $this->form->class = 'tform'; 
         $this->form = new BootstrapFormWrapper($this->form);
-        $this->form->style = 'display: table;width:100%'; // change style
+        $this->form->style = 'display: table;width:100%'; 
         
         // define the form title
         $this->form->setFormTitle('VwPapeleta Report');
-        
-
 
         // create the form fields
         $CodTurmaetapa = new TEntry('CodTurmaetapa');
@@ -36,30 +34,24 @@ class VwPapeletaReport extends TPage
         $Periodo = new TEntry('Periodoturma');
         $NomeCurso = new TEntry('NomeCurso');
         $output_type = new TRadioGroup('output_type');
-
          
         TTransaction::open('dados_fei');
-            $sessao_papeleta = TSession::getValue('sessao_papeleta');
-
-            $nomedisciplina = $sessao_papeleta["NomeDisciplina"];
-            $coddiscipina = $sessao_papeleta["CodDisciplina"];
-            $codprofessor = $sessao_papeleta["CodProfessor"];
-            $codturmaetapa = $sessao_papeleta["CodTurmaetapa"];
-            $periodoturma = $sessao_papeleta["Periodo"];
-            $nomecurso = $sessao_papeleta["NomeCurso"];
-            $codgradedisciplinaetapafrente = $sessao_papeleta["key"];
             
+            $sessao = TSession::getValue('sessao_papeleta_unificada');
             $sessao_bimestre = TSession::getValue('sessao_bimestre');
-            $Bimestre = $sessao_bimestre["Bimestre"];
+            
+            $Bimestre = $sessao_bimestre["Bimestre"] ?? '2';
 
-              
-            $CodTurmaetapa->setValue($codturmaetapa);
-            $CodDisciplina->setValue($coddiscipina);
-            $Avaliacao->setValue($Bimestre);
-            $CodGradeDisciplinaEtapa_Frente->setValue($codgradedisciplinaetapafrente);
-            $NomeDisciplina->setValue($nomedisciplina);
-            $Periodo->setValue($periodoturma);
-            $NomeCurso->setValue($nomecurso);
+            if (!empty($sessao))
+            {
+                $CodTurmaetapa->setValue($sessao['CodTurmaetapa'] ?? '');
+                $CodDisciplina->setValue($sessao['CodDisciplina'] ?? '');
+                $Avaliacao->setValue($Bimestre);
+                $CodGradeDisciplinaEtapa_Frente->setValue($sessao['CodGradeDisciplinaEtapa_Frente'] ?? '');
+                $NomeDisciplina->setValue($sessao['NomeDisciplina'] ?? '');
+                $Periodo->setValue($sessao['Periodoturma'] ?? '');
+                $NomeCurso->setValue($sessao['NomeCurso'] ?? '');
+            }
         
             $CodTurmaetapa->setEditable(false);
             $CodDisciplina->setEditable(false);
@@ -80,11 +72,8 @@ class VwPapeletaReport extends TPage
         $this->form->addQuickField('Período:', $Periodo,  '50%' );
         $this->form->addQuickField('Curso:', $NomeCurso,  '50%' );
         $this->form->addQuickField('Output', $output_type,  '100%' , new TRequiredValidator);
-
-
-
         
-        $output_type->addItems(array('pdf'=>'PDF'));;
+        $output_type->addItems(array('pdf'=>'PDF'));
         $output_type->setValue('pdf');
         $output_type->setLayout('horizontal');
         
@@ -96,8 +85,7 @@ class VwPapeletaReport extends TPage
         
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
-        // $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $container->style = 'width: 100%';
         $container->add(TPanelGroup::pack('Papeleta Bimestral', $this->form));
         
         parent::add($container);
@@ -110,60 +98,45 @@ class VwPapeletaReport extends TPage
     {
         try
         {
-            // open a transaction with database 'dados_fei_t'
             TTransaction::open('dados_fei');
-            $sessao_papeleta = TSession::getValue('sessao_papeleta');
-
-            $nomedisciplina = $sessao_papeleta["NomeDisciplina"];
-            $nomecurso = $sessao_papeleta["NomeCurso"];
             
-            // get the form data into an active record
             $formdata = $this->form->getData();
             
             $repository = new TRepository('VwPapeleta');
             $criteria   = new TCriteria;
-            $criteria->setProperty('order', 'Ordem, Nome asc');  
             
-            if ($formdata->CodTurmaetapa)
-            {
-                $criteria->add(new TFilter('CodTurmaetapa', 'like', "%{$formdata->CodTurmaetapa}%"));
-            }
-            if ($formdata->CodDisciplina)
-            {
-                $criteria->add(new TFilter('CodDisciplina', 'like', "%{$formdata->CodDisciplina}%"));
-            }
-            if ($formdata->Avaliacao)
-            {
-                $criteria->add(new TFilter('Avaliacao', 'like', "%{$formdata->Avaliacao}%"));
-            }
-            if ($formdata->CodGradeDisciplinaEtapa_Frente)
-            {
-                $criteria->add(new TFilter('CodGradeDisciplinaEtapa_Frente', 'like', "%{$formdata->CodGradeDisciplinaEtapa_Frente}%"));
-            }
-            if ($formdata->Periodo)
-            {
-                $criteria->add(new TFilter('Periodo', 'like', "%{$formdata->Periodo}%"));
-            }
-
-           
-
-            $criteria->add(new TFilter('resultado', 'is not', NULL));
+            $criteria->setProperty('order', 'Nome');  
+            $criteria->setProperty('direction', 'asc');  
             
-            
-            //$criteria->add(new TFilter('mediasem', 'is not', NULL));
-
-
-            //echo $criteria->dump();
-
-            //die();
-
-                       
+            if (!empty($formdata->CodTurmaetapa))
+            {
+                $criteria->add(new TFilter('CodTurmaetapa', '=', $formdata->CodTurmaetapa));
+            }
+            if (!empty($formdata->CodDisciplina))
+            {
+                $criteria->add(new TFilter('CodDisciplina', '=', $formdata->CodDisciplina));
+            }
+            if (!empty($formdata->Avaliacao))
+            {
+                $criteria->add(new TFilter('Avaliacao', '=', $formdata->Avaliacao));
+            }
+            if (!empty($formdata->CodGradeDisciplinaEtapa_Frente))
+            {
+                $criteria->add(new TFilter('CodGradeDisciplinaEtapa_Frente', '=', $formdata->CodGradeDisciplinaEtapa_Frente));
+            }
+                        
             $objects = $repository->load($criteria, FALSE);
             $format  = $formdata->output_type;
             
             if ($objects)
             {
-                $widths = array(120,500,80,80,80,120,80,80);
+                // AGRUPAMENTO CONTRA REPETIÇÕES
+                $alunos_filtrados = array();
+                foreach ($objects as $obj) {
+                    $alunos_filtrados[$obj->codaluno] = $obj;
+                }
+
+                $widths = array(120,500,80,80,80,120,80,80); 
                 
                 switch ($format)
                 {
@@ -182,19 +155,25 @@ class VwPapeletaReport extends TPage
                         break;
                 }
 
+                // LÊ A SESSÃO ÚNICA CENTRALIZADA
+                $sessao = TSession::getValue('sessao_papeleta_unificada');
 
-                $sessao_papeleta = TSession::getValue('sessao_papeleta');
-                $NomeDisciplina = $sessao_papeleta["NomeDisciplina"];
-                $Etapa = $sessao_papeleta["Etapa"];
-                $Identificacao = $sessao_papeleta["Identificacao"];
-                $NomeEntidade = $sessao_papeleta["NomeEntidade"];
-                $NomeProfessor = $sessao_papeleta["NomeProfessor"];
-                $Periodo = $sessao_papeleta["Periodo"];
-                $NomeCurso = $sessao_papeleta["NomeCurso"];
+                $NomeDisciplina = $formdata->NomeDisciplina ?? ($sessao['NomeDisciplina'] ?? '');
+                $Periodo        = $formdata->Periodoturma ?? ($sessao['Periodoturma'] ?? '');
+                $NomeCurso      = $formdata->NomeCurso ?? ($sessao['NomeCurso'] ?? '');
+                $Bimestre       = $formdata->Avaliacao ?? '';
 
+                $Etapa          = $sessao['Etapa'] ?? '';
+                $Identificacao  = $sessao['Identificacao'] ?? '';
+                $NomeEntidade   = $sessao['NomeEntidade'] ?? '';
+                $NomeProfessor  = $sessao['NomeProfessor'] ?? '';
 
-                $sessao_bimestre = TSession::getValue('sessao_bimestre');
-                $Bimestre = $sessao_bimestre["Bimestre"];
+                if (empty($NomeProfessor) && !empty($objects)) {
+                    $NomeProfessor = $objects[0]->NomeProfessor ?? '';
+                }
+                if (empty($NomeEntidade) && !empty($objects)) {
+                    $NomeEntidade = $objects[0]->NomeEntidade ?? '';
+                }
 
                 // create the document styles
                 $tr->addStyle('title', 'Arial', '10', 'B',   '#000000', '#E8E8E8');
@@ -205,35 +184,32 @@ class VwPapeletaReport extends TPage
                 $tr->addStyle('footer', 'Arial', '9', 'I',  '#000000', '#A9A9A9');
                 $tr->addStyle('footer2', 'Arial', '24', 'I',  '#ffffff', '#ffffff');
                 
-                // add a header row
+                // Cabeçalho
                 $tr->addRow();
                 $tr->addCell('FUNDAÇÃO EDUCACIONAL DE ITUVERAVA', 'center', 'header', 8);
+                
                 $tr->addRow();
-                $tr->addRow();
-                $tr->addCell($NomeEntidade, 'center', 'header2', 8);
-                $tr->addRow();
+                $tr->addCell(!empty($NomeEntidade) ? $NomeEntidade : 'F.E.I.', 'center', 'header2', 8);
+                
                 $tr->addRow();
                 $tr->addCell('Papeleta Bimestral', 'center', 'header', 8);
+                
                 $tr->addRow();
-                $tr->addCell('Bimestre:', 'right', 'header', 2);
-                $tr->addCell($Bimestre, 'left', 'header',6);
+                $tr->addCell('Bimestre:', 'right', 'header2', 2);
+                $tr->addCell($Bimestre . 'º Bimestre', 'left', 'header2', 6);
+                
                 $tr->addRow();
                 $tr->addCell($NomeCurso, 'center', 'header2', 8);
-                $tr->addRow();
-                $tr->addCell('Disciplina:', 'left', 'header2');
-                $tr->addCell($NomeDisciplina, 'left', 'header2');
-                $tr->addCell('Turno:', 'left', 'header2');
-                $tr->addCell($Periodo, 'center', 'header2');
-                $tr->addCell('Ciclo:', 'left', 'header2');
-                $tr->addCell($Etapa, 'center', 'header2');
-
-                $tr->addCell($Identificacao, 'center', 'header2',5);
                 
                 $tr->addRow();
-
-
+                $tr->addCell('Disciplina:', 'left', 'header2', 1);
+                $tr->addCell($NomeDisciplina, 'left', 'header2', 2);
+                $tr->addCell('Turno:', 'left', 'header2', 1);
+                $tr->addCell($Periodo, 'center', 'header2', 1);
+                $tr->addCell('Ciclo:', 'left', 'header2', 1);
+                $tr->addCell($Etapa . ' ' . $Identificacao, 'center', 'header2', 2);
                 
-                // add titles row
+                // Colunas
                 $tr->addRow();
                 $tr->addCell('Cod.', 'right', 'title');
                 $tr->addCell('Nome', 'left', 'title');
@@ -244,11 +220,10 @@ class VwPapeletaReport extends TPage
                 $tr->addCell('Result.', 'left', 'title');
                 $tr->addCell('Disc.', 'left', 'title');
                 
-                // controls the background filling
-                $colour= FALSE;
+                $colour = FALSE;
                 
-                // data rows
-                foreach ($objects as $object)
+                // Listagem limpa dos alunos
+                foreach ($alunos_filtrados as $object)
                 {
                     $style = $colour ? 'datap' : 'datai';
                     $tr->addRow();
@@ -264,17 +239,16 @@ class VwPapeletaReport extends TPage
                     $colour = !$colour;
                 }
                 
-                // footer row
-
+                // Rodapé
                 $tr->addRow();
                 $tr->addCell(date('d-m-Y h:i:s'), 'center', 'footer', 8);
                 $tr->addRow();
                 $tr->addRow();
                 $tr->addRow();
-                $tr->addCell('______________', 'center', 'footer2', 2);
+                $tr->addCell('______________', 'center', 'footer2', 8);
                 $tr->addRow();
-                $tr->addCell($NomeProfessor, 'center', 'footer', 2);
-                // stores the file
+                $tr->addCell($NomeProfessor, 'center', 'footer', 8);
+
                 if (!file_exists("app/output/VwPapeleta.{$format}") OR is_writable("app/output/VwPapeleta.{$format}"))
                 {
                     $tr->save("app/output/VwPapeleta.{$format}");
@@ -284,31 +258,22 @@ class VwPapeletaReport extends TPage
                     throw new Exception(_t('Permission denied') . ': ' . "app/output/VwPapeleta.{$format}");
                 }
                 
-                // open the report file
                 parent::openFile("app/output/VwPapeleta.{$format}");
                 
-                // shows the success message
-                new TMessage('info', 'Papeleta gerada com sucesso! Por favor, habilite o pop-up do navegador caso não visualize o arquivo.');
+                new TMessage('info', 'Papeleta gerada com sucesso!');
             }
             else
             {
-                new TMessage('info', 'NÃO EXISTE NOTAS LANÇADAS!');
+                new TMessage('info', 'NÃO EXISTEM NOTAS OU ALUNOS PARA ESTA DISCIPLINA NESTE BIMESTRE!');
             }
     
-            // fill the form with the active record data
             $this->form->setData($formdata);
-            
-            // close the transaction
             TTransaction::close();
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) 
         {
-            // shows the exception error message
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-            
-            // undo all pending operations
             TTransaction::rollback();
         }
     }
-
 }

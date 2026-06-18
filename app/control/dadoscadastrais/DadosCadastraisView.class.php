@@ -1,12 +1,9 @@
 <?php
-
-
 class DadosCadastraisView extends TPage
 {
     protected $form; 
     protected $formFields;
     protected $detail_list;
-
 
     public function __construct($param)
     {
@@ -22,31 +19,27 @@ class DadosCadastraisView extends TPage
             
             TTransaction::close();
             
-                        
             TTransaction::open('dados_fei');
             
-            //Para preenchimendo da view
+            // Para preenchimento da view
             $fiAluno = new FiAluno($user->systemuser_codlegado);
             $object_cidade = new FiCidade($fiAluno->CodCidade);
             
-            
-            ///////////Verifica se é da graduação ou colégio//////////////////////(Amanda)
+            /////////// Verifica se é da graduação ou colégio //////////////////////
             $ano_atual = date('Y');
                         
-            $array_colegio = [];
             $array_colegio = ['118' => '118', '119' => '119', '120' => '120'];
 
             $matriculas = new TRepository('VwAlunoMatriculaEtapa');
             
             $criteria_cadastro = new TCriteria;
             $criteria_cadastro->add(new TFilter('Codaluno', '=', $user->systemuser_codlegado));
-            $criteria_cadastro->add(new TFilter('AnoMatricula', '=', $ano_atual)); //Tira as matrículas antigas do NSC e ANGLO
+            $criteria_cadastro->add(new TFilter('AnoMatricula', '=', $ano_atual));
             $criteria_cadastro->add(new TFilter('CodCurso', 'NOT IN', $array_colegio));
                                     
             $aluno = $matriculas->load($criteria_cadastro);
     
             TTransaction::close();            
-            ///////////Encerra Verifica se é da graduação ou colégio//////////////////////(Amanda)
         }
         catch (Exception $e) 
         {
@@ -54,61 +47,108 @@ class DadosCadastraisView extends TPage
             TTransaction::rollback(); 
         }
         
-        
-        // creates the form
+        // Creates the form
         $this->form = new BootstrapFormBuilder('form_DadosCadastrais');
         $this->form->setFormTitle('Meu Cadastro');
 
-       
-        $text1  = new TTextDisplay($fiAluno->Nome, '#333333', '14px', '');
-        $text2  = new TTextDisplay(TDate::date2br($fiAluno->Datanascimento), '#333333', '14px', '');
-        $text3  = new TTextDisplay($fiAluno->Sexo, '#333333', '14px', '');
-        $text4  = new TTextDisplay($fiAluno->Naturalidade, '#333333', '14px', '');
-        $text5  = new TTextDisplay($fiAluno->NaturalidadeUF, '#333333', '14px', '');
-        $text6  = new TTextDisplay($fiAluno->Nacionalidade, '#333333', '14px', '');
-        $text7  = new TTextDisplay($fiAluno->NomePai, '#333333', '14px', '');
-        $text8  = new TTextDisplay($fiAluno->NomeMae, '#333333', '14px', '');
-        $text9  = new TTextDisplay($fiAluno->Rg, '#333333', '14px', '');
-        $text10  = new TTextDisplay($fiAluno->RgOrgaoExpedidor, '#333333', '14px', '');
-        $text11  = new TTextDisplay($fiAluno->Profissao, '#333333', '14px', '');
-        $text12  = new TTextDisplay($fiAluno->CPF, '#333333', '14px', '');
-        $text13  = new TTextDisplay($fiAluno->Endereco, '#333333', '14px', '');
-        $text14  = new TTextDisplay($fiAluno->EnderecoNumero, '#333333', '14px', '');
-        $text15  = new TTextDisplay($fiAluno->EnderecoComplemeto, '#333333', '14px', '');
-        $text16  = new TTextDisplay($fiAluno->Bairro, '#333333', '14px', '');
-        $text17  = new TTextDisplay($fiAluno->Cep, '#333333', '14px', '');
-        $text18  = new TTextDisplay($fiAluno->Telefone, '#333333', '14px', '');
-        $text19  = new TTextDisplay($fiAluno->Telefone2, '#333333', '14px', '');
-        $text20  = new TTextDisplay($fiAluno->Telefone3, '#333333', '14px', '');
-        $text21  = new TTextDisplay($fiAluno->Email, '#333333', '14px', '');
-        $text22  = new TTextDisplay($fiAluno->EstadoCivil, '#333333', '14px', '');
-        $text23  = new TTextDisplay($fiAluno->CorRaca, '#333333', '14px', '');        
-        $text24  = new TTextDisplay($object_cidade->Nome, '#333333', '14px', '');  
-        $text25  = new TTextDisplay($fiAluno->ContatoWhatsapp, '#333333', '14px', '');        
+        // Estilização das tags/badges para dar destaque visual moderno
+        $sexoBadge = $fiAluno->Sexo == 'F' ? 'success' : 'info';
+        $corRacaVal = $fiAluno->CorRaca ? $fiAluno->CorRaca : 'Não Informada';
 
+        // Customização dos elementos de exibição (Valores)
+        $text_nome         = '<b>' . $fiAluno->Nome . '</b>';
+        $text_nascimento   = TDate::date2br($fiAluno->Datanascimento);
+        $text_sexo         = "<span class='label label-{$sexoBadge}'>" . ($fiAluno->Sexo == 'F' ? 'Feminino' : 'Masculino') . "</span>";
+        $text_naturalidade = $fiAluno->Naturalidade;
+        $text_uf           = "<span class='label label-default'>{$fiAluno->NaturalidadeUF}</span>";
+        $text_nacionalidade= $fiAluno->Nacionalidade;
+        $text_pai          = $fiAluno->NomePai ? $fiAluno->NomePai : '<i>Não informado</i>';
+        $text_mae          = $fiAluno->NomeMae;
+        $text_rg           = $fiAluno->Rg;
+        $text_expedidor    = $fiAluno->RgOrgaoExpedidor;
+        $text_profissao    = $fiAluno->Profissao ? $fiAluno->Profissao : '<i>Não informada</i>';
+        $text_cpf          = $fiAluno->CPF;
+        $text_civil        = $fiAluno->EstadoCivil;
+        $text_raca         = "<span class='label label-primary'>{$corRacaVal}</span>";        
 
-        $this->form->addFields( [ new TFormSeparator('Informações gerais') ] );
-        $this->form->addFields( [ new TLabel('Nome') ], [ $text1 ],[ new TLabel('Data de nascimento') ], [ $text2 ] );
-        $this->form->addFields( [ new TLabel('Sexo') ], [ $text3 ], [ new TLabel('Naturalidade') ], [ $text4 ] );
-        $this->form->addFields( [ new TLabel('Naturalidade UF') ], [ $text5 ], [ new TLabel('Nacionalidade') ], [ $text6 ] );
-        $this->form->addFields( [ new TLabel('Nome do pai') ], [ $text7 ], [ new TLabel('Nome da mãe') ], [ $text8 ] );
-        $this->form->addFields( [ new TLabel('RG') ], [ $text9 ], [ new TLabel('Órgão expedidor') ], [ $text10 ] );
-        $this->form->addFields( [ new TLabel('Profissão') ], [ $text11 ], [ new TLabel('CPF') ], [ $text12 ] );
-        $this->form->addFields( [ new TLabel('Cor/raça') ], [ $text23 ],[ new TLabel('Estado civil') ], [ $text22 ] );
+        // Container principal onde vamos injetar o grid customizado
+        $gridContainer = new TElement('div');
+        $gridContainer->style = 'padding: 10px 15px;';
+
+        // --- FUNÇÃO AUXILIAR PARA CRIAR OS BLOCOS DE CAMPO ---
+        $createFieldBlock = function($label, $value, $colSize) {
+            $col = new TElement('div');
+            $col->class = $colSize;
+            $col->style = 'margin-bottom: 15px;';
+            
+            $lbl = new TElement('label');
+            $lbl->style = 'display: block; font-weight: bold; margin-bottom: 3px; font-size: 12px; text-transform: uppercase;';
+            $lbl->add($label);
+            
+            $val = new TElement('div');
+            $val->style = 'font-size: 14px;';
+            $val->add($value);
+            
+            $col->add($lbl);
+            $col->add($val);
+            return $col;
+        };
+
+        // --- SEÇÃO 1: IDENTIFICAÇÃO ---
+        // Criamos o separador como um TElement ou passamos o objeto nativo direto na linha do grid
+        $sep1 = new TFormSeparator('Identificação & Informações Gerais');
+        $gridContainer->add($sep1);
         
-        /*Ocultado para não confundir o aluno depois que ele atualizar as informações na tabela contato_aluno,
-        visto que aqui traz o registro do Genesi*/
-        
-        /*$this->form->addFields( [new TFormSeparator('Contato')] );
-        $this->form->addFields( [new TLabel('Endereço')], [$text13], [new TLabel('Número')], [$text14]);
-        $this->form->addFields( [new TLabel('Complemento')], [$text15], [new TLabel('Bairro')], [$text16]);
-        $this->form->addFields( [new TLabel('Cidade')], [$text24], [new TLabel('CEP')], [$text17]);
-        $this->form->addFields( [new TLabel('Telefone')], [$text18], [new TLabel('Telefone 2')], [$text19]);
-        $this->form->addFields( [new TLabel('Telefone 3')], [$text20], [new TLabel('Email')], [$text21]);
-        $this->form->addFields( [new TLabel('Contato whatsapp')], [$text25]);*/
-      
-        
-        //Se for do colégio, não permite alteração por parte do aluno
+        $row1 = new TElement('div');
+        $row1->class = 'row';
+        $row1->add($createFieldBlock('Nome Completo', $text_nome, 'col-sm-8'));
+        $row1->add($createFieldBlock('Data de Nascimento', $text_nascimento, 'col-sm-4'));
+        $gridContainer->add($row1);
+
+        $row2 = new TElement('div');
+        $row2->class = 'row';
+        $row2->add($createFieldBlock('Sexo', $text_sexo, 'col-sm-3'));
+        $row2->add($createFieldBlock('Estado Civil', $text_civil, 'col-sm-4'));
+        $row2->add($createFieldBlock('Cor / Raça', $text_raca, 'col-sm-5'));
+        $gridContainer->add($row2);
+
+        // --- SEÇÃO 2: DOCUMENTAÇÃO ---
+        $sep2 = new TFormSeparator('Documentação');
+        $gridContainer->add($sep2);
+
+        $row3 = new TElement('div');
+        $row3->class = 'row';
+        $row3->add($createFieldBlock('CPF', $text_cpf, 'col-sm-4'));
+        $row3->add($createFieldBlock('RG', $text_rg, 'col-sm-4'));
+        $row3->add($createFieldBlock('Órgão Expedidor', $text_expedidor, 'col-sm-4'));
+        $gridContainer->add($row3);
+
+        // --- SEÇÃO 3: ORIGEM E FILIAÇÃO ---
+        $sep3 = new TFormSeparator('Origem & Filiação');
+        $gridContainer->add($sep3);
+
+        $row4 = new TElement('div');
+        $row4->class = 'row';
+        $row4->add($createFieldBlock('Naturalidade', $text_naturalidade, 'col-sm-5'));
+        $row4->add($createFieldBlock('UF', $text_uf, 'col-sm-2'));
+        $row4->add($createFieldBlock('Nacionalidade', $text_nacionalidade, 'col-sm-5'));
+        $gridContainer->add($row4);
+
+        $row5 = new TElement('div');
+        $row5->class = 'row';
+        $row5->add($createFieldBlock('Profissão', $text_profissao, 'col-sm-12'));
+        $gridContainer->add($row5);
+
+        $row6 = new TElement('div');
+        $row6->class = 'row';
+        $row6->add($createFieldBlock('Nome da Mãe', $text_mae, 'col-sm-6'));
+        $row6->add($createFieldBlock('Nome do Pai', $text_pai, 'col-sm-6'));
+        $gridContainer->add($row6);
+
+        // Agora sim, injetamos todo o conjunto (Separadores + Linhas sincronizadas)
+        $this->form->addContent([$gridContainer]);
+
+        // Define as ações de cabeçalho baseadas no tipo de curso
         if($aluno)
         {
             $this->form->addHeaderAction('Atualizar informações de contato', new TAction([$this, 'onSetDadosContato'], ['Codaluno' => $fiAluno->Codaluno]), 'far:edit blue fa-lg');            
@@ -118,21 +158,19 @@ class DadosCadastraisView extends TPage
             $this->form->addHeaderAction('Solicitar Alteração', new TAction(['TicketFormListAluno', 'onReload']), 'far:edit blue fa-lg');
         }
         
-    
-        // create the page container
+        // Create the page container
         $container = new TVBox;
         $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->style = 'width: 100%';
         $container->add($this->form);
 
         $div = new TElement('div');
-        $div->add($a = $container);
-        $a->style = 'width:90%;';
+        $div->add($container);
+        $container->style = 'width:100%;';
 
         parent::add($div);
     }
   
-    
     public function onSetDadosContato($param)
     {
         try
@@ -140,7 +178,6 @@ class DadosCadastraisView extends TPage
             TTransaction::open('Felabs_DB');
             
             $cod_aluno = $param['Codaluno'];
-            
             $repository = new TRepository('ContatoAluno');
             
             $criteria = new TCriteria;
@@ -151,13 +188,11 @@ class DadosCadastraisView extends TPage
             if($contato_aluno)
             {
                 $parametros['key'] = $contato_aluno[0]->id;
-                
                 TApplication::loadPage('DadosCadastraisAlunoEditForm', 'onEdit', $parametros);
             }
             else
             {
                 $parametros['cod_aluno'] = $cod_aluno;
-                
                 TApplication::loadPage('DadosCadastraisAlunoEditForm', 'onLoad', $parametros);
             }
             
@@ -169,7 +204,6 @@ class DadosCadastraisView extends TPage
             TTransaction::rollback(); 
         }    
     }
-    
     
     public function onLoad()
     {

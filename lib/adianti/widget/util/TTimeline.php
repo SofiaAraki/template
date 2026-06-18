@@ -111,7 +111,7 @@ class TTimeline extends TElement
      * @param  $align    Item align
      * @param  $object   Item data object
      */
-    public function addItem( $id, $title, $content, $date, $icon, $align = null, $object = null  )
+    public function addItem( $id, $title, $content, $date, $icon, $align = null, $object = null, $time = null  )
     {
         if (is_null($object))
         {
@@ -128,6 +128,7 @@ class TTimeline extends TElement
         $item->{'title'}   = $title;
         $item->{'content'} = $content;
         $item->{'date'}    = $date;
+        $item->{'time'}    = $time;
         $item->{'icon'}    = $icon;
         $item->{'align'}   = $align;
         $item->{'object'}  = $object;
@@ -212,6 +213,12 @@ class TTimeline extends TElement
         {
             $span->add( new TImage( 'far:clock' ) );
             $span->add( TDateTime::convertToMask( $item->{'date'}, 'yyyy-mm-dd hh:ii:ss', 'hh:ii' ) );
+        }
+
+        if (!empty($item->{'time'}))
+        {
+            $span->add( new TImage('far:clock') );
+            $span->add(' '.$item->{'time'});
         }
         
         $title = new TElement( 'a' );

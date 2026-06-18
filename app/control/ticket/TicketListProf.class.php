@@ -1,15 +1,10 @@
 <?php
-
-
 class TicketListProf extends TPage
 {
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
     private $loaded;
-    private $deleteButton;
-    
 
     public function __construct()
     {
@@ -19,44 +14,31 @@ class TicketListProf extends TPage
         $this->form = new BootstrapFormBuilder('form_TicketParticipante');
         $this->form->setFormTitle('Buscar Ticket');
         
-
         // create the form fields
         $id = new THidden('id');
         $ticket_id = new TEntry('ticket_id');
-        $system_user_id = new THidden('system_user_id');
-
+        $system_user_id = new TEntry('system_user_id');
+        $status = new TCombo('status');
+        $status->addItems( [ 'A' => 'Aberto', 'E' => 'Em Progresso', 'F' => 'Finalizado' ] );
 
         // add the fields
-        $this->form->addFields(  [ $id ] );
         $this->form->addFields( [ new TLabel('Id do Ticket') ], [ $ticket_id ] );
-        $this->form->addFields( [ $system_user_id ] );
-
-
-        // set sizes
-        $id->setSize('100%');
-        $ticket_id->setSize('100%');
-        $system_user_id->setSize('100%');
-
+        $this->form->addFields( [ new TLabel('Aluno(a):') ], [ $system_user_id ] );
+        $this->form->addFields( [ new TLabel('Status') ], [ $status ] );
         
         // keep the form filled during navigation with session data
         $this->form->setData( TSession::getValue('TicketParticipante_filter_data') );
         
-        
         // add the search form actions
         $btn = $this->form->addAction(('Buscar'), new TAction([$this, 'onSearch']), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addActionLink(_t('New'), new TAction(['TicketParticipanteForm', 'onEdit']), 'fa:plus green');
-        
+        $btn->class = 'btn btn-sm btn-primary';        
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
         $this->datagrid->style = 'width: 100%';
-        $this->datagrid->datatable = 'true';
         $this->datagrid->disableHtmlConversion();
 
-
         // creates the datagrid columns
-        $column_id = new TDataGridColumn('id', 'Id', 'left');
         $column_ticket_id = new TDataGridColumn('ticket_id', 'Ticket Id', 'left');
         $column_system_user_id = new TDataGridColumn('system_user_id', 'Solicitante', 'left');
         $column_status = new TDataGridColumn('status', 'Status', 'left');
@@ -64,9 +46,17 @@ class TicketListProf extends TPage
         $column_ultima_edicao = new TDataGridColumn('ultima_edicao', 'Última Edição', 'left');
         $column_data_reg = new TDataGridColumn('data_reg', 'Criado em', 'left');
 
+        $column_ultima_edicao->setTransformer(function($value)
+        {
+            return $value ? date('d/m/Y H:i', strtotime($value)) : '';
+        });
 
+        $column_data_reg->setTransformer(function($value)
+        {
+            return $value ? date('d/m/Y H:i', strtotime($value)) : '';
+        });
+        
         // add the columns to the DataGrid
-        //$this->datagrid->addColumn($column_id);
         $this->datagrid->addColumn($column_ticket_id);
         $this->datagrid->addColumn($column_system_user_id);
         $this->datagrid->addColumn($column_status);
@@ -74,16 +64,12 @@ class TicketListProf extends TPage
         $this->datagrid->addColumn($column_ultima_edicao);
         $this->datagrid->addColumn($column_data_reg);
 
-        
         // create abrir action
-        $action_abrir = new TDataGridAction(array($this, 'goTicketView'),$param);
-        //$action_edit->setUseButton(TRUE);
-        //$action_edit->setButtonClass('btn btn-default');
+        $action_abrir = new TDataGridAction(array($this, 'goTicketView'), ['ticket_id' => '{ticket_id}']);
         $action_abrir->setLabel('Abrir Ticket');
         $action_abrir->setImage('fas:ticket-alt green fa-lg');
         $action_abrir->setField('ticket_id');
         $this->datagrid->addAction($action_abrir);
-        
         
         // create the datagrid model
         $this->datagrid->createModel();
@@ -92,18 +78,16 @@ class TicketListProf extends TPage
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction([$this, 'onReload']));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
-        
 
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
         $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         $container->add(TPanelGroup::pack('Tickets dos quais participo', $this->datagrid, $this->pageNavigation));
         
         parent::add($container);
     }
-
 
     public function goTicketView($param)
     {
@@ -117,35 +101,6 @@ class TicketListProf extends TPage
 
         TApplication::loadPage('TicketView','onReload', $parametros);        
     }
-    
-
-    public function onInlineEdit($param)
-    {
-        try
-        {
-            $field = $param['field'];
-            $key   = $param['key'];
-            $value = $param['value'];
-            
-            TTransaction::open('Felabs_DB');
-            
-            $object = new TicketParticipante($key); 
-            
-            $object->{$field} = $value;
-            $object->store();
-            
-            TTransaction::close(); 
-            
-            $this->onReload($param);
-            new TMessage('info', "Record Updated");
-        }
-        catch (Exception $e)
-        {
-            new TMessage('error', $e->getMessage());
-            TTransaction::rollback();
-        }
-    }
-    
 
     public function onSearch()
     {
@@ -166,6 +121,13 @@ class TicketListProf extends TPage
             TSession::setValue('TicketProfList_filter_ticket_id', $filter);
         }
 
+        // NOVO: Tratamento do Filtro de Status
+        if (isset($data->status) AND ($data->status)) {
+            // Como o status está na tabela Ticket, filtramos via subquery no ticket_id
+            $filter = new TFilter('ticket_id', 'IN', "(SELECT id FROM ticket WHERE status = '{$data->status}')"); 
+            TSession::setValue('TicketParticipanteList_filter_status', $filter); 
+        }
+
 
         if (isset($data->system_user_id) AND ($data->system_user_id)) {
             $filter = new TFilter('system_user_id', '=', "$data->system_user_id");
@@ -182,7 +144,6 @@ class TicketListProf extends TPage
         $param['first_page']=1;
         $this->onReload($param);
     }
-    
 
     public function onReload($param = NULL)
     {
@@ -190,13 +151,11 @@ class TicketListProf extends TPage
         {
             TTransaction::open('Felabs_DB');
             
-            //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
             $userid = TSession::getValue('userid');
             $user = new SystemUser($userid);
-            
 
             $repository = new TRepository('TicketParticipante');
-            $limit = 30;
+            $limit = 10;
 
             $criteria = new TCriteria;
             $criteria->add(new TFilter('system_user_id', '=', $user->id));
@@ -220,6 +179,11 @@ class TicketListProf extends TPage
                 $criteria->add(TSession::getValue('TicketProfList_filter_ticket_id'));
             }
 
+            // NOVO: Aplica o filtro de status caso exista na sessão
+            if (TSession::getValue('TicketParticipanteList_filter_status')) {
+                $criteria->add(TSession::getValue('TicketParticipanteList_filter_status'));
+            }
+
 
             if (TSession::getValue('TicketProfList_filter_system_user_id')) {
                 $criteria->add(TSession::getValue('TicketProfList_filter_system_user_id'));
@@ -241,8 +205,8 @@ class TicketListProf extends TPage
                     $itemObj = new Ticket($object->ticket_id);
 
 
-                    $object->data_reg = date('d/m/Y H:i',strtotime($itemObj->data_reg));
-                    $object->ultima_edicao = date('d/m/Y H:i',strtotime($itemObj->ultima_edicao));
+                    $object->data_reg = $itemObj->data_reg;
+                    $object->ultima_edicao = $itemObj->ultima_edicao;
  
 
                     $user = new SystemUser($itemObj->system_user_id);
@@ -287,41 +251,7 @@ class TicketListProf extends TPage
             new TMessage('error', $e->getMessage());
             TTransaction::rollback();
         }
-    }
-
-
-    public static function onDelete($param)
-    {
-        $action = new TAction([__CLASS__, 'Delete']);
-        $action->setParameters($param);
-        
-        new TQuestion(TAdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
-    }
-    
-
-    public static function Delete($param)
-    {
-        try
-        {
-            $key = $param['key'];
-            
-            TTransaction::open('Felabs_DB');
-            
-            $object = new TicketParticipante($key, FALSE);
-            $object->delete();
-            
-            TTransaction::close();
-            
-            $pos_action = new TAction([__CLASS__, 'onReload']);
-            new TMessage('info', TAdiantiCoreTranslator::translate('Record deleted'), $pos_action);
-        }
-        catch (Exception $e)
-        {
-            new TMessage('error', $e->getMessage());
-            TTransaction::rollback();
-        }
-    }
-    
+    }    
 
     public function show()
     {

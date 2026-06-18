@@ -169,7 +169,7 @@ class SolicitacaoAlunoFormMensagens extends TPage
         $div->add($a = $container);
       //  $div->add($b = $container1);
 
-        $a->style = 'width:90%;';
+        $a->style = 'width:100%;';
      //   $b->style = 'width:30%;';
        // $div->add( $b=new PedidosEstadoChartView(false) );
 

@@ -87,7 +87,7 @@ class MeuCursoForm extends TPage
         
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 90%';
+        $container->style = 'width: 100%';
         //$container->add(new TXMLBreadCrumb('menu.xml', 'MeuCursoView'));
 
 

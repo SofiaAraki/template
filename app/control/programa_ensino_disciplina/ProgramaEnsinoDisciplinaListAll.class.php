@@ -1,20 +1,14 @@
 <?php
-
-
 class ProgramaEnsinoDisciplinaListAll extends TPage
 {
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
     private $loaded;
-    private $deleteButton;
     
-
     public function __construct()
     {
         parent::__construct();
-        
         
         // creates the form
         $this->form = new TQuickForm('form_search_ProgramaEnsinoDisciplina');
@@ -28,7 +22,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
         TTransaction::open('Felabs_DB');
         
         $disciplinas_programa_ensino = ProgramaEnsinoDisciplina::getObjects();
-        
         foreach($disciplinas_programa_ensino as $disciplina_programa_ensino)
         {
             $disciplinas[$disciplina_programa_ensino->disciplina] = $disciplina_programa_ensino->disciplina;
@@ -50,25 +43,19 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
 
         // create the form fields
         $curso = new TEntry('curso');
-        //$disciplina = new TEntry('disciplina');
         $disciplina = new TDBCombo('disciplina', 'dados_fei', 'VwProfessordisciplinassemestre', 'CodGradeDisciplinaEtapaFrente', '{NomeDisciplina} - {Identificacao}', 'NomeDisciplina', $criteria);
         $disciplina->enableSearch();
-
 
         // add the fields
         $this->form->addQuickField('Curso', $curso, '50%');
         $this->form->addQuickField('Disciplina', $disciplina, '50%');
-
         
         // keep the form filled during navigation with session data
         $this->form->setData( TSession::getValue('ProgramaEnsinoDisciplina_filter_data') );
 
-        
         // add the search form actions
         $btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
         $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addQuickAction(_t('New'),  new TAction(array('ProgramaEnsinoDisciplinaForm', 'onEdit')), 'bs:plus-sign green');
-
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;
@@ -76,7 +63,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
         
-
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'ID', 'right');
         $column_system_user_id = new TDataGridColumn('system_user->name', 'Professor', 'left');
@@ -88,7 +74,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
         //$column_periodo = new TDataGridColumn('periodo', 'Periodo', 'left');
         $column_turma = new TDataGridColumn('turma', 'Turma', 'left');
         $column_data_reg = new TDataGridColumn('data_reg', 'Data do registro', 'left');
-
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
@@ -102,83 +87,96 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
         $this->datagrid->addColumn($column_turma);
         $this->datagrid->addColumn($column_data_reg);
 
-
-        // create EDIT action
-        $action_pdf = new TDataGridAction(array('ProgramaEnsinoDisciplinaFormView', 'onShow'));
+        // Altere a ação para apontar para o onPrint na própria Listagem
+        $action_pdf = new TDataGridAction(array('ProgramaEnsinoDisciplinaList', 'onPrint'));
         $action_pdf->setButtonClass('btn btn-default btn-sm');
-        $action_pdf->setLabel('Visualizar');
-        $action_pdf->setImage('fa:search #478fca');
+        $action_pdf->setLabel('Imprimir PDF');
+        $action_pdf->setImage('far:file-pdf red'); // Ícone mais intuitivo para PDF
         $action_pdf->setField('id');
         $this->datagrid->addAction($action_pdf);
-        
-        
-        // create EDIT action
-        /*$action_edit = new TDataGridAction(array('ProgramaEnsinoDisciplinaForm', 'onEdit'));
-        //$action_edit->setUseButton(TRUE);
-        //$action_edit->setButtonClass('btn btn-default');
-        $action_edit->setLabel(_t('Edit'));
-        $action_edit->setImage('far:edit blue fa-lg');
-        $action_edit->setField('id');
-        $this->datagrid->addAction($action_edit);
-      
-
-        // create DELETE action
-        $action_del = new TDataGridAction(array($this, 'onDelete'));
-        //$action_del->setUseButton(TRUE);
-        //$action_del->setButtonClass('btn btn-default');
-        $action_del->setLabel(_t('Delete'));
-        $action_del->setImage('far:trash-alt red fa-lg');
-        $action_del->setField('id');
-        $this->datagrid->addAction($action_del);*/
-
        
         // create the datagrid model
         $this->datagrid->createModel();
-        
         
         // creates the page navigation
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
 
-
         // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';
-        //$container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add(TPanelGroup::pack('Listagem Geral - Programa de Ensino da Disciplina', $this->form));
         $container->add(TPanelGroup::pack('', $this->datagrid, $this->pageNavigation));
         
         parent::add($container);
-    }
-    
+    }   
 
-    public function onInlineEdit($param)
+    public static function onPrint($param)
     {
         try
         {
-            $field = $param['field'];
-            $key   = $param['key'];
-            $value = $param['value'];
+            if (empty($param['key'])) return;
+
+            TTransaction::open('Felabs_DB');            
+            $object = ProgramaEnsinoDisciplina::find($param['key']);
+
+            if ($object)
+            {
+                $object->data_reg = TDate::date2br($object->data_reg);
+                $userName = new SystemUser($object->system_user_id);
+                $object->system_user_id = $userName->name;
+
+                // Busca o nome legível da disciplina na base legada
+                TTransaction::open('dados_fei');
+                $criteria = new TCriteria;
+                $criteria->add(new TFilter('CodGradeDisciplinaEtapaFrente', '=', $object->disciplina));
+                $disciplinaNome = VwProfessordisciplinassemestre::getObjects($criteria);
+                if (!empty($disciplinaNome)) {
+                    $object->disciplina = $disciplinaNome[0]->NomeDisciplina;
+                }
+                TTransaction::close();
+
+                // --- CORREÇÃO: Fallback seguro para evitar caminhos nulos se a unidade for nula ---
+                $unidadeId = isset($object->unidade) ? (int)$object->unidade : 0;
+
+                $template = ($unidadeId !== 2 && $unidadeId !== 10) 
+                    ? 'app/documents/ProgramaEnsinoDisciplina.html' 
+                    : 'app/documents/ProgramaEnsinoDisciplinaFFCL.html';
+
+                // Validação extra para garantir que o arquivo fisicamente existe antes de passar para o Adianti Parser
+                if (!file_exists($template)) {
+                    throw new Exception("O arquivo de template obrigatório não foi localizado em: {$template}");
+                }
+
+                $html = new AdiantiHTMLDocumentParser($template, 'A4', 'portrait');
+                $html->setMaster($object);
+                $html->process();
+                $output = $html->getContents();
             
-            TTransaction::open('Felabs_DB'); 
-            
-            $object = new ProgramaEnsinoDisciplina($key); 
-            $object->{$field} = $value;
-            $object->store(); 
-            
-            TTransaction::close(); 
-            
-            $this->onReload($param); 
-            new TMessage('info', "Record Updated");
+                $document = 'tmp/'.uniqid().'.pdf'; 
+                $html = AdiantiHTMLDocumentParser::newFromString($output);
+                $html->saveAsPDF($document);
+
+                // Abre o PDF em popup diretamente na tela do usuário
+                $window = TWindow::create('Programa de Ensino', 0.8, 0.8);
+                $element = new TElement('object');
+                $element->data  = 'download.php?file='.$document;
+                $element->type  = 'application/pdf';
+                $element->style = "width: 100%; height:calc(100% - 10px)";
+
+                $window->add($element);
+                $window->show();
+            }
+
+            TTransaction::close();
         }
-        catch (Exception $e) 
+        catch (Exception $e)
         {
-            new TMessage('error', $e->getMessage()); 
-            TTransaction::rollback(); 
+            new TMessage('error', $e->getMessage());
+            TTransaction::rollback();
         }
     }
-    
 
     public function onSearch()
     {
@@ -187,7 +185,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
       
         TSession::setValue('ProgramaEnsinoDisciplinaList_filter_curso', NULL);
         TSession::setValue('ProgramaEnsinoDisciplinaList_filter_disciplina', NULL);
-        //TSession::setValue('ProgramaEnsinoDisciplinaList_filter_obg_optativa', NULL);
         TSession::setValue('ProgramaEnsinoDisciplinaList_filter_periodo', NULL);
         TSession::setValue('ProgramaEnsinoDisciplinaList_filter_data_reg', NULL);
 
@@ -202,12 +199,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
             TSession::setValue('ProgramaEnsinoDisciplinaList_filter_disciplina', $filter);
         }
 
-        
-        /*if (isset($data->obg_optativa) AND ($data->obg_optativa)) {
-            $filter = new TFilter('obg_optativa', 'like', "%{$data->obg_optativa}%");
-            TSession::setValue('ProgramaEnsinoDisciplinaList_filter_obg_optativa', $filter);
-        }*/
-        
 
         if (isset($data->periodo) AND ($data->periodo)) {
             $filter = new TFilter('periodo', 'like', "%{$data->periodo}%"); 
@@ -223,7 +214,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
         
         $this->form->setData($data);
         
-
         TSession::setValue('ProgramaEnsinoDisciplina_filter_data', $data);
         
         $param=array();
@@ -231,7 +221,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
         $param['first_page']=1;
         $this->onReload($param);
     }
-    
 
     public function onReload($param = NULL)
     {
@@ -240,18 +229,15 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
             TTransaction::open('Felabs_DB');
             
             $loggedUnit = TSession::getValue('userunitid');
-            //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
             $userid = TSession::getValue('userid');
             $user = new SystemUser($userid);
             
-
             $repository = new TRepository('ProgramaEnsinoDisciplina');
             $limit = 10;
             
             $criteria = new TCriteria;
             $criteria->add(new TFilter('unidade', '=', $loggedUnit));
             
-          
             if (empty($param['order']))
             {
                 $param['order'] = 'id';
@@ -304,8 +290,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
 
                     $criteria2 = new TCriteria;
                     $criteria2->add(new TFilter('CodGradeDisciplinaEtapaFrente', '=', $object->disciplina));
-                    //var_dump($object->disciplina);
-                    //die;
 
                     $disciplinaNome = VwProfessordisciplinassemestre::getObjects($criteria2);
                     $object->disciplina = $disciplinaNome[0]->NomeDisciplina;
@@ -322,7 +306,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
                 }
             }
             
-
             $criteria->resetProperties();
             $count = $repository->count($criteria);
             
@@ -330,7 +313,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
             $this->pageNavigation->setProperties($param); 
             $this->pageNavigation->setLimit($limit); 
             
-
             TTransaction::close();
             $this->loaded = true;
         }
@@ -340,40 +322,6 @@ class ProgramaEnsinoDisciplinaListAll extends TPage
             TTransaction::rollback();
         }
     }
-    
-
-    public function onDelete($param)
-    {
-        $action = new TAction(array($this, 'Delete'));
-        $action->setParameters($param); 
-        
-        new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
-    }
-    
-
-    public function Delete($param)
-    {
-        try
-        {
-            $key = $param['key']; 
-            
-            TTransaction::open('Felabs_DB'); 
-            
-            $object = new ProgramaEnsinoDisciplina($key, FALSE); 
-            $object->delete(); 
-            
-            TTransaction::close(); 
-            
-            $this->onReload( $param ); 
-            new TMessage('info', AdiantiCoreTranslator::translate('Record deleted')); 
-        }
-        catch (Exception $e) 
-        {
-            new TMessage('error', $e->getMessage()); 
-            TTransaction::rollback(); 
-        }
-    }
-    
 
     public function show()
     {

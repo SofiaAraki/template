@@ -171,6 +171,9 @@ class AtividadeComplementar extends TRecord
         
         $atividades = $repository->load($criteria); 
         
+        // CORREÇÃO: Inicializa como array vazio para evitar erro no array_sum
+        $horas = []; 
+        
         foreach($atividades as $atividade)
         {
             $horas[] = $atividade->carga_horaria;
@@ -198,6 +201,9 @@ class AtividadeComplementar extends TRecord
         $criteria->add(new TFilter('status_atividade', '=', 'Aguardando aprovação'));
         
         $atividades = $repository->load($criteria); 
+        
+        // CORREÇÃO: Inicializa como array vazio para evitar erro no array_sum
+        $horas = []; 
         
         foreach($atividades as $atividade)
         {

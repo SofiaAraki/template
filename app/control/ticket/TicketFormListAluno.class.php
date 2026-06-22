@@ -43,14 +43,12 @@ class TicketFormListAluno extends TPage
         
         TTransaction::close();
         
-        
         // creates the form
         $this->form = new TQuickForm('form_Ticket');
         $this->form->class = 'tform'; 
         $this->form = new BootstrapFormWrapper($this->form);
         $this->form->style = 'display: table;width:100%'; 
         $this->form->setFormTitle('Ticket');
-
 
         TTransaction::open('Felabs_DB');
 
@@ -59,18 +57,13 @@ class TicketFormListAluno extends TPage
         $criteria = new TCriteria;
         $criteria->add( new TFilter('departamento_id', '=', $loggedUnit));
         
-        //$categorias = TicketCategoria::getObjects($criteria);
         $colaboradores = SystemUser::getObjects();
 
         TTransaction::close();
 
-
         // create the form fields
         $id = new THidden('id');
-        //$titulo = new THidden('titulo');
         $descricao = new TText('descricao');
-        //public function __construct($name, $database, $model, $key, $value, $ordercolumn = NULL, TCriteria $criteria = NULL)
-        //$system_user_id = new TDBUniqueSearch('system_user_id','dados_fei_t','FiAluno','Codaluno','NomeSemAcento');
         $system_user_id = new THidden('system_user_id');
         $destino_user_id = new THidden('destino_user_id'); //CRIADO MANUAL
         $status = new THidden('status');
@@ -78,52 +71,35 @@ class TicketFormListAluno extends TPage
         $categoria = new TDBCombo('categoria', 'Felabs_DB', 'TicketCategoria', 'id', 'nome', 'nome', $criteria);
         $data_reg = new THidden('data_reg');
         $anexo = new TMultiFile('anexo');
-        
 
-        //$combo = new TDBCombo('campo','banco','model','chave','valor','ordem',$criteria);
-
-
-        //$system_user_id->setMinLength(5);
         $descricao->setSize('100%');
         $id->setEditable(FALSE);
 
         //$deptoItems = [];
         //$deptoItems[1] = 'Secretaria FE';
 
-
         // add the fields
         $this->form->addQuickField('Id', $id, '50%');
         $this->form->addQuickField('Departamento', $departamento, '50%');
         $this->form->addQuickField('Solicitante (aluno)', $system_user_id, '50%');
         $this->form->addQuickField('Categoria', $categoria, '60%', new TRequiredValidator);
-        //$this->form->addQuickField('Título', $titulo, '100%');
         $this->form->addQuickField('Descrição', $descricao, '60%', new TRequiredValidator);
         $this->form->addQuickField('Adicionar participante', $destino_user_id, '50%');
         $this->form->addQuickField('Anexar arquivo(s)', $anexo, '60%');
         $this->form->addQuickField('Status', $status, '100%');        
         $this->form->addQuickField('Data Reg', $data_reg, '100%');
 
-
-
         // set exit action for input_exit
         $change_action = new TAction(array($this, 'onChangeAction'));
         $categoria->setChangeAction($change_action);
 
-         
         // create the form actions
-        $btn = $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addQuickAction(_t('New'),  new TAction(array($this, 'onClear')), 'bs:plus-sign green');
-        //$btn = $this->form->addQuickAction('Voltar', new TAction(array('TicketList', 'onReload')), 'far:arrow-alt-circle-left blue');
-        
+        $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'fa:save green');
         
         //creates a Datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid = new BootstrapDatagridWrapper($this->datagrid);
         $this->datagrid->style = 'width: 100%';
-        //$this->datagrid->datatable = 'true';
-        //$this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
-        
 
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'left');
@@ -160,7 +136,7 @@ class TicketFormListAluno extends TPage
 
 
         // create abrir action
-        $action_abrir = new TDataGridAction(array($this, 'goTicketView'),$param);
+        $action_abrir = new TDataGridAction(array($this, 'goTicketView'), ['key' => '{ticket_id']);
         //$action_edit->setUseButton(TRUE);
         //$action_edit->setButtonClass('btn btn-default');
         $action_abrir->setLabel('Abrir Ticket');

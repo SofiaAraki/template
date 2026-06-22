@@ -12,16 +12,11 @@ class AgendamentoEquipamentoItemFormList extends TPage
     {
         parent::__construct();
         
-        
-        // creates the form
-        $this->form = new TQuickForm('form_AgendamentoEquipamentoItem');
-        $this->form->class = 'tform'; 
-        $this->form = new BootstrapFormWrapper($this->form);
-        $this->form->style = 'display: table;width:100%';
-        $this->form->setFormTitle('AgendamentoEquipamentoItem');
-        
+        // Cria o formulário usando BootstrapFormBuilder (padrão atual e limpo)
+        $this->form = new BootstrapFormBuilder('form_AgendamentoEquipamentoItem');
+        $this->form->setFormTitle('Cadastro de Equipamentos');
 
-        // create the form fields
+        // Cria os campos do formulário
         $id = new THidden('id');
         $equipamento = new TEntry('equipamento');
         $unidade = new TCombo('unidade');
@@ -36,143 +31,116 @@ class AgendamentoEquipamentoItemFormList extends TPage
         $system_user_id = new THidden('system_user_id');
         $data_reg = new THidden('data_reg');
 
+        // Configuração do componente de data
+        $data_aquisicao->setMask('dd/mm/yyyy');
 
+        // Itens de Unidade
         $items = array();
         $items['0'] = 'FE';
         $items['1'] = 'CNSC';
         $items['2'] = 'FFCL';
         $items['3'] = 'FAFRAM';
-        //$items['4'] = 'FFCL PÓS'
-        //$items['6'] = 'NEAD';
         $items['8'] = 'VAN GOGH';
         $items['12'] = 'CONNEXT';
 
         $unidade->addItems($items);
 
+        // Validações obrigatórias básicas
+        $equipamento->addValidation('Equipamento', new TRequiredValidator);
+        $unidade->addValidation('Unidade', new TRequiredValidator);
 
-        // add the fields
-        $this->form->addQuickField('Id', $id, '50%');
-        $this->form->addQuickField('Equipamento', $equipamento, '100%');
-        $this->form->addQuickField('Unidade', $unidade, '100%');
-        $this->form->addQuickField('Status', $status, '100%');
-        $this->form->addQuickField('Marca', $marca, '100%');
-        $this->form->addQuickField('Modelo', $modelo, '100%');
-        $this->form->addQuickField('Número de série', $numero_serie, '100%');
-        $this->form->addQuickField('Patrimônio FE', $patrimonio, '100%');
-        $this->form->addQuickField('Identificador', $identificador, '100%');
-        $this->form->addQuickField('Imagem', $imagem, '100%');
-        $this->form->addQuickField('Data de aquisição', $data_aquisicao, '50%');
-        $this->form->addQuickField('System User Id', $system_user_id, '100%');
-        $this->form->addQuickField('Data Reg', $data_reg, '100%');
-
-
-        // create the form actions
-        $btn = $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'onSave')), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addQuickAction(_t('New'),  new TAction(array($this, 'onClear')), 'bs:plus-sign green');
+        // Adiciona os campos ao formulário usando linhas organizadas
+        $this->form->addFields([$id], [$status], [$system_user_id], [$data_reg]);
         
+        $this->form->addFields([new TLabel('Equipamento')], [$equipamento], [new TLabel('Unidade')], [$unidade]);
+        $this->form->addFields([new TLabel('Marca')], [$marca], [new TLabel('Modelo')], [$modelo]);
+        $this->form->addFields([new TLabel('Número de Série')], [$numero_serie], [new TLabel('Patrimônio FE')], [$patrimonio]);
+        $this->form->addFields([new TLabel('Identificador')], [$identificador], [new TLabel('Data de Aquisição')], [$data_aquisicao]);
+        $this->form->addFields([new TLabel('Imagem')], [$imagem]);
+
+        // Definição de tamanhos padrão
+        $id->setSize('100%');
+        $equipamento->setSize('100%');
+        $unidade->setSize('100%');
+        $marca->setSize('100%');
+        $modelo->setSize('100%');
+        $numero_serie->setSize('100%');
+        $patrimonio->setSize('100%');
+        $identificador->setSize('100%');
+        $data_aquisicao->setSize('100%');
+        $imagem->setSize('100%');
+
+        // Ações do formulário
+        $this->form->addAction(_t('Clear'), new TAction(array($this, 'onClear')), 'fa:eraser red');
+        $this->form->addAction(_t('Save'), new TAction(array($this, 'onSave')), 'far:save green');
         
-        // creates a Datagrid
-        $this->datagrid = new TDataGrid;
-        $this->datagrid = new BootstrapDatagridWrapper($this->datagrid);
+        // Cria a Datagrid
+        $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
         $this->datagrid->style = 'width: 100%';
-        // $this->datagrid->datatable = 'true';
-        
 
-        // creates the datagrid columns
-        $column_id = new TDataGridColumn('id', 'Id', 'left');
+        // Colunas da datagrid
+        $column_id = new TDataGridColumn('id', 'Id', 'center', '50px');
         $column_equipamento = new TDataGridColumn('equipamento', 'Equipamento', 'left');
         $column_unidade = new TDataGridColumn('unidade', 'Unidade', 'left');
-        $column_status = new TDataGridColumn('status', 'Ativo', 'left');
-        $column_imagem = new TDataGridColumn('imagem', 'Imagem', 'left');
+        $column_status = new TDataGridColumn('status', 'Ativo', 'center');
         $column_marca = new TDataGridColumn('marca', 'Marca', 'left');
         $column_modelo = new TDataGridColumn('modelo', 'Modelo', 'left');
-        $column_numero_serie = new TDataGridColumn('numero_serie', 'Número de série', 'left');
-        $column_patrimonio = new TDataGridColumn('patrimonio', 'Patrimônio FE', 'left');
         $column_identificador = new TDataGridColumn('identificador', 'Identificador', 'left');
-        $column_data_aquisicao = new TDataGridColumn('data_aquisicao', 'Data de aquisição', 'left');
-        $column_system_user_id = new TDataGridColumn('system_user_id', 'Cadastrado por', 'left');
-        $column_data_reg = new TDataGridColumn('data_reg', 'Data Reg', 'left');
 
-
-        // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
         $this->datagrid->addColumn($column_equipamento);
         $this->datagrid->addColumn($column_unidade);
         $this->datagrid->addColumn($column_status);
-        //$this->datagrid->addColumn($column_imagem);
         $this->datagrid->addColumn($column_marca);
         $this->datagrid->addColumn($column_modelo);
-        //$this->datagrid->addColumn($column_numero_serie);
-        //$this->datagrid->addColumn($column_patrimonio);
         $this->datagrid->addColumn($column_identificador);
-        //$this->datagrid->addColumn($column_data_aquisicao);
-        //$this->datagrid->addColumn($column_system_user_id);
-        //$this->datagrid->addColumn($column_data_reg);
 
-        
-        // creates two datagrid actions
+        // Ações da datagrid
         $action = new TDataGridAction(array('AgendamentoEquipamentoItemFormView', 'onEdit'));
-        //$action1->setUseButton(TRUE);
-        //$action1->setButtonClass('btn btn-default');
         $action->setLabel(_t('View'));
         $action->setImage('fa:search green fa-lg');
         $action->setField('id');
 
-
         $action1 = new TDataGridAction(array($this, 'onEdit'));
-        //$action1->setUseButton(TRUE);
-        //$action1->setButtonClass('btn btn-default');
         $action1->setLabel(_t('Edit'));
         $action1->setImage('far:edit blue fa-lg');
         $action1->setField('id');
         
-        
         $action2 = new TDataGridAction(array($this, 'onDelete'));
-        //$action2->setUseButton(TRUE);
-        //$action2->setButtonClass('btn btn-default');
         $action2->setLabel(_t('Delete'));
         $action2->setImage('far:trash-alt red fa-lg');
         $action2->setField('id');
 
-
         $action_onoff = new TDataGridAction(array($this, 'onTurnOnOff'));
-        $action_onoff->setButtonClass('btn btn-default');
         $action_onoff->setLabel(_t('Activate/Deactivate'));
         $action_onoff->setImage('fa:power-off fa-lg orange');
         $action_onoff->setField('id');
         
-        
-        // add the actions to the datagrid
         $this->datagrid->addAction($action);
         $this->datagrid->addAction($action1);
         $this->datagrid->addAction($action2);
         $this->datagrid->addAction($action_onoff);
         
-        
-        // create the datagrid model
         $this->datagrid->createModel();
         
-        
-        // creates the page navigation
+        // Paginação
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
-        
-        // vertical box container
+        // Construção do Container da Página
         $container = new TVBox;
         $container->style = 'width: 100%';
         $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
-        $container->add(TPanelGroup::pack('Cadastro de Equipamentos', $this->form));
+        
+        $alerta = new TAlert('warning', "Atenção: Usuários só poderão visualizar e agendar equipamentos da unidade que escolheram no momento do login. Escolha a unidade FE para permitir agendamentos a partir de outras unidades.");
+        $container->add($alerta);
+        
+        $container->add($this->form);
         $container->add(TPanelGroup::pack('', $this->datagrid, $this->pageNavigation));
 
-        $alerta = new TAlert('warning', "Atenção: Usuários só poderão visualizar e agendar equipamentos da unidade que escolheram no momento do login. Escolha a unidade FE para permitir agendamentos a partir de outras unidades.");
-        parent::add($alerta);
         parent::add($container);
-
     }
-
 
     public function onTurnOnOff($param)
     {
@@ -186,13 +154,12 @@ class AgendamentoEquipamentoItemFormList extends TPage
             {
                 $equip->status = 'S';
             }
-            elseif ($equip->status == 'S')
+            else
             {
                 $equip->status = 'N';
             }
             
             $equip->store();
-            
             TTransaction::close();
             
             $this->onReload($param);
@@ -204,7 +171,6 @@ class AgendamentoEquipamentoItemFormList extends TPage
         }
     }
 
-
     public function onReload($param = NULL)
     {
         try
@@ -213,13 +179,12 @@ class AgendamentoEquipamentoItemFormList extends TPage
             
             $repository = new TRepository('AgendamentoEquipamentoItem');
             $limit = 10;
-
             $criteria = new TCriteria;
             
             if (empty($param['order']))
             {
                 $param['order'] = 'id';
-                $param['direction'] = 'asc';
+                $param['direction'] = 'desc';
             }
             
             $criteria->setProperties($param); 
@@ -237,24 +202,19 @@ class AgendamentoEquipamentoItemFormList extends TPage
             
             if ($objects)
             {
+                // Mapeamento exato de badges para exibição na grid
+                $unidades_map = [
+                    '0'  => '<span class="label label-primary">FE</span>',
+                    '1'  => '<span class="label label-info">CNSC</span>',
+                    '2'  => '<span class="label label-warning">FFCL</span>',
+                    '3'  => '<span class="label label-danger">FAFRAM</span>',
+                    '8'  => '<span class="label label-default">VAN GOGH</span>',
+                    '12' => '<span class="label label-success">CONNEXT</span>'
+                ];
+
                 foreach ($objects as $object)
                 {
-                    if($object->unidade == '0')
-                    {
-                        $object->unidade = '<span class="label label-primary">FE</span>';                        
-                    }
-                    elseif($object->unidade == '12')
-                    {
-                        $object->unidade = '<span class="label label-success">CONNEXT</span>';                        
-                    }
-                    elseif($object->unidade == '2')
-                    {
-                        $object->unidade = '<span class="label label-warning">FFCL</span>';                        
-                    }
-                    elseif($object->unidade == '3')
-                    {
-                        $object->unidade = '<span class="label label-danger">FAFRAM</span>';
-                    }
+                    $object->unidade = isset($unidades_map[$object->unidade]) ? $unidades_map[$object->unidade] : $object->unidade;
 
                     if($object->status == 'N')
                     {
@@ -271,6 +231,7 @@ class AgendamentoEquipamentoItemFormList extends TPage
 
                     $object->data_reg = TDate::date2br($object->data_reg);
                     $object->data_aquisicao = TDate::date2br($object->data_aquisicao);
+                    
                     $this->datagrid->addItem($object);
                 }
             }
@@ -291,7 +252,6 @@ class AgendamentoEquipamentoItemFormList extends TPage
             TTransaction::rollback();
         }
     }
-    
 
     public function onDelete($param)
     {
@@ -300,14 +260,12 @@ class AgendamentoEquipamentoItemFormList extends TPage
         
         new TQuestion(TAdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
     }
-    
 
     public function Delete($param)
     {
         try
         {
             $key = $param['key'];
-            
             TTransaction::open('Felabs_DB');
             
             $object = new AgendamentoEquipamentoItem($key, FALSE);
@@ -315,7 +273,7 @@ class AgendamentoEquipamentoItemFormList extends TPage
             
             TTransaction::close(); 
             
-            $this->onReload( $param );
+            $this->onReload($param);
             new TMessage('info', TAdiantiCoreTranslator::translate('Record deleted'));
         }
         catch (Exception $e)
@@ -325,74 +283,72 @@ class AgendamentoEquipamentoItemFormList extends TPage
         }
     }
     
- 
     public function onSave( $param )
     {
         try
         {
             TTransaction::open('Felabs_DB');
             
-            //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
             $userid = TSession::getValue('userid');
             $user = new SystemUser($userid);
 
             $this->form->validate();
 
-            $object = new AgendamentoEquipamentoItem;
             $data = $this->form->getData();
-
-            $data->system_user_id = $user->id;
-            $data->status = 'S';
-            $data->data_reg = date('Y-m-d H:i:s');
-
-            $object->fromArray( (array) $data);
+            $object = new AgendamentoEquipamentoItem;
             
-
-            if($object->imagem)   //SE USUÁRIO CARREGA FOTO
+            if (!empty($data->id))
             {
-                $userid = $user->id;
-                $better_token = md5(uniqid(rand(), true));
-                
-                $partes = explode(".",$object->imagem);
-                $extensaoPonto = '.'.$partes[1];
-    
-                $source_file   = 'tmp/'.$object->imagem;
-                $nomeFoto = $better_token . '_' . $userid . $extensaoPonto;
-                $target_file   = 'app/images/equipamentos/' . $nomeFoto;
-                $finfo         = new finfo(FILEINFO_MIME_TYPE);
-            
-                //if the user uploaded a source file
-
-                //move to the target directory
-                //var_dump($source_file);
-                //die();
-                
-                rename($source_file, $target_file);
-                
-                try
-                {
-                    TTransaction::open('Felabs_DB');
-                    
-                    $object->imagem = $nomeFoto;
-                    //$user->store();
-
-                    TTransaction::close();
-                }
-                catch (Exception $e)
-                {
-                    new TMessage('error', $e->getMessage());
-                    TTransaction::rollback();
-                }
-            
-                $image = new TImage($nomeFoto);   
+                // Se for edição, carrega o objeto existente para preservar status e histórico
+                $object->load($data->id);
+            }
+            else
+            {
+                // Se for novo registro, atribui os dados de auditoria iniciais
+                $object->status = 'S';
+                $object->data_reg = date('Y-m-d H:i:s');
+                $object->system_user_id = $user->id;
             }
 
+            // Clona e move os campos vindos do formulário para o Active Record
+            $object->fromArray((array) $data);
+            $object->data_aquisicao = TDate::date2us($data->data_aquisicao);
+
+            // Tratamento e renomeação do arquivo de imagem carregado
+            if(!empty($object->imagem))
+            {
+                $source_file = 'tmp/'.$object->imagem;
+                if (file_exists($source_file))
+                {
+                    $better_token = md5(uniqid(rand(), true));
+                    $partes = explode(".", $object->imagem);
+                    $extensaoPonto = '.' . end($partes);
+        
+                    $nomeFoto = $better_token . '_' . $user->id . $extensaoPonto;
+                    $target_dir = 'app/images/equipamentos';
+                    
+                    if (!is_dir($target_dir)) {
+                        mkdir($target_dir, 0755, true);
+                    }
+                    
+                    $target_file = $target_dir . '/' . $nomeFoto;
+                    rename($source_file, $target_file);
+                    
+                    $object->imagem = $nomeFoto;
+                }
+            }
+            else if (!empty($data->id))
+            {
+                // Se o campo imagem veio vazio numa edição, mantém a imagem que já estava no banco
+                $objeto_antigo = new AgendamentoEquipamentoItem($data->id);
+                $object->imagem = $objeto_antigo->imagem;
+            }
 
             $object->store();
             
             $data->id = $object->id;
-            
             $this->form->setData($data);
+            
             TTransaction::close();
             
             new TMessage('info', TAdiantiCoreTranslator::translate('Record saved'));
@@ -401,17 +357,15 @@ class AgendamentoEquipamentoItemFormList extends TPage
         catch (Exception $e)
         {
             new TMessage('error', $e->getMessage());
-            $this->form->setData( $this->form->getData() );
+            $this->form->setData($this->form->getData());
             TTransaction::rollback();
         }
     }
-    
 
     public function onClear( $param )
     {
         $this->form->clear(TRUE);
     }
-    
 
     public function onEdit( $param )
     {
@@ -420,12 +374,12 @@ class AgendamentoEquipamentoItemFormList extends TPage
             if (isset($param['key']))
             {
                 $key = $param['key'];
-                
                 TTransaction::open('Felabs_DB');
                 
                 $object = new AgendamentoEquipamentoItem($key);
-                $this->form->setData($object);
+                $object->data_aquisicao = TDate::date2br($object->data_aquisicao);
                 
+                $this->form->setData($object);
                 TTransaction::close();
             }
             else
@@ -439,13 +393,12 @@ class AgendamentoEquipamentoItemFormList extends TPage
             TTransaction::rollback();
         }
     }
-    
 
     public function show()
     {
         if (!$this->loaded AND (!isset($_GET['method']) OR $_GET['method'] !== 'onReload') )
         {
-            $this->onReload( func_get_arg(0) );
+            $this->onReload(func_get_arg(0));
         }
         parent::show();
     }

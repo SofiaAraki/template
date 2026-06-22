@@ -514,8 +514,8 @@ class DisciplinaGradeCurriculoForm extends TPage
     {
         try
         {
-            $opcao_carga_horaria = $param['opcao_carga_horaria'];
-            $etiquetas_selecionadas = $param['etiqueta'];
+            $opcao_carga_horaria = $param['opcao_carga_horaria'] ?? [];
+            $etiquetas_selecionadas = $param['etiqueta'] ?? [];
             
             
             TTransaction::open('Felabs_DB');             

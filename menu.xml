@@ -112,6 +112,10 @@
             <action>AgendamentoEquipamentoList</action>
             <icon>fas:laptop fa-fw</icon>
         </menuitem>
+        <menuitem label="Plano de Ensino">
+            <action>ProgramaEnsinoDisciplinaList</action>
+            <icon>fas:book fa-fw</icon>
+        </menuitem>
         <menuitem label="Diário de Classe">
             <action>HorarioAulasList</action>
             <icon>far:check-square fa-fw</icon>
@@ -162,10 +166,6 @@
             <action>AtividadeProfessorDisciplinasList</action>
             <icon>fas:graduation-cap fa-fw</icon>
         </menuitem>
-        <menuitem label="Plano de Ensino">
-            <action>ProgramaEnsinoDisciplinaList</action>
-            <icon>fas:book fa-fw</icon>
-        </menuitem>
         <menuitem label="Solicitação Marketing">
             <action>MarketingBriefingFormList</action>
             <icon>fas:camera fa-fw</icon>
@@ -188,10 +188,6 @@
             </menuitem>
             </menu>
         </menuitem>
-        <menuitem label="Atividade Complementar">
-            <action>AtividadeComplementarSecretariaList</action>
-            <icon>far:circle fa-fw</icon>
-        </menuitem>
         <menuitem label="Carteirinha Veículos">
             <icon>far:circle fa-fw</icon>
             <menu>
@@ -209,10 +205,6 @@
             </menuitem>
             </menu>
         </menuitem>
-        <menuitem label="Conteúdo Programático">
-            <action>ConteudoProgramaticoListAll</action>
-            <icon>far:circle fa-fw</icon>
-        </menuitem>
         <menuitem label="Equipamentos">
             <icon>far:circle fa-fw</icon>
             <menu>
@@ -226,16 +218,28 @@
             </menuitem>
             </menu>
         </menuitem>
+        <menuitem label="Atividade Complementar">
+            <action>AtividadeComplementarSecretariaList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Estágio">
+            <action>EstagioSecretariaList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Plano de Ensino">
+            <action>ProgramaEnsinoDisciplinaListAll</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Conteúdo Programático">
+            <action>ConteudoProgramaticoListAll</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
         <menuitem label="Enviar Provas e Anexos">
             <action>AgendamentoProvaList</action>
             <icon>far:circle fa-fw</icon>
         </menuitem>
         <menuitem label="Enviar Email Turma">
             <action>EmailTurmaFormList</action>
-            <icon>far:circle fa-fw</icon>
-        </menuitem>
-        <menuitem label="Estágio">
-            <action>EstagioSecretariaList</action>
             <icon>far:circle fa-fw</icon>
         </menuitem>
         <menuitem label="Info Página Inicial">
@@ -258,10 +262,6 @@
                 <icon>far:circle fa-fw</icon>
             </menuitem>
             </menu>
-        </menuitem>
-        <menuitem label="Plano de Ensino">
-            <action>ProgramaEnsinoDisciplinaListAll</action>
-            <icon>far:circle fa-fw</icon>
         </menuitem>
         <menuitem label="Secretaria Digital">
             <icon>far:circle fa-fw</icon>
@@ -354,15 +354,6 @@
             <menuitem label="Listar e-Ticket">
                 <action>TicketParticipanteListAdm</action>
                 <icon>fas:headset fa-fw</icon>
-            </menuitem>
-            <menuitem label="Requerimentos">
-                <icon>far:circle fa-fw</icon>
-                <menu>
-                <menuitem label="Matrícula Connext">
-                    <action>ReqMatriculaAlunoListConnext</action>
-                    <icon>far:circle fa-fw</icon>
-                </menuitem>
-                </menu>
             </menuitem>
             </menu>
         </menuitem>
@@ -500,18 +491,6 @@
                   <icon>fas:user fa-fw</icon>
                   <action>SystemUserList</action>
               </menuitem>
-              <menuitem label='_t{Page management}'>
-                    <icon>fab:wikipedia-w fa-fw</icon>
-                    <action>SystemWikiList</action>
-              </menuitem>
-              <menuitem label='_t{News management}'>
-                    <icon>fas:pen-square fa-fw</icon>
-                    <action>SystemPostList</action>
-              </menuitem>
-              <menuitem label='_t{Schedules}'>
-                  <icon>fas:clock fa-fw</icon>
-                  <action>SystemScheduleList#method=onReload</action>
-              </menuitem>
               <menuitem label='_t{Preferences}'>
                   <icon>fas:cog fa-fw</icon>
                   <action>SystemPreferenceForm#method=onEdit</action>
@@ -541,10 +520,6 @@
               <menuitem label='_t{Request Log}'>
                   <icon>fas:globe fa-fw</icon>
                   <action>SystemRequestLogList</action>
-              </menuitem>
-              <menuitem label='_t{Schedules}'>
-                  <icon>fas:clock fa-fw</icon>
-                  <action>SystemScheduleLogList</action>
               </menuitem>
               <menuitem label='_t{PHP Log}'>
                   <icon>fas:exclamation-triangle fa-fw</icon>

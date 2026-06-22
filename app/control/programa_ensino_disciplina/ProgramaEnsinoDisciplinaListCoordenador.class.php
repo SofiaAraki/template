@@ -1,20 +1,14 @@
 <?php
-
-
 class ProgramaEnsinoDisciplinaListCoordenador extends TPage
 {
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
     private $loaded;
-    private $deleteButton;
-    
 
     public function __construct()
     {
         parent::__construct();
-        
         
         // creates the form
         $this->form = new TQuickForm('form_search_ProgramaEnsinoDisciplina');
@@ -22,27 +16,20 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
         $this->form = new BootstrapFormWrapper($this->form);
         $this->form->style = 'display: table;width:100%'; 
         $this->form->setFormTitle('ProgramaEnsinoDisciplina');
-        
 
         // create the form fields
         $curso = new TEntry('curso');
         $disciplina = new TEntry('disciplina');
 
-
         // add the fields
         $this->form->addQuickField('Curso', $curso, '50%');
         $this->form->addQuickField('Disciplina', $disciplina, '50%');
         
-        
         // keep the form filled during navigation with session data
         $this->form->setData( TSession::getValue('ProgramaEnsinoDisciplina_filter_data') );
         
-        
         // add the search form actions
-        $btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addQuickAction(_t('New'),  new TAction(array('ProgramaEnsinoDisciplinaForm', 'onEdit')), 'bs:plus-sign green');
-        
+        $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;
@@ -78,43 +65,20 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
 
 
         // create EDIT action
-        $action_pdf = new TDataGridAction(array('ProgramaEnsinoDisciplinaFormView', 'onShow'));
+        $action_pdf = new TDataGridAction(array('ProgramaEnsinoDisciplinaForm', 'Show'));
         $action_pdf->setButtonClass('btn btn-default btn-sm');
         $action_pdf->setLabel('Visualizar');
         $action_pdf->setImage('fa:search #478fca');
         $action_pdf->setField('id');
         $this->datagrid->addAction($action_pdf);
         
-        
-        // create EDIT action
-        /*$action_edit = new TDataGridAction(array('ProgramaEnsinoDisciplinaForm', 'onEdit'));
-        //$action_edit->setUseButton(TRUE);
-        //$action_edit->setButtonClass('btn btn-default');
-        $action_edit->setLabel(_t('Edit'));
-        $action_edit->setImage('far:edit blue fa-lg');
-        $action_edit->setField('id');
-        $this->datagrid->addAction($action_edit);
-        
-        
-        // create DELETE action
-        $action_del = new TDataGridAction(array($this, 'onDelete'));
-        //$action_del->setUseButton(TRUE);
-        //$action_del->setButtonClass('btn btn-default');
-        $action_del->setLabel(_t('Delete'));
-        $action_del->setImage('far:trash-alt red fa-lg');
-        $action_del->setField('id');
-        $this->datagrid->addAction($action_del);*/
-        
-        
         // create the datagrid model
         $this->datagrid->createModel();
-        
         
         // creates the page navigation
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
-
 
         // vertical box container
         $container = new TVBox;
@@ -126,34 +90,6 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
         
         parent::add($container);
     }
-    
-
-    public function onInlineEdit($param)
-    {
-        try
-        {
-            $field = $param['field'];
-            $key   = $param['key'];
-            $value = $param['value'];
-            
-            TTransaction::open('Felabs_DB'); 
-            
-            $object = new ProgramaEnsinoDisciplina($key); 
-            $object->{$field} = $value;
-            $object->store(); 
-            
-            TTransaction::close(); 
-            
-            $this->onReload($param); 
-            new TMessage('info', "Record Updated");
-        }
-        catch (Exception $e) 
-        {
-            new TMessage('error', $e->getMessage()); 
-            TTransaction::rollback(); 
-        }
-    }
-
 
     public function onSearch()
     {
@@ -207,7 +143,6 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
         $this->onReload($param);
     }
     
-
     public function onReload($param = NULL)
     {
         try
@@ -215,13 +150,11 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
             TTransaction::open('Felabs_DB');
             
             $loggedUnit = TSession::getValue('userunitid');
-            //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
             $userid = TSession::getValue('userid');
             $user = new SystemUser($userid);
             
-
             $repository = new TRepository('ProgramaEnsinoDisciplina');
-            $limit = 1000;
+            $limit = 10;
 
             $criteria = new TCriteria;
             $criteria->add(new TFilter('unidade', '=', $loggedUnit));
@@ -241,26 +174,21 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
                 $criteria->add(TSession::getValue('ProgramaEnsinoDisciplinaList_filter_curso')); 
             }
 
-
             if (TSession::getValue('ProgramaEnsinoDisciplinaList_filter_disciplina')) {
                 $criteria->add(TSession::getValue('ProgramaEnsinoDisciplinaList_filter_disciplina')); 
             }
-
 
             if (TSession::getValue('ProgramaEnsinoDisciplinaList_filter_obg_optativa')) {
                 $criteria->add(TSession::getValue('ProgramaEnsinoDisciplinaList_filter_obg_optativa')); 
             }
 
-
             if (TSession::getValue('ProgramaEnsinoDisciplinaList_filter_periodo')) {
                 $criteria->add(TSession::getValue('ProgramaEnsinoDisciplinaList_filter_periodo'));
             }
 
-
             if (TSession::getValue('ProgramaEnsinoDisciplinaList_filter_data_reg')) {
                 $criteria->add(TSession::getValue('ProgramaEnsinoDisciplinaList_filter_data_reg'));
             }
-
 
             $objects = $repository->load($criteria, FALSE);
             
@@ -275,36 +203,44 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
             {
                 foreach ($objects as $object)
                 {
+                    // Abre conexão auxiliar externa externa
                     TTransaction::open('dados_fei');
 
                     $criteria2 = new TCriteria;
                     $criteria2->add(new TFilter('CodGradeDisciplinaEtapaFrente', '=', $object->disciplina));
-                    //var_dump($object->disciplina);
-                    //die;
-
                     $disciplinaNome = VwProfessordisciplinassemestre::getObjects($criteria2);
-                    $object->disciplina = $disciplinaNome[0]->NomeDisciplina;
-
-                    TTransaction::close();
-
-                    //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
-
-                    TTransaction::open('dados_fei');
 
                     $criteria1 = new TCriteria;
                     $criteria1->add(new TFilter('CodGradecurso', '=', $object->CodGradecurso));
-                    
                     $coordenadores = FiCoordenador::getObjects($criteria1);
 
-                    $coordenadores[0]->Codprofessor;
+                    TTransaction::close(); // Fecha a conexão externa
 
-                    TTransaction::close();
+                    // --- CORREÇÃO DOS WARNINGS: Validação de Segurança ---
+                    if (!empty($disciplinaNome) && isset($disciplinaNome[0])) 
+                    {
+                        $object->disciplina = $disciplinaNome[0]->NomeDisciplina;
+                        $codEntidade = $disciplinaNome[0]->CodEntidade;
+                    } 
+                    else 
+                    {
+                        $object->disciplina = "Disciplina não localizada (" . $object->disciplina . ")";
+                        $codEntidade = null;
+                    }
+
+                    $codProfessorCoordenador = null;
+                    if (!empty($coordenadores) && isset($coordenadores[0])) 
+                    {
+                        $codProfessorCoordenador = $coordenadores[0]->Codprofessor;
+                    }
+                    // -----------------------------------------------------
 
                     $object->data_reg = TDate::date2br($object->data_reg);
                     
-                    if($disciplinaNome[0]->CodEntidade == $loggedUnit) //SE REGISTRO PERTENCE A UNIDADE DO USUÁRIO LOGADO
+                    // Só adiciona à listagem se os dados cruzados existirem e baterem com as regras de permissão
+                    if ($codEntidade == $loggedUnit) // SE REGISTRO PERTENCE A UNIDADE DO USUÁRIO LOGADO
                     {
-                        if($coordenadores[0]->Codprofessor == $user->systemuser_codlegado)
+                        if ($codProfessorCoordenador !== null && $codProfessorCoordenador == $user->systemuser_codlegado)
                         {
                             $this->datagrid->addItem($object);
                         }                        
@@ -330,39 +266,6 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
             TTransaction::rollback();
         }
     }
-    
-
-    public function onDelete($param)
-    {
-        $action = new TAction(array($this, 'Delete'));
-        $action->setParameters($param); 
-        
-        new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
-    }
-    
-
-    public function Delete($param)
-    {
-        try
-        {
-            $key = $param['key']; 
-            
-            TTransaction::open('Felabs_DB'); 
-            
-            $object = new ProgramaEnsinoDisciplina($key, FALSE); 
-            $object->delete(); 
-            
-            TTransaction::close(); 
-            $this->onReload( $param ); 
-            new TMessage('info', AdiantiCoreTranslator::translate('Record deleted')); 
-        }
-        catch (Exception $e) 
-        {
-            new TMessage('error', $e->getMessage()); 
-            TTransaction::rollback(); 
-        }
-    }
-
 
     public function show()
     {

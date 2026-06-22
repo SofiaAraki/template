@@ -1,20 +1,16 @@
 <?php
-
 class ConteudoProgramaticoFormEdit extends TPage
 {
     protected $form; 
     protected $detail_list;
-    
 
     public function __construct()
     {
         parent::__construct();
         
-        
         // creates the form
         $this->form = new BootstrapFormBuilder('form_ConteudoProgramatico');
         $this->form->setFormTitle('Conteudo Programático');
-        
         
         // master fields
         $id = new TEntry('id');
@@ -29,12 +25,9 @@ class ConteudoProgramaticoFormEdit extends TPage
 
         $copia_disciplina = new TCombo('copia_disciplina');
 
-
         $curso->setEditable(FALSE);
         $turma->setEditable(FALSE);
         $nome_disciplina->setEditable(FALSE);
-
-
 
         TTransaction::open('Felabs_DB');
         
@@ -51,7 +44,6 @@ class ConteudoProgramaticoFormEdit extends TPage
         $repository = new TRepository('VwProfessordisciplinassemestre');
 
         $ano = date('Y');
-
         $mes = date('m');
 
         if($mes < 8)
@@ -62,7 +54,6 @@ class ConteudoProgramaticoFormEdit extends TPage
         {
             $semestre = 2;
         }
-        
             
         // creates a criteria
         $criteria = new TCriteria;
@@ -72,16 +63,10 @@ class ConteudoProgramaticoFormEdit extends TPage
         $criteria->add(new TFilter('Semestre', '=', $semestre), TExpression::AND_OPERATOR);
         $criteria->add(new TFilter('CodEntidade', '=', $loggedUnitProf), TExpression::AND_OPERATOR);
        
-
-        //echo $criteria->dump();
-
-
         $repo = $repository->load($criteria);
       
-
         $items = [];
         $i = 0;
-
         foreach($repo as $row)
         {
             $stringCodDisciplina = $repo[$i]->CodGradeDisciplinaEtapaFrente;
@@ -90,30 +75,19 @@ class ConteudoProgramaticoFormEdit extends TPage
             $i++;
         }
 
-
-        /*$disciplina->addItems($items);
-
-        $change_action = new TAction(array($this, 'onChangeAction'));
-        
-        $disciplina->setChangeAction($change_action);*/
-
-
         // detail fields
         $detail_id = new THidden('detail_id');
         $detail_data_aula = new TDate('detail_data_aula');
         $detail_conteudo = new TText('detail_conteudo');
 
-
         $detail_data_aula->setMask('dd/mm/yyyy');
         $detail_data_aula->setDatabaseMask('yyyy-mm-dd');
-
 
         if (!empty($id))
         {
             $id->setEditable(FALSE);
         }
 
-        
         // master fields
         $this->form->addFields( [new TLabel('Id')], [$id] );       
         $this->form->addFields( [new TLabel('Disciplina')], [$nome_disciplina] );
@@ -124,11 +98,9 @@ class ConteudoProgramaticoFormEdit extends TPage
         $this->form->addFields([$system_user_id] );
         $this->form->addFields([$data_reg] );
 
-
         $curso->setSize('100%');
         $disciplina->setSize('100%');
         $turma->setSize('100%');
-        
         
         // detail fields
         $this->form->addContent( ['<h4>Conteúdo por Data</h4><hr>'] );
@@ -136,27 +108,22 @@ class ConteudoProgramaticoFormEdit extends TPage
         $this->form->addFields( [new TLabel('Data Aula')], [$detail_data_aula] );
         $this->form->addFields( [new TLabel('Conteudo')], [$detail_conteudo] );
 
-
         $add = TButton::create('add', [$this, 'onSaveDetail'], 'Adicionar', 'fa:plus');
         $this->form->addFields( [], [$add] )->style = 'background: whitesmoke; padding: 5px; margin: 1px;';
-
         
         $this->detail_list = new BootstrapDatagridWrapper(new TQuickGrid);
         $this->detail_list->style = "min-width: 700px; width:100%;margin-bottom: 10px";
         $this->detail_list->setId('ConteudoProgramatico_list');
 
-        
         // items
         $this->detail_list->addQuickColumn('Data Aula', 'data_aula', 'left', 50);
         $this->detail_list->addQuickColumn('Conteudo', 'conteudo', 'left', 100);
-
 
         // detail actions
         $this->detail_list->addQuickAction( 'Edit',   new TDataGridAction([$this, 'onEditDetail']),   'id', 'fa:edit blue');
         $this->detail_list->addQuickAction( 'Delete', new TDataGridAction([$this, 'onDeleteDetail']), 'id', 'fas:trash-alt red');
         $this->detail_list->createModel();
         
-
         $panel = new TPanelGroup;
         $panel->add($this->detail_list);
         $panel->getBody()->style = 'overflow-x:auto';
@@ -173,7 +140,6 @@ class ConteudoProgramaticoFormEdit extends TPage
         $change_action_copia = new TAction(array($this, 'onChangeActionCopia'));
         $copia_disciplina->setChangeAction($change_action_copia);
         
-        
         // create the page container
         $container = new TVBox;
         $container->style = 'width: 100%';
@@ -182,8 +148,7 @@ class ConteudoProgramaticoFormEdit extends TPage
         parent::add($container);
     }
 
-
-     public static function onChangeActionCopia($param)
+    public static function onChangeActionCopia($param)
     {
         // define the delete action
         $action = new TAction(array(__CLASS__, 'ChangeActionCopia'));
@@ -246,7 +211,6 @@ class ConteudoProgramaticoFormEdit extends TPage
         }
     }
 
-
     public static function onChangeAction($param)
     {
         TTransaction::open('dados_fei');
@@ -272,9 +236,6 @@ class ConteudoProgramaticoFormEdit extends TPage
         $criteria->add(new TFilter('Semestre', '=', $semestre), TExpression::AND_OPERATOR);//$semestre
 
         $repo = $repository->load($criteria);
-
-        //var_dump($repo[0]);
-
 
         $obj = new StdClass;
         $obj->curso = $repo[0]->NomeCurso;
@@ -326,7 +287,6 @@ class ConteudoProgramaticoFormEdit extends TPage
             new TMessage('error', $e->getMessage());
         }
     }
-    
 
     public static function onEditDetail( $param )
     {
@@ -341,22 +301,9 @@ class ConteudoProgramaticoFormEdit extends TPage
         
         TForm::sendData( 'form_ConteudoProgramatico', $data );
     }
-    
 
     public function onDeleteDetail( $param )
     {
-        // reset items
-        //$data = new stdClass;
-        //$data->detail_data_aula = '';
-        //$data->detail_conteudo = '';
-          
-        // clear form data
-        //TForm::sendData('form_ConteudoProgramatico', $data );
-        
-        // get detail id
-        //$detail_id = $param['key'];
-
-
         TTransaction::open('Felabs_DB'); 
         
         $object = new ConteudoProgramaticoItem($param['key']);
@@ -371,7 +318,6 @@ class ConteudoProgramaticoFormEdit extends TPage
 
         TApplication::loadPage('ConteudoProgramaticoForm', 'onEdit', $parametro);
     }
-
 
     public function onReload($param)
     {
@@ -391,8 +337,7 @@ class ConteudoProgramaticoFormEdit extends TPage
         }
         
         $this->loaded = TRUE;
-    }
-    
+    }   
 
     public function onEdit($param)
     {
@@ -471,8 +416,7 @@ class ConteudoProgramaticoFormEdit extends TPage
             new TMessage('error', $e->getMessage());
             TTransaction::rollback();
         }
-    }
-    
+    } 
 
     public function onSave()
     {
@@ -483,7 +427,6 @@ class ConteudoProgramaticoFormEdit extends TPage
             $data = $this->form->getData();
             $master = new ConteudoProgramatico;
 
-            //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
             $userid = TSession::getValue('userid');
             $user = new SystemUser($userid);    
 
@@ -556,7 +499,6 @@ class ConteudoProgramaticoFormEdit extends TPage
             TTransaction::rollback();
         }
     }
-    
 
     public function show()
     {

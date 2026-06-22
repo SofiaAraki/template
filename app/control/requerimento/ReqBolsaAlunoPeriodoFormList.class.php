@@ -46,8 +46,8 @@ class ReqBolsaAlunoPeriodoFormList extends TPage
         $data_inicio->setMask('dd/mm/yyyy');
         $data_fim->setMask('dd/mm/yyyy');
 
-        $this->form->addAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save green');
-        $this->form->addAction(('Novo'), new TAction(array($this, 'onEdit')), 'fa:eraser red');
+        $this->form->addAction(_t('Clear'), new TAction(array($this, 'onEdit')), 'fa:eraser red');
+        $this->form->addAction(_t('Save'), new TAction(array($this, 'onSave')), 'far:save green');
         
         // creates a DataGrid
         $this->datagrid = new BootstrapDatagridWrapper(new TQuickGrid);

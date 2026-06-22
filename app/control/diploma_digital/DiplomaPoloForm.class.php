@@ -196,7 +196,7 @@ class DiplomaPoloForm extends TPage
 
     public static function onOpcaoCodigoEmecChange($param)
     {
-        $opcao_codigo = $param['opcao_codigo_emec'];      
+        $opcao_codigo = $param['opcao_codigo_emec'] ?? [];      
         
         if($opcao_codigo == 'Possui código EMEC')
         {

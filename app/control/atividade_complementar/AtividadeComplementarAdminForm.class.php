@@ -551,7 +551,7 @@ class AtividadeComplementarAdminForm extends TWindow
             
             
             //Atividade ID vai "substituir" o tipo_atividade ao ser exibida no histórico, então os dois campos precisam referenciar a mesma atividade
-            $atividade_id = $param['cadastro_atividade_id'];
+            $atividade_id = $param['cadastro_atividade_id'] ?? nul;
             $cadastro_atividade = new AtividadeComplementarCadastro($atividade_id);
             
             
@@ -924,7 +924,7 @@ class AtividadeComplementarAdminForm extends TWindow
         $obj->cod_prof_responsavel = $object->cod_prof_responsavel;
         $obj->titulacao_prof_responsavel = $object->titulacao_prof_responsavel;
                         
-        TForm::sendData('form_AtividadeComplementar', $obj);    
+        TForm::sendData('form_AtividadeComplementarAdmin', $obj);    
     }
 }
 

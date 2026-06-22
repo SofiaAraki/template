@@ -242,7 +242,7 @@ class DiplomaDiplomadoForm extends TPage
 
     public static function onDocumentoChange($param)
     {
-        $documento = $param['documento_identificacao'];
+        $documento = $param['documento_identificacao'] ?? null;
 
         if($documento == 'RG')
         {
@@ -328,7 +328,7 @@ class DiplomaDiplomadoForm extends TPage
     
     public static function onOpcaoNacionalidadeChange($param)
     {
-        $nacionalidade = $param['opcao_nacionalidade'];
+        $nacionalidade = $param['opcao_nacionalidade'] ?? null;
 
         if($nacionalidade == 'Brasileira' OR $nacionalidade == 'Brasileiro')
         {

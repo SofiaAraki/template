@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+<style type="text/css">
+.TIT {
+	text-align: center;
+}
+.TIT2 {
+	text-align: center;
+}
+.timbre {
+	text-align: center;
+}
+body,td,th {
+	font-size: 16px;
+}
+</style>
+</head>
+
+<div><img src="file: app/resources/untitled.jpg" width='100%' height='100%'></div>
+<body>
+
+<table width="762" border="0" align="center" cellpadding="2" cellspacing="0" style=" float: left; font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;">
+   <tbody>
+
+   <tr style="height: 64px;">
+   <td style="border-bottom-style: solid; border-bottom-width: medium; text-align: center; height: 64px; width: 750px;" colspan="2" bgcolor="#E6F2FF">
+   <h2><strong>TICKET DE ATENDIMENTO - ID: {$id}</strong></h2></td>
+   </tr>
+   <tr style="height: 30px;">
+   <td style="height: 30px; width: 750px;" colspan="2"><strong>Solicitante:</strong> {$system_user_id}</td>
+   </tr>
+   <tr style="height: 30px;">
+   <td style="height: 30px; width: 750px;" colspan="2"><strong>Matr&iacute;cula atual:</strong> {$matricula_aluno}</td>
+   </tr>
+   <tr style="height: 30px;">
+   <td style="height: 30px; width: 750px;" colspan="2"><strong>Unidade:</strong> {$departamento}</td>
+   </tr>
+   <tr style="height: 30px;">
+   <td width="500" style="height: 30px; width: 500px;"><strong>Categoria:</strong> {$categoria}</td>
+   <td width="250" style="height: 30px; width: 250px;"><strong>Data de abertura:</strong> {$data_reg}</td>
+   </tr>
+   <tr style="height: 30px;">
+   <td style="height: 30px; width: 750px;" colspan="2"><strong>Aberto por:</strong> {$quem_abriu}</td>
+   </tr>
+   </tbody>
+</table>
+
+
+<table data-detailmodel="TicketItem" class="mce-table"  width="850" border="1" align="center" cellpadding="3" cellspacing="0" style="float: left; font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif; font-size: 12px; position: relative; margin-top: 425px;">
+   <thead>
+   <tr>
+   <th width="226" style="text-align: center" >Usu&aacute;rio</th>
+   <th width="392" style="text-align: center" >Descri&ccedil;&atilde;o</th>
+   <th width="122" style="text-align: center" >Data</th>
+   </tr>
+   </thead>
+   <tbody>
+   <tr>
+   <td>{$system_user_id}</td>
+   <td >{$descricao}</td>
+   <td >{$data_reg}</td>
+   </tr>
+   </tbody>
+</table>
+</body>
+</html>

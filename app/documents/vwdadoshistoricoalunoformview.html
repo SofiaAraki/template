@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+<style type="text/css">
+div {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+table {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	border-color: #999;
+	text-align: left;
+		
+}
+
+table2 {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+	position: fixed;
+	top: -20px;
+	left: 0px;
+	right: 0px;
+	height: 150px;
+	color: black;
+	text-align: center;
+	line-height: 15px;
+	margin-top: -20px;
+	
+	            }
+
+.curso1 {
+	font-size: 16px;
+}
+.curso2 {
+	font-size: 12px;
+}
+.curso2 {
+	font-size: 12px;
+}
+.IDENT {
+	font-weight: bold;
+	font-size: 18px;
+	text-align: center;
+}
+.NOME {
+	font-weight: bold;
+	line-height: 15px;
+	text-align: left;
+}
+.NOME1 {
+	text-align: left;
+}
+.lb {
+	font-size: xx-small;
+	line-height: 5px;
+}
+.habc {
+	text-align: center;
+	font-size: 10px;
+}
+.ch {
+	text-align: right;
+	font-weight: bold;
+	font-size: 14px;
+}
+.mce-table {
+	font-weight: bold;
+	text-align: left;
+}
+.mce-table2 {
+	font-weight: normal;
+	font-size: 12px;
+	text-align: left;
+	font-family: Arial, Helvetica, sans-serif;
+	
+}
+.mce-table4 {
+	font-weight: bold;
+	font-size: 14px;
+	text-align: right;
+	font-family: Arial, Helvetica, sans-serif;
+	
+}
+.tabledisc {
+	font-weight: bold;
+	text-align: center;
+}
+.mce-table3 {
+	text-align: center;
+	padding: 0px;
+	
+}
+.tabledisc tr .tabledisc {
+	font-weight: normal;
+}
+.esp {
+	font-size: 9px;
+	margin-top: 150px;
+}
+</style>
+
+</head>
+
+<body class="esp">
+
+<header>
+    <div align="center"><b><font size="4">FUNDAÇÃO EDUCACIONAL DE ITUVERAVA</font></b></div>
+    <div align="center" class="mce-table3"><font size="0">CNPJ 45.332.194/0001-60  -  Inscrição Estadual 389.013.829.111 <br />Entidade Filantrópica de Utilidade Pública e Detentora do CEBAS no MEC <br />
+Rua Cel. Flauzino Barboza Sandoval, 1259 - Ituverava -SP CEP: 14500-000 Fone/Fax:(16)-3729-9000</font></div><br />
+    <div align="center"><b><font size="1">MANTIDA</font></b></div><BR>
+    <div align="center"><strong><font size="3"></a>{$NomeFantasia}</font></strong></div>
+ 	<div align="center"><font size="0">{$HISTORICO_CAB1}</font></div>
+    <div align="center"><font size="0">{$HISTORICO_CAB2}</font></div>
+    <div align="center"><font size="0">{$HISTORICO_CAB3}</font></div>
+    <div align="center"><font size="0">{$HISTORICO_CAB4}</font></div>
+</header>
+
+
+<div align="center"><b><font size="4">HISTÓRICO ESCOLAR</font></b></div><br>
+
+<table width="100%" border="0">
+  <tr>
+    <td colspan="4" bgcolor="#CCCCCC" class="IDENT">IDENTIFICAÇÃO</td>
+  </tr>
+  <tr>
+    <td colspan="4"><span class="NOME">NOME SOCIAL: </span>{$Nome}</td>
+  </tr>
+  <tr>
+    <td colspan="4"><span class="NOME">NOME CIVIL: </span>{$NomeIdentificacaoCivil}</td>
+  </tr>
+  <tr class="lb">
+    <td height="1" colspan="4">&nbsp;</td>
+  </tr>
+   <tr>
+    <td colspan="2"><span class="NOME">RG: </span>{$Rg} - {$RgOrgaoExpedidor}</td>
+    <td colspan="2"><span class="NOME">CPF: </span>{$CPF} </td>
+  <tr class="lb">
+    <td height="1" colspan="4">&nbsp;</td>
+  </tr>
+
+    
+  </tr>
+</table>
+
+<table width="100%" border="0">
+    <tr>
+    <td colspan="4" bgcolor="#CCCCCC" class="IDENT">NASCIMENTO</td>
+  </tr>
+  <tr>
+    <td colspan="2"><span class="NOME">DATA NASCIMENTO: </span>{$Datanascimento}</td>
+    <td><span class="NOME">NATURALIDADE: </span>{$Naturalidade}/{$NaturalidadeUF}</td>
+    <td><span class="NOME">NACIONALIDADE: </span>{$Nacionalidade}</td>
+  </tr>
+  <tr class="lb">
+    <td height="1" colspan="4">&nbsp;</td>
+  </tr>
+</table>
+
+<table width="100%" border="0">
+    <tr>
+    <td colspan="3" bgcolor="#CCCCCC" class="IDENT">ENSINO MÉDIO</td>
+  </tr>
+  <tr>
+    <td><span class="NOME">ESTABELECIMENTO: </span>{$EscolaEnsinoMedio}</td>
+    <td><span class="NOME">CIDADE: </span>{$EscolaEnsinoMedioLocal}</td>
+    <td><span class="NOME">ANO: </span>{$DataConclEMExt}</td>
+  </tr>
+  <tr class="lb">
+    <td height="1" colspan="4">&nbsp;</td>
+  </tr>
+</table>
+
+<table width="100%" border="0">
+    <tr>
+    <td colspan="3" bgcolor="#CCCCCC" class="IDENT">FORMA DE INGRESSO</td>
+  </tr>
+  <tr>
+    <td><span class="NOME">TIPO: </span>{$TipoIngresso}</td>
+    <td><span class="NOME">DATA: </span>{$DataIngresso}</td>
+  </tr>
+  <tr class="lb">
+    <td height="1" colspan="4">&nbsp;</td>
+  </tr>
+</table>
+
+
+<table width="100%" border="0" cellspacing=0 cellpadding=0>
+  <tr>
+    <td height="26" bgcolor="#CCCCCC" class="IDENT">{$Nomehistorico}</td>
+  </tr>
+  <tr>
+    <td bgcolor="#CCCCCC" class="habc">{$Habilitacao1} <br />{$Habilitacao2}<br />{$Reconhecimento}<br /></td>
+  </tr>
+</table>
+ 
+<br>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#CCCCCC" class="IDENT" >COMPONENTES CURRICULARES</td>
+  </tr>
+</table>
+    
+<table data-detailmodel="VwHistoricodisciplina" width="100%" border="0.5" cellspacing=0 cellpadding=2 bordercolor="#999999">
+  <thead >
+      <tr>
+        <td colspan="6" class="mce-table2"><strong>Nome: </strong>{$Nome}</td>
+    </tr>
+      <tr >
+        <td bgcolor="#CCCCCC" class="tabledisc">ETAPA</td>
+        <td bgcolor="#CCCCCC" class="tabledisc">ANO/SEM</td>
+        <td bgcolor="#CCCCCC" class="tabledisc">DISCIPLINA</td>
+        <td bgcolor="#CCCCCC" class="tabledisc"><span class="mce-table2"></span>NOTA</td>
+        <td bgcolor="#CCCCCC" class="tabledisc">C.H</td>
+        <td bgcolor="#CCCCCC" class="tabledisc">RESULTADO</td>
+    </tr>
+  </thead>
+  <tbody>
+  <tr class="mce-table2">
+    <td height="35" class="mce-table3">{$Etapa}</span></td>
+    <td class="mce-table3">{$Ano}/{$Sem}</span></td>
+    <td>{$PrefixoDisciplina} <strong>{$NomeDisciplina}</strong>{$SufixoDisciplina}<br>
+      Prof. {$nome}{$NomeProf} - {$HabilitacaoProf3} {$TituloProf}</td>
+    <td class="mce-table3">{$NotaFinal}</td>
+    <td class="mce-table3">{$CHParcial}</td>
+    <td class="mce-table3">{$Sit}</td>
+    </tr>
+    <tfoot>
+      <tr style="background-color: #999999;">
+      <td colspan="4"class="mce-table4"><b>TOTAL DA CARGA HORÁRIA.....</b></td>
+     <td class="mce-table4"><b>sum({$CHParcial})</b></td>
+		 <td class="mce-table3"><b> </b></td>
+      </tr>
+   </tfoot>
+  </tbody>
+</table>
+
+<br>
+
+<div style="page-break-after: always"></div>
+
+<table width="100%" border="0">
+     <tr>
+         <td bgcolor="#CCCCCC" class="IDENT">OBSERVAÇÕES</td>
+     </tr>
+     <tr>
+       <td style="text-align: left; font-size: 12px;" ><p>{$ObservacaoCadastral1}</p>
+         <p>{$ObservacaoCadastral2}</p>
+         <p>{$ObservacaoCadastral3}</p>
+         <p>{$ObservacaoCadastral4}</p>
+        <p>{$ObservacaoCadastral5}</p>
+         <br />
+           <p>{$ObservacaoFinais1}</p>
+           <p>{$ObservacaoFinais2} </p>
+           <p>{$ObservacaoFinais3} </p>
+           <p>{$ObservacaoFinais4}</p> 
+      <p>{$ObservacaoFinais5}</p></td>
+  </tr>
+</table>
+<br>
+
+<table width="100%" border="0">
+  <tr>
+    <td><strong>Coordenador do Curso - Área de Formação - Titulação:</strong> {$NomeCoordenador} - {$HabilitacaoProf1} - {$HabilitacaoProf3}</td>
+  </tr>
+</table>
+<br>
+<table width="100%" border="0">
+  <tr bgcolor="#CCCCCC" class="tabledisc">
+    <td bgcolor="#CCCCCC"><strong>CONCLUSÃO DO CURSO</strong></td>
+    <td ><strong>COLAÇÃO DE GRAU</strong></td>
+    <td ><strong>EXPEDIÇÃO DO DIPLOMA</strong></td>
+    <td ><strong>EXPEDIÇÃO DO HISTÓRICO</strong></td>
+  </tr>
+  <tr>
+    <td style="text-align: center">{$DataConclusaoCurso}</td>
+    <td style="text-align: center" >{$DataColacaoGrau}</td>
+    <td style="text-align: center" >{$DataExpedicaoDiploma}</td>
+    <td style="text-align: center" >{$dataexphistorico}</td>
+  </tr>
+</table>
+<br>
+<br>
+<br>
+<br>
+<br>
+<table width="100%" border="0" class="tabledisc">
+      <tr>
+        <td colspan="2" align="center" style="text-align: center"><font size="16px"><strong>____________________________</strong></td>
+        <td colspan="2" align="center" style="text-align: center"><font size="16px"><strong>____________________________</strong></td>
+
+      </tr>
+      <tr>
+        <td colspan="2" align="center" class="tabledisc"><span style="font-weight: bold">{$SECRETARIO_DADOS1}</span><br/> 
+        {$SECRETARIO_DADOS2} <br/>{$SECRETARIO_DADOS3}</td>
+        <td colspan="2" align="center" class="tabledisc" style="text-align: center"><span style="font-weight: bold">{$DIRETOR_DADOS1} </span><br/> 
+        <span style="font-weight: normal">{$DIRETOR_DADOS2} <br/>{$DIRETOR_DADOS3}</span></td>
+
+      </tr>
+</table>
+    
+
+
+   
+   
+   <!--<tfoot>
+      <tr style="background-color: #cce3fb;">
+         <td style="width: 68px;"> </td>
+         <td style="width: 158px;"> </td>
+         <td style="width: 171px;"> </td>
+         <td style="width: 244px;text-align:center">sum({$quantidade})</td>
+      </tr>
+   </tfoot>-->
+
+</body>
+</html>

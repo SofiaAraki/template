@@ -4,7 +4,7 @@ class TicketFormList extends TPage
     protected $form; 
     protected $loaded;
 
-    public function __construct( $param )
+    public function __construct()
     {
         parent::__construct();
         
@@ -66,9 +66,8 @@ class TicketFormList extends TPage
         $categoria->setChangeAction($change_action);
 
         // create the form actions
-        $btn = $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $btn = $this->form->addQuickAction('Voltar', new TAction(array('TicketList', 'onReload')), 'far:arrow-alt-circle-left blue');
+        $this->form->addQuickAction(_t('Back'), new TAction(array('TicketList', 'onReload')), 'far:arrow-alt-circle-left blue');
+        $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'onSave')), 'fa:save green');
         
         // vertical box container
         $container = new TVBox;
@@ -78,7 +77,6 @@ class TicketFormList extends TPage
         
         parent::add($container);
     }
-
 
     public static function onExitAction($param) //INSERE NOME, EMAIL E DADOS DA MATRÍCULA
     {
@@ -155,7 +153,6 @@ class TicketFormList extends TPage
         TForm::sendData('form_Ticket', $object);
     }
        
-
     public static function onChangeAction($param)
     {
         TTransaction::open('Felabs_DB');
@@ -270,8 +267,8 @@ class TicketFormList extends TPage
                     foreach($codEntidades as $codEntidade) //CADASTRA O ALUNO NAS ENTIDADES DAS QUAIS ELE POSSUI MATRÍCULA
                     {
                         $criteriaT = new TCriteria;
-                        $criteriaT->add( new TFilter(system_user_id, '=', $novoAluno->id));
-                        $criteriaT->add( new TFilter(system_unit_id, '=', $codEntidade));
+                        $criteriaT->add( new TFilter('system_user_id', '=', $novoAluno->id));
+                        $criteriaT->add( new TFilter('system_unit_id', '=', $codEntidade));
                    
                         $unitTests = SystemUserUnit::getObjects($criteriaT);
      
@@ -317,7 +314,7 @@ class TicketFormList extends TPage
             $ticketPart->system_user_id = $object->system_user_id;
             $ticketPart->store();
 
-            if ($data->destino_user_id) 
+            if (!empty($data->destino_user_id)) 
             {
                 foreach ($data->destino_user_id as $user_id) 
                 {
@@ -391,6 +388,5 @@ Fundação Educacional de Ituverava
 
     public function onShow()
     {
-        parent::show();
     }
 }

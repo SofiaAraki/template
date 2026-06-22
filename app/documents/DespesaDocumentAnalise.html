@@ -1,0 +1,96 @@
+<div align="center"><b>FUNDAÇÃO EDUCACIONAL DE ITUVERAVA</b></div>
+<div align="center"><font size="2">CNPJ:45.332.194/0001-60 - IE 389.013.829.111</font></div>
+<div align="center"><font size="2">Entidade Filantrópica de Utilidade Pública e Detentora do CEBAS no MEC</font></div>
+<div align="center"><font size="2"><b>MANTIDAS</font></b></div>
+<div align="center"><font size="2">Colégio NSC(Sistema COC) e Colégio Van Gogh(Sistema Anglo)</font></div>
+<div align="center"><font size="2">Faculdade Filosofia, Ciências e Letras(FFCL); Faculdade Dr. Francisco Maeda(FAFRAM)</font></div>
+<div align="center"><font size="2">Faculdade São Joaquim da Barra (FAJOB)</font></div><br>
+
+<table class="mce-table" style="border-collapse: collapse; border: 1px solid black; height: 118px;" border="1" width="850" cellspacing="0" cellpadding="5">
+   <tbody>
+		
+      <tr>
+         <td style="width: 411px; text-align: center; background: #c0c0c0" colspan="2"><strong>RELATÓRIO INDIVIDUAL DE DESPESAS - ID: {$id}</strong></td>
+      </tr>
+      <tr>
+		 <td style="width: 411px;"><b>Professor:</b> {$nome} </td><td style="width: 411px;"><b>Curso:</b> {$curso} </td>
+      </tr>
+	  <tr>
+		 <td style="width: 411px;"><b>Trecho:</b> {$trecho_professor->nome_trecho} </td><td style="width: 411px;"></td>
+      </tr>
+	   <tr>
+		 <td style="width: 411px;"><b>Distância em Km:</b> {$trecho_professor->distancia} </td><td style="width: 411px;"><b>Dias que ministrou aulas:</b> {$qtd_aulas} </td>
+      </tr>
+	  <tr>
+		 <td style="width: 411px;"><b>Quantidade de dias:</b> {$qtd_dias} </td><td style="width: 411px;"><b>Observação:</b> {$obs} </td>
+      </tr>
+	  <tr>
+		 <td style="width: 411px;"><b>Data do registro:</b> {$data_reg} </td><td style="width: 411px;"><b>Total por dia:</b> {$total_dia} Km</td>
+      </tr>
+	  <tr>
+		 <td style="width: 411px;"><b>Total percorrido:</b> {$total_percorrido} Km </td><td style="width: 411px;"><b>Custo médio Km rodado:</b> R$ {$custo_medio} </td>
+      </tr>
+	  <tr>
+		 <td style="width: 411px;"><b>Total de despesas:</b> R$ {$valor_total} </td><td style="width: 411px;"><b>Situação:</b> {$situacao} </td>
+      </tr>
+   </tbody>
+</table>
+
+<br>
+  
+</table>
+
+<table data-detailmodel="DespesaProfessorItem" class="mce-table" style="border-collapse: collapse; border: 1px solid #929292; height: 75px;" border="1" width="850" cellspacing="0" cellpadding="3">
+   <thead>
+	  <tr>
+         <td style="width: 411px; text-align: center; background: #c0c0c0" colspan="4"><strong>ITEMS</strong></td>
+      </tr>
+      <tr style="background-color: #96c0e6;">
+         <th style="width: 200px;">Categoria</th>
+         <th style="width: 120px;">Data</th>
+         <th style="width: 100px;">Quantidade</th>
+         <th style="width: 100px;">Valor</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr style="background-color: #f0f0f0;">
+         <td style="width: 200px;">{$item_tipo}</td>
+         <td style="width: 120px;">{$data_despesa}</td>
+         <td style="width: 100px;">{$quantidade}</td>
+         <td style="width: 100px;text-align:right">R$ {$valor}</td>
+      </tr>
+   </tbody>
+   <tfoot>
+      <tr style="background-color: #f0f0f0;">
+         <td style="width: 200px;"><b>Total de despesas: </b></td>
+         <td style="width: 120px;"> </td>
+         <td style="width: 100px;"> </td>
+         <td style="width: 100px;text-align:right">R$ {$valor_total}</td>
+      </tr>
+   </tfoot>
+<br>
+</table>
+
+<table class="mce-table" style="border-collapse: collapse; border: 1px solid black; height: 118px;" border="1" width="850" cellspacing="0" cellpadding="5">
+   <tbody>
+		
+      <tr>
+         <td style="width: 411px; text-align: center; background: #c0c0c0" colspan="2"><strong>ANÁLISE DOS DADOS</strong></td>
+      </tr>
+      <tr>
+		 <td style="width: 411px;"><b>Observação:</b> {$obs_analise} </td><td style="width: 411px;"><b>Análise (Cont.) feita por:</b> {$analise->name} </td>
+      </tr>
+	  <tr>
+		 <td style="width: 411px;"><b>Observação:</b> {$obs_parecer} </td><td style="width: 411px;"><b>Parecer:</b> {$parecer->name} </td>
+      </tr>
+	  <tr>
+		 <td style="width: 411px;"><b>Data do registro:</b> {$data_final} </td><td style="width: 411px;"><b>Situação:</b> {$situacao} </td>
+      </tr>
+	  
+   </tbody>
+</table>
+
+<br>
+  
+</table>
+

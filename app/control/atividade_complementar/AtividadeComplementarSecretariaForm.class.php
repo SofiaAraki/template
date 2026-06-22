@@ -412,7 +412,7 @@ class AtividadeComplementarSecretariaForm extends TPage
         {
             TTransaction::open('Felabs_DB');
             
-            $atividade_id = $param['cadastro_atividade_id'];
+            $atividade_id = $param['cadastro_atividade_id'] ?? null;
             
             $cadastro_atividade  = new AtividadeComplementarCadastro($atividade_id);
             

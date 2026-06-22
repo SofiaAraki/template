@@ -5,7 +5,7 @@ class TicketList extends TPage
     private $datagrid; 
     private $pageNavigation;
     private $loaded;
- 
+
     public function __construct()
     {
         parent::__construct();
@@ -44,19 +44,18 @@ class TicketList extends TPage
         $system_user_id->addItems($items);
 
         // add the fields
-        $this->form->addQuickField('Id do Ticket', $id, '100%');
-        $this->form->addQuickField('Descrição', $descricao, '100%');
-        $this->form->addQuickField('Solicitante', $system_user_id, '100%');
-        $this->form->addQuickField('Status', $status, '100%');
-        $this->form->addQuickField('Categoria', $categoria, '100%');
-        $this->form->addQuickField('Data Reg', $data_reg, '100%');
+        $this->form->addQuickField('Id do Ticket', $id, '80%');
+        $this->form->addQuickField('Descrição', $descricao, '80%');
+        $this->form->addQuickField('Solicitante', $system_user_id, '80%');
+        $this->form->addQuickField('Status', $status, '80%');
+        $this->form->addQuickField('Categoria', $categoria, '80%');
+        $this->form->addQuickField('Data Reg', $data_reg, '80%');
 
         // keep the form filled during navigation with session data
         $this->form->setData( TSession::getValue('Ticket_filter_data') );
         
         // add the search form actions
-        $btn = $this->form->addQuickAction(('Buscar'), new TAction(array($this, 'onSearch')), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fas:search');
         $this->form->addQuickAction('Novo Ticket',  new TAction(array('TicketFormList', 'onShow')), 'fas:plus green');
         
         // creates a Datagrid

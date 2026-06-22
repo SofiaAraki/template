@@ -116,12 +116,11 @@ class TicketView extends TPage
         $this->form->addQuickField('Data Reg', $data_reg, '100%');
 
         // create the form actions
-        $btn = $this->form->addQuickAction(('Salvar Alterações'), new TAction(array($this, 'onSave')), 'fas:save');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addQuickAction(('Salvar Alterações'), new TAction(array($this, 'onSave')), 'fa:save green');
         
         if($user->funcao_legado == '') //SECRETARIA E ADMINS
         {
-            $btn1 = $this->form->addQuickAction('Voltar', new TAction(array('TicketFormList', 'onReload')), 'fas:arrow-alt-circle-left blue');
+            $btn1 = $this->form->addQuickAction('Voltar', new TAction(array('TicketFormList', 'onShow')), 'fas:arrow-alt-circle-left blue');
             $btn2 = $this->form->addQuickAction('Fechar Ticket', new TAction(array($this, 'onFechaTicket')), 'fas:times');
             $btn2->class = 'btn btn-sm btn-danger';
             $btn3 = $this->form->addQuickAction('Imprimir Atendimento', new TAction(array($this, 'onImprimeAtendimento')), 'fas:print');

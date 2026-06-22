@@ -331,8 +331,8 @@ class DisciplinaOptativaCurriculoForm extends TPage
         {
             TTransaction::open('dados_fei');
             
-            $cod_disciplina = $param['cod_disciplina']; 
-            $cod_curriculo = $param['cod_curriculo'];
+            $cod_disciplina = $param['cod_disciplina'] ?? []; 
+            $cod_curriculo = $param['cod_curriculo'] ?? [];
             
             if($cod_disciplina AND $cod_curriculo)
             {
@@ -360,8 +360,8 @@ class DisciplinaOptativaCurriculoForm extends TPage
     
     public static function onChangeCargaHoraria($param)
     {
-        $cod_disciplina = $param['cod_disciplina'];
-        $opcao_carga_horaria = $param['opcao_carga_horaria'];
+        $cod_disciplina = $param['cod_disciplina'] ?? [];
+        $opcao_carga_horaria = $param['opcao_carga_horaria'] ?? [];
         
         if($opcao_carga_horaria)
         {    
@@ -476,8 +476,8 @@ class DisciplinaOptativaCurriculoForm extends TPage
     {
         try
         {
-            $opcao_carga_horaria = $param['opcao_carga_horaria'];
-            $etiquetas_selecionadas = $param['etiqueta'];
+            $opcao_carga_horaria = $param['opcao_carga_horaria'] ?? [];
+            $etiquetas_selecionadas = $param['etiqueta'] ?? [];
             
             TTransaction::open('Felabs_DB'); 
             

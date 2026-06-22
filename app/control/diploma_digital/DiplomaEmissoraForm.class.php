@@ -449,7 +449,7 @@ class DiplomaEmissoraForm extends TPage
     
     public static function onOpcaoCredenciamentoChange($param)
     {
-        $opcao_credenciamento_emec = $param['opcao_credenciamento_emec'];
+        $opcao_credenciamento_emec = $param['opcao_credenciamento_emec'] ?? null;
 
         if($opcao_credenciamento_emec == "Utilizar informações sobre ato regulatório")
         {
@@ -552,7 +552,7 @@ class DiplomaEmissoraForm extends TPage
     
     public static function onOpcaoRecredenciamentoChange($param)
     {
-        $opcao_recredenciamento_emec = $param['opcao_recredenciamento_emec'];
+        $opcao_recredenciamento_emec = $param['opcao_recredenciamento_emec'] ?? null;
         
         if($opcao_recredenciamento_emec == "Utilizar informações sobre ato regulatório")
         {
@@ -655,7 +655,7 @@ class DiplomaEmissoraForm extends TPage
     
     public static function onOpcaoRenovacaoChange($param)
     {
-        $opcao_renovacao_emec = $param['opcao_renovacao_emec'];
+        $opcao_renovacao_emec = $param['opcao_renovacao_emec'] ?? null;
         
         if($opcao_renovacao_emec == "Utilizar informações sobre ato regulatório")
         {

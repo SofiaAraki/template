@@ -1,22 +1,16 @@
 <?php
-
-
 class ContratoFinanceiroListMatricula extends TPage
 {
     protected $form;
 
-
     public function __construct( $param )
     {
-    
         parent::__construct();
-
 
         // creates the form
         $this->form = new BootstrapFormBuilder('form_ContratoFinanceiroListMatricula');
         $this->form->setFormTitle('Contrato Financeiro - Lançamento de Desconto');
         $this->form->setFieldSizes('100%');
-        
 
         // create the form fields
         $id = new THidden('id');
@@ -82,7 +76,6 @@ class ContratoFinanceiroListMatricula extends TPage
         $DataPrimeiraParcela = new TDate('DataPrimeiraParcela');
         $DataFinalContrato = new TEntry('DataFinalContrato');
 
-        
         $combo_prazo = [];
         $combo_prazo['Janeiro'] = "Janeiro";
         $combo_prazo['Fevereiro'] = "Fevereiro";
@@ -100,14 +93,12 @@ class ContratoFinanceiroListMatricula extends TPage
         $InicioPrestServico->addItems($combo_prazo);
         $TerminoPrestServico->addItems($combo_prazo);
 
-
         // add the fields
         //$this->form->addFields( [ new TLabel('Id'), $id ] );        
         $this->form->addFields( [ $id ] );
         
         $this->form->addFields( [new TFormSeparator('Dados do Aluno(a)')] );
 
-        
         $row = $this->form->addFields( [ new TLabel('Cod. Aluno'), $Codaluno ]);
         $row->layout = ['col-sm-2'];
         
@@ -210,7 +201,6 @@ class ContratoFinanceiroListMatricula extends TPage
                                        [ new TLabel('Data do Contrato por extenso'), $DataFinalContrato ]);
         $row->layout = ['col-sm-3', 'col-sm-9'];
         
-       
 
         // set sizes
         $id->setSize('50%');
@@ -270,30 +260,24 @@ class ContratoFinanceiroListMatricula extends TPage
         $DataPrimeiraParcela->setMask('dd/mm/yyyy');
         $DataPrimeiraParcela->setDatabaseMask('yyyy-mm-dd');
         
-
         $InicioPrestServico->addValidation('Início prest. serv.', new TRequiredValidator);
         $TerminoPrestServico->addValidation('Término prest. serv.', new TRequiredValidator);
         $DataPrimeiraParcela->addValidation('Data 1ª Parcela', new TRequiredValidator);
         $DataFinalContrato ->addValidation('Data do Contrato por extenso', new TRequiredValidator);       
         $DescontoComercial->addValidation('Desconto Comercial', new TRequiredValidator);
 
-
         $exit_action = new TAction(array($this, 'onExitAction'));
         $Codaluno->setExitAction($exit_action);
-
 
         if (!empty($id))
         {
             $id->setEditable(FALSE);
         }
 
-
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addActionLink(('Listar Contratos'),  new TAction(['ContratoFinanceiroAdm', 'onReload']), 'fa:list black');
+        $this->form->addActionLink(_t('Back'),  new TAction(['ContratoFinanceiroAdm', 'onReload']), 'fa:arrow-alt-circle-left blue');
+        $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save green');
 
-       
         // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';
@@ -303,12 +287,8 @@ class ContratoFinanceiroListMatricula extends TPage
         parent::add($container);
     }
 
-
     public function onSave( $param )
     {
-        //var_dump($param);
-       // die();
-
         try
         {
             TTransaction::open('Felabs_DB'); // open a transaction
@@ -344,24 +324,12 @@ class ContratoFinanceiroListMatricula extends TPage
         {
             new TMessage('error', $e->getMessage()); // shows the exception error message
         }
-    }
-
-
-    public function onClear( $param )
-    {
-        $this->form->clear();
-    }
-
-
-    function loadPage()
-    {}
-    
+    } 
 
     public static function onExitAction($param) //INSERE NOME, EMAIL E DADOS DA MATRÍCULA
     {
         $Cod_Aluno = $param['Codaluno'];
 
-      
         try
         {
             TTransaction::open('dados_fei');
@@ -498,63 +466,8 @@ class ContratoFinanceiroListMatricula extends TPage
         }
     }
 
-
-   /* public function onEdit( $param )
+    public function onShow()
     {
-        try
-        {
-            if (isset($param['key']))
-            {
-                $key = $param['key'];  // get the parameter $key
-                TTransaction::open('dados_fei'); // open a transaction
-                $object = new VwAlunoMatriculaEtapa($key); // instantiates the Active Record
 
-                $criteria = new TCriteria;
-                $criteria->add( new TFilter( 'Codaluno', '=', ($param['key']) ));
-            
-                $objects = VwAlunoMatriculaEtapa::getObjects($criteria);
-                
-                $ultimo = end($objects);
-
-                var_dump($ultimo);
-
-                $ultimo->Datanascimento = TDate::date2br($ultimo->Datanascimento);
-
-                $curso = $ultimo->CodCurso;
-
-
-                TTransaction::open('Felabs_DB');
-
-                $object_curso = new ContratoFinanceiro($curso);
-
-
-                $obj_curso = new stdclass();
-                $obj_curso->ValorAnoSem     = $object_curso->valor_total; 
-                $obj_curso->ValorAnoSemExt  = $object_curso->valor_total_extenso; 
-                $obj_curso->ValorParc1      = $object_curso->valor_primeira_parcela; 
-                $obj_curso->ValorParc1Ext   = $object_curso->varlor_prim_parcela_extenso; 
-                $obj_curso->ValorDmsParc    = $object_curso->valor_demais_parcelas;
-                $obj_curso->ValorDmsParcExt = $object_curso->valor_dms_parcelas_extenso;
-             
-
-                TForm::sendData('form_ContratoFinanceiroListMatricula',$obj_curso);
-
-                $this->form->setData($ultimo); // fill the form
-
-                TTransaction::close(); // close the transaction
-
-                TTransaction::close();
-            }
-            else
-            {
-                $this->form->clear(TRUE);
-            }
-        }
-        catch (Exception $e) // in case of exception
-        {
-            new TMessage('error', $e->getMessage()); // shows the exception error message
-            TTransaction::rollback(); // undo all pending operations
-        }
-    }*/
+    }
 }
-

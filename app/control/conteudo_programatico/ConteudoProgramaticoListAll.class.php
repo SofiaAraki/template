@@ -1,27 +1,14 @@
 <?php
-
-
 class ConteudoProgramaticoListAll extends TPage
 {
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
     private $loaded;
-    private $deleteButton;
-    
 
     public function __construct()
     {
         parent::__construct();
-        
-
-        if(TSession::getValue('userunitid') == 3)
-        {
-            new TMessage('info','Funcionalidade não disponível para FAFRAM');
-            die;
-        }
-        
         
         // creates the form
         $this->form = new TQuickForm('form_search_ConteudoProgramatico');
@@ -29,7 +16,6 @@ class ConteudoProgramaticoListAll extends TPage
         $this->form = new BootstrapFormWrapper($this->form);
         $this->form->style = 'display: table;width:100%'; 
         $this->form->setFormTitle('Conteudo Programático');
-        
 
         // create the form fields
         $id = new TEntry('id');
@@ -37,18 +23,15 @@ class ConteudoProgramaticoListAll extends TPage
         $disciplina = new TEntry('disciplina');
         $etapa = new TEntry('etapa');
         $turma = new TEntry('turma');
-        $status = new TEntry('status');
         $data_reg = new TEntry('data_reg');
         $system_user_id = new TEntry('system_user_id');
 
-
         // add the fields
-        $this->form->addQuickField('Id', $id, '100%');
+        //$this->form->addQuickField('Id', $id, '100%');
         $this->form->addQuickField('Curso', $curso, '100%');
         //$this->form->addQuickField('Disciplina', $disciplina, '100%');
         $this->form->addQuickField('Etapa', $etapa,  '100%');
         //$this->form->addQuickField('Turma', $turma, '100%');
-        //$this->form->addQuickField('Status', $status, '100%');
         //$this->form->addQuickField('Data Reg', $data_reg, '100%');
         //$this->form->addQuickField('System User Id', $system_user_id, '100%');
 
@@ -58,17 +41,13 @@ class ConteudoProgramaticoListAll extends TPage
         
         // add the search form actions
         $btn = $this->form->addQuickAction(('Buscar'), new TAction(array($this, 'onSearch')), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addQuickAction(_t('New'),  new TAction(array('ConteudoProgramaticoForm', 'onEdit')), 'bs:plus-sign green');
-        
+        $btn->class = 'btn btn-sm btn-primary';        
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid = new BootstrapDatagridWrapper($this->datagrid);
         $this->datagrid->style = 'width: 100%';
-        $this->datagrid->datatable = 'true';
-        // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
-        
+        $this->datagrid->datatable = 'true';        
 
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'right');
@@ -76,10 +55,8 @@ class ConteudoProgramaticoListAll extends TPage
         $column_disciplina = new TDataGridColumn('disciplina', 'Disciplina', 'left');
         $column_etapa = new TDataGridColumn('etapa', 'Etapa', 'left');
         $column_turma = new TDataGridColumn('turma', 'Turma', 'left');
-        $column_status = new TDataGridColumn('status', 'Status', 'left');
         $column_data_reg = new TDataGridColumn('data_reg', 'Data do registro', 'left');
         $column_system_user_id = new TDataGridColumn('system_user->name', 'Lançado por', 'left');
-
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
@@ -87,40 +64,23 @@ class ConteudoProgramaticoListAll extends TPage
         $this->datagrid->addColumn($column_disciplina);
         $this->datagrid->addColumn($column_etapa);
         $this->datagrid->addColumn($column_turma);
-        //$this->datagrid->addColumn($column_status);
         $this->datagrid->addColumn($column_data_reg);
         $this->datagrid->addColumn($column_system_user_id);
-
         
         // create EDIT action
-        $action_edit = new TDataGridAction(array('ConteudoProgramaticoFormView', 'mostrar'));
-        //$action_edit->setUseButton(TRUE);
-        //$action_edit->setButtonClass('btn btn-default');
-        $action_edit->setLabel(('Editar'));
-        $action_edit->setImage('fas:search blue fa-lg');
-        $action_edit->setField('id');
-        $this->datagrid->addAction($action_edit);
+        $action_view = new TDataGridAction(array('ConteudoProgramaticoFormView', 'onShow'));
+        $action_view->setLabel(('Editar'));
+        $action_view->setImage('fa:search');
+        $action_view->setField('id');
+        $this->datagrid->addAction($action_view);
 
-   
-        // create DELETE action
-        /*$action_del = new TDataGridAction(array($this, 'onDelete'));
-        //$action_del->setUseButton(TRUE);
-        //$action_del->setButtonClass('btn btn-default');
-        $action_del->setLabel(_t('Delete'));
-        $action_del->setImage('far:trash-alt red fa-lg');
-        $action_del->setField('id');
-        $this->datagrid->addAction($action_del);*/
-
- 
         // create the datagrid model
         $this->datagrid->createModel();
-       
         
         // creates the page navigation
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
-       
 
         // vertical box container
         $container = new TVBox;
@@ -131,34 +91,6 @@ class ConteudoProgramaticoListAll extends TPage
         
         parent::add($container);
     }
-    
-
-    public function onInlineEdit($param)
-    {
-        try
-        {
-            $field = $param['field'];
-            $key   = $param['key'];
-            $value = $param['value'];
-            
-            TTransaction::open('Felabs_DB'); 
-            
-            $object = new ConteudoProgramatico($key); 
-            $object->{$field} = $value;
-            $object->store(); 
-            
-            TTransaction::close(); 
-            
-            $this->onReload($param); 
-            new TMessage('info', "Record Updated");
-        }
-        catch (Exception $e) 
-        {
-            new TMessage('error', $e->getMessage()); 
-            TTransaction::rollback(); 
-        }
-    }
-    
 
     public function onSearch()
     {
@@ -347,41 +279,7 @@ class ConteudoProgramaticoListAll extends TPage
             new TMessage('error', $e->getMessage());
             TTransaction::rollback();
         }
-    }
-    
-
-    public function onDelete($param)
-    {
-        $action = new TAction(array($this, 'Delete'));
-        $action->setParameters($param); 
-        
-        new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
-    }
-    
-
-    public function Delete($param)
-    {
-        try
-        {
-            $key = $param['key']; 
-            
-            TTransaction::open('Felabs_DB'); 
-            
-            $object = new ConteudoProgramatico($key, FALSE); 
-            $object->delete(); 
-            
-            TTransaction::close(); 
-            
-            $this->onReload( $param ); 
-            new TMessage('info', AdiantiCoreTranslator::translate('Record deleted')); 
-        }
-        catch (Exception $e) 
-        {
-            new TMessage('error', $e->getMessage()); 
-            TTransaction::rollback(); 
-        }
-    }
-    
+    }    
 
     public function show()
     {

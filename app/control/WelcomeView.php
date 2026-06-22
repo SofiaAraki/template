@@ -1,6 +1,5 @@
 <?php
 
-// Ajustado o namespace para o padrão do seu projeto 'template'
 use template\Widget\TStory;
 
 /**
@@ -51,13 +50,6 @@ class WelcomeView extends TPage
 
                 TTransaction::close();
                 TTransaction::open('Felabs_DB');
-            }
-
-            // AJUSTE DE UNIDADE ADMINISTRATIVA
-            if ($loggedUnit == 5 || $loggedUnit == 6) {
-                $loggedUnit = 2;
-            } elseif ($loggedUnit == 4) {
-                $loggedUnit = 3;
             }
 
             // VERIFICAÇÃO DE COMUNICADOS DE BOLSA IMPEDIENTES
@@ -116,7 +108,7 @@ class WelcomeView extends TPage
             // CONSTRUÇÃO DA INTERFACE GRÁFICA (LAYOUT)
             // ==========================================
             $container = new TElement('div');
-            $container->style = 'margin-top: 10px;';
+            $container->class = 'container-fluid';
 
             // --- PRIMEIRA LINHA: CARDS DE ACESSO RÁPIDO ---
             $row1 = new TElement('div');
@@ -129,18 +121,17 @@ class WelcomeView extends TPage
             $linkDiario  = $isProfessor ? 'index.php?class=HorarioAulasList' : 'index.php?class=BoletimNovoList';
             $linkETicket = $isProfessor ? 'index.php?class=TicketFormListProf' : 'index.php?class=TicketFormListAluno';
 
-            $row1->add($this->column($this->card('Moodle', 'fa-graduation-cap', '#4B779A', $linkMoodle, true)));
-            $row1->add($this->column($this->card($labelDiario, 'fa-book', '#34495E', $linkDiario)));
-            $row1->add($this->column($this->card('E-Ticket', 'fa-ticket-alt', '#E67E22', $linkETicket)));
-            $row1->add($this->column($this->card('Biblioteca', 'fa-university', '#16A085', $linkBiblioteca, true)));
+            // Usando TPanelGroup nativo para os cards, que herdam as cores automaticamente
+            $row1->add($this->column($this->card('Moodle', 'fa-graduation-cap', $linkMoodle, true)));
+            $row1->add($this->column($this->card($labelDiario, 'fa-book', $linkDiario)));
+            $row1->add($this->column($this->card('E-Ticket', 'fa-ticket-alt', $linkETicket)));
+            $row1->add($this->column($this->card('Biblioteca', 'fa-university', $linkBiblioteca, true)));
             $container->add($row1);
 
             // --- SEGUNDA LINHA: CALENDÁRIO DINÂMICO ADAPTATIVO ---
             $row2 = new TElement('div');
             $row2->class = 'row';
-            $row2->style = 'margin-top: 25px;';
 
-            // AJUSTE DINÂMICO DE ESPAÇO: Aluno ganha tela cheia (col-sm-12), Professor divide espaço (col-sm-8)
             $colAulas = new TElement('div');
             $colAulas->class = $isProfessor ? 'col-sm-8' : 'col-sm-12';
             
@@ -154,17 +145,15 @@ class WelcomeView extends TPage
             $colAulas->add($aulasPanel);
             $row2->add($colAulas);
 
-            // Se for Professor, monta a coluna lateral útil de lançamentos
             if ($isProfessor) {
                 $colNotas = new TElement('div');
                 $colNotas->class = 'col-sm-4';
 
-                $notas = new TPanelGroup('Lançamento de Notas');
+                $notas = new TPanelGroup('Lançamento de Notas');                
                 $notas->add($periodoAtivoHtml);
                 
                 $btn = new TElement('a');
                 $btn->class = 'btn btn-primary btn-block';
-                $btn->style = 'margin-top: 15px; font-weight: bold; padding: 10px;';
                 $btn->href = 'index.php?class=ApontamentoBimestral&method=onReload';
                 $btn->add('<i class="fa fa-arrow-circle-right"></i> Abrir Painel de Lançamentos');
                 
@@ -191,7 +180,7 @@ class WelcomeView extends TPage
                 $noticias = Noticias::getObjects($criteriaNoticias);
                 if (!empty($noticias)) 
                 {
-                    $container->add('<br><hr><h4 class="text-muted" style="margin-left: 15px;"><i class="fa fa-bullhorn"></i> Mural de Avisos Informativos</h4><br>');
+                    $container->add('<br><hr><h4 class="text-muted"><i class="fa fa-bullhorn"></i> Mural de Avisos Informativos</h4><br>');
                     $noticias = array_reverse($noticias);
 
                     foreach ($noticias as $noticia)
@@ -249,7 +238,6 @@ class WelcomeView extends TPage
                     $evento = array();
                     $evento['id']    = isset($aula->CodCalendarioCurso) ? $aula->CodCalendarioCurso : $aula->CodGradeDisciplinaEtapa_Frente;
                     
-                    // Tratamento dinâmico baseado em qual View está respondendo
                     $nomeDiscip  = isset($aula->NomeDisciplina) ? $aula->NomeDisciplina : (isset($aula->NomeFrente) ? $aula->NomeFrente : 'Aula');
                     $turmaIdent  = isset($aula->Identificacao) ? $aula->Identificacao : '';
                     
@@ -260,7 +248,8 @@ class WelcomeView extends TPage
                     
                     $evento['start'] = $dataAula . 'T' . $horaFixa;
                     $evento['end']   = $dataAula . 'T' . date('H:i:s', strtotime($horaFixa . ' + 50 minutes'));
-                    $evento['color'] = ($logged->funcao_legado == 'Professor') ? '#2980b9' : '#27ae60';
+                    
+                    $evento['color'] = ($logged->funcao_legado == 'Professor') ? '#337ab7' : '#5cb85c';
 
                     $popover_content = "<b>Turma:</b> {$turmaIdent}<br>".
                                        "<b>Curso:</b> {$aula->NomeCurso}<br>".
@@ -298,21 +287,26 @@ class WelcomeView extends TPage
         return $col;
     }
 
-    private function card($titulo, $icone, $cor, $url, $targetBlank = false)
+    // REMOVIDO TODO CSS FIXO: Agora o componente gera painéis puros estruturados nativamente no framework
+    private function card($titulo, $icone, $url, $targetBlank = false)
     {
-        $target = $targetBlank ? 'target="_blank"' : '';
-        $html = new TElement('div');
-        $html->class = 'panel panel-default text-center';
-        $html->style = "border-top: 4px solid {$cor}; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform .2s;";
+        $panel = new TPanelGroup($titulo);
         
-        $html->add("
-            <a href='{$url}' {$target} style='text-decoration: none; color: #333; display: block; padding: 15px;'>
-                <div style='font-weight: bold; font-size: 14px; margin-bottom: 10px; color: #555;'>{$titulo}</div>
-                <div style='margin: 10px 0;'>
-                    <i class='fa {$icone} fa-4x' style='color: {$cor};'></i>
-                </div>
-            </a>
-        ");
-        return $html;
+        $center = new TElement('center');
+        
+        $link = new TElement('a');
+        $link->href = $url;
+        if ($targetBlank) {
+            $link->target = '_blank';
+        }
+        
+        $icon = new TElement('i');
+        $icon->class = "fa {$icone} fa-4x text-primary";
+        
+        $link->add($icon);
+        $center->add($link);
+        $panel->add($center);
+        
+        return $panel;
     }
 }

@@ -13,7 +13,7 @@ class ConteudoProgramaticoForm extends TPage
         
         // creates the form
         $this->form = new BootstrapFormBuilder('form_ConteudoProgramatico');
-        $this->form->setFormTitle('Conteudo Programático');
+        $this->form->setFormTitle('Conteúdo Programático');
         
         // master fields
         $id = new TEntry('id');
@@ -29,471 +29,307 @@ class ConteudoProgramaticoForm extends TPage
 
         $curso->setEditable(FALSE);
         $turma->setEditable(FALSE);
-        //$disciplina->setEditable(FALSE);
 
 
         TTransaction::open('Felabs_DB');
         
-        //$loggedProf = SystemUser::newFromLogin(TSession::getValue('login'));
         $userid = TSession::getValue('userid');
         $user = new SystemUser($userid);
         $loggedUnitProf = TSession::getValue('userunitid');
         
-        TTransaction::close();
-
-
         TTransaction::open('dados_fei');
-
-        $repository = new TRepository('VwProfessordisciplinassemestre');
-
-        $ano = date('Y');
-
-        $mes = date('m');
-
-        if($mes < 8)
-        {
-            $semestre = 1;
-        }
-        elseif($mes > 7)
-        {
-            $semestre = 2;
-        }
-            
-        // creates a criteria
+        
         $criteria = new TCriteria;
-            
-        $criteria->add(new TFilter('CodProfessor', '=', $user->systemuser_codlegado));
-        $criteria->add(new TFilter('Ano', '=', 2024), TExpression::AND_OPERATOR);
-/**/    $criteria->add(new TFilter('Semestre', '=', 1), TExpression::AND_OPERATOR);
-        $criteria->add(new TFilter('CodEntidade', '=', $loggedUnitProf), TExpression::AND_OPERATOR);
-
-        $repo = $repository->load($criteria);
+        $criteria->add(new TFilter('CodEntidade', '=', $loggedUnitProf));
+        $criteria->add(new TFilter('IdProfessor', '=', $user->id_legado));
         
-        $items = [];
-        $i = 0;
-
-        foreach($repo as $row)
+        $disciplinas = VwProfessordisciplinassemestre::getObjects($criteria);
+        
+        $combo_items = array();
+        if($disciplinas)
         {
-            $stringCodDisciplina = $repo[$i]->CodGradeDisciplinaEtapaFrente;
-
-            $items["$stringCodDisciplina"] = $repo[$i]->NomeDisciplina. ' - ' .$repo[$i]->Identificacao.' - '.$repo[$i]->CodGradeDisciplinaEtapaFrente;
-            $i++;
+            foreach($disciplinas as $objDisc)
+            {
+                $combo_items[$objDisc->CodGradeDisciplinaEtapaFrente] = $objDisc->NomeDisciplina.' - '.$objDisc->Turma;
+            }
         }
-
-        $disciplina->addItems($items);
-
-        $change_action = new TAction(array($this, 'onChangeAction'));
+        $disciplina->addItems($combo_items);
         
-        $disciplina->setChangeAction($change_action);
-
-
-        // detail fields
-        $detail_id = new THidden('detail_id');
-        $detail_data_aula = new TDate('detail_data_aula');
-        $detail_conteudo = new TText('detail_conteudo');
-
-
-        $detail_data_aula->setMask('dd/mm/yyyy');
-        $detail_data_aula->setDatabaseMask('yyyy-mm-dd');
-
-
-        if (!empty($id))
+        
+        $criteriaCopia = new TCriteria;
+        $criteriaCopia->add(new TFilter('system_user_id', '=', $userid));
+        $conteudos_copia = ConteudoProgramatico::getObjects($criteriaCopia);
+        
+        $combo_copia = array();
+        if($conteudos_copia)
         {
-            $id->setEditable(FALSE);
+            foreach($conteudos_copia as $objCopia)
+            {
+                TTransaction::open('dados_fei');
+                $criteriaC = new TCriteria;
+                $criteriaC->add(new TFilter('CodGradeDisciplinaEtapaFrente', '=', $objCopia->disciplina));
+                $discNome = VwProfessordisciplinassemestre::getObjects($criteriaC);
+                
+                $nomeD = !empty($discNome) ? $discNome[0]->NomeDisciplina : $objCopia->disciplina;
+                TTransaction::close();
+                
+                $combo_copia[$objCopia->id] = 'ID: '.$objCopia->id.' - '.$nomeD.' - '.$objCopia->turma;
+            }
         }
-
+        $copia_disciplina->addItems($combo_copia);
         
-        // master fields
-        $this->form->addFields( [new TLabel('Id')], [$id] );       
+        TTransaction::close();
+        
+        $id->setEditable(FALSE);
+        
+        // add the fields
+        $this->form->addFields( [new TLabel('Id')], [$id] );
+        $this->form->addFields( [new TLabel('Cópia')], [$copia_disciplina] );
+        $this->form->addFields( [new TLabel('Curso')], [$curso] );
         $this->form->addFields( [new TLabel('Disciplina')], [$disciplina] );
-        $this->form->addFields( [new TLabel('Curso')], [$curso],[new TLabel('Turma')], [$turma] );
-        $this->form->addFields([$etapa] );
-        $this->form->addFields([$status] );
-        $this->form->addFields([$system_user_id] );
-        $this->form->addFields([$data_reg] );
+        $this->form->addFields( [$etapa] );
+        $this->form->addFields( [new TLabel('Turma')], [$turma] );
+        $this->form->addFields( [$status] );
+        $this->form->addFields( [$system_user_id] );
+        $this->form->addFields( [$data_reg] );
 
-
-        $disciplina->addValidation('Disciplina', new TRequiredValidator); 
-
-
+        $id->setSize('100%');
         $curso->setSize('100%');
         $disciplina->setSize('100%');
         $turma->setSize('100%');
-
+        $copia_disciplina->setSize('100%');
         
         // detail fields
-        $this->form->addContent( ['<h4>Conteúdo por Data</h4><hr>'] );
-        $this->form->addFields( [$detail_id] );        
-        $this->form->addFields( [new TLabel('Data Aula')], [$detail_data_aula] );
-        $this->form->addFields( [new TLabel('Conteudo')], [$detail_conteudo] );
-
-
-        $add = TButton::create('add', [$this, 'onSaveDetail'], 'Adicionar', 'fa:plus');
-        $this->form->addFields( [], [$add] )->style = 'background: whitesmoke; padding: 5px; margin: 1px;';
-
+        $this->detail_list = new元素('div');
+        $this->detail_list->id = 'detail_list';
         
-        $this->detail_list = new BootstrapDatagridWrapper(new TQuickGrid);
-        $this->detail_list->style = "min-width: 700px; width:100%;margin-bottom: 10px";
-        $this->detail_list->setId('ConteudoProgramatico_list');
-
+        $detail_id = new THidden('detail_id[]');
+        $detail_data_aula = new TDate('detail_data_aula[]');
+        $detail_conteudo = new TText('detail_conteudo[]');
         
-        // items
-        $this->detail_list->addQuickColumn('Data Aula', 'data_aula', 'left', 50);
-        $this->detail_list->addQuickColumn('Conteudo', 'conteudo', 'left', 100);
-
-
-        // detail actions
-        $this->detail_list->addQuickAction( 'Edit',   new TDataGridAction([$this, 'onEditDetail']),   'id', 'fa:edit blue');
-        $this->detail_list->addQuickAction( 'Delete', new TDataGridAction([$this, 'onDeleteDetail']), 'id', 'fas:trash-alt red');
-        $this->detail_list->createModel();
-
+        $detail_data_aula->setMask('dd/mm/yyyy');
         
-        $panel = new TPanelGroup;
-        $panel->add($this->detail_list);
-        $panel->getBody()->style = 'overflow-x:auto';
-        $this->form->addContent( [$panel] );
-
-        //$btn = $this->form->addAction( _t('Save'),  new TAction([$this, 'onSave']), 'fa:save');
-        //$btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addAction( _t('Clear'), new TAction([$this, 'onClear']), 'fa:eraser red');
-        $this->form->addAction('Voltar',new TAction(['ConteudoProgramaticoList','onReload']),'far:arrow-alt-circle-left blue');
+        $this->form->addContent( [ TElement::tag('h5', 'Itens do Conteúdo Programático', array('style'=>'background: #f5f5f5; padding: 5px; margin-bottom: 5px; font-weight: bold')) ] );
         
-        $copia_disciplina->addItems($items);
-        $this->form->addFields( [new TLabel('Copiar Conteúdo para Disciplina:','#FF0000')], [$copia_disciplina] );
-
-        $change_action_copia = new TAction(array($this, 'onChangeActionCopia'));
-        $copia_disciplina->setChangeAction($change_action_copia);
-
+        $table_id = 'table_ConteudoProgramaticoItem';
+        $this->form->addContent( [ TElement::tag('table', 
+            TElement::tag('tr', 
+                TElement::tag('th', 'Data da Aula', array('width'=>'20%')).
+                TElement::tag('th', 'Conteúdo ministrado', array('width'=>'75%')).
+                TElement::tag('th', '&nbsp;', array('width'=>'5%'))
+            ).
+            TElement::tag('tr', 
+                TElement::tag('td', $detail_data_aula).
+                TElement::tag('td', $detail_conteudo).
+                TElement::tag('td', TElement::tag('button', '<i class="fa fa-plus green"></i>', array('class'=>'btn btn-default', 'onclick'=>"ttable_add_row('{$table_id}')")))
+            , array('class'=>'ttable_actions_row')), array('id'=>$table_id, 'class'=>'ttable', 'style'=>'width:100%')) ] );
+            
+        $this->form->addContent( [$this->detail_list] );
         
-
-              
+        $copia_disciplina->setChangeAction(new TAction(array($this, 'onCopia')));
+        $disciplina->setChangeAction(new TAction(array($this, 'onChangeDisciplina')));
         
-        // create the page container
+        // create the form actions
+        $this->form->addHeaderAction(_t('Save'), new TAction(array($this, 'onSave')), 'fa:floppy-o bridge blue');
+        
+        if($user->funcao_legado == 'Professor')
+        {
+            $this->form->addHeaderAction('Voltar', new TAction(['ConteudoProgramaticoList','onReload']), 'far:arrow-alt-circle-left blue');
+        }
+        else
+        {
+            $this->form->addHeaderAction('Voltar', new TAction(['ConteudoProgramaticoListAll','onReload']), 'far:arrow-alt-circle-left blue');
+        }
+        
+        // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';
-        $container->add(new TXMLBreadCrumb('menu.xml', 'ConteudoProgramaticoList'));
+        
+        // AJUSTADO: Usa ConteudoProgramaticoListAll para evitar quebras dinâmicas de rota no menu.xml
+        $container->add(new TXMLBreadCrumb('menu.xml', 'ConteudoProgramaticoListAll'));
         $container->add($this->form);
+        
         parent::add($container);
     }
-
-   
-
-
-    public static function onChangeAction($param)
-    {
-        TTransaction::open('dados_fei');
     
-        $repository = new TRepository('VwProfessordisciplinassemestre');
-
-        $ano = date('Y');
-        $mes = date('m');
-
-        if($mes < 8)
-        {
-            $semestre = 1;
-        }
-        elseif($mes > 7)
-        {
-            $semestre = 2;
-        }
-    
-            
-        // creates a criteria
-        $criteria = new TCriteria;
-        $criteria->add(new TFilter('CodGradeDisciplinaEtapaFrente', '=', $param['disciplina']));
-        $criteria->add(new TFilter('Ano', '=', 2024), TExpression::AND_OPERATOR);
-/**/    $criteria->add(new TFilter('Semestre', '=', 1), TExpression::AND_OPERATOR);//$semestre
-        
-        $repo = $repository->load($criteria);
-        
-        //var_dump($repo[0]);
-
-        $obj = new StdClass;
-        $obj->curso = $repo[0]->NomeCurso;
-        $obj->turma = $repo[0]->Identificacao;
-/**/    $obj->etapa = $repo[0]->Semestre;
-        TForm::sendData('form_ConteudoProgramatico', $obj);
-
-        TTransaction::close();
-    }
-
-    public static function onChangeActionCopia($param)
-    {
-        // define the delete action
-        $action = new TAction(array(__CLASS__, 'ChangeActionCopia'));
-        $action->setParameters($param); // pass the key parameter ahead
-        
-        // shows a dialog to the user
-        new TQuestion(('Deseja copiar o conteúdo lançado para a disciplina escolhida?'), $action);
-    }
-
-    public static function ChangeActionCopia($param)
+    public static function onChangeDisciplina($param)
     {
         try
         {
             TTransaction::open('dados_fei');
-        
-            $repository = new TRepository('VwProfessordisciplinassemestre');
-            $disciplinas = $repository  ->where('CodGradeDisciplinaEtapaFrente',  '=', $param['key'])
-                                        ->load();
-
-            foreach ($disciplinas as $disciplina)
-            {
-                $Curso =            $disciplina->NomeCurso;
-                $DisciplinaCopia =  $disciplina->CodGradeDisciplinaEtapaFrente;
-//              $Etapa =            $disciplina->Etapa;
-                $Etapa =            $disciplina->Semestre;
-                $Turma =            $disciplina->Identificacao;
-            }
-
-            TTransaction::open('Felabs_DB');
-                $copia = new ConteudoProgramatico;
-                $copia->system_user_id = TSession::getValue('userid');
-                $copia->data_reg = date('Y-m-d');;
-                $copia->curso =  $Curso;
-                $copia->disciplina = $DisciplinaCopia;
-                $copia->etapa = $Etapa;
-                $copia->turma = $Turma;
-                $copia->store();
-
-                $ID_copia = $copia->id;
+            $criteria = new TCriteria;
+            $criteria->add(new TFilter('CodGradeDisciplinaEtapaFrente', '=', $param['disciplina']));
             
-                $copia_detalhe = ConteudoProgramaticoItem::where('conteudo_programatico_id', '=', $param["id"])->load(); 
-
-                foreach($copia_detalhe as $std)
-                {          
-                    $copia_item = new ConteudoProgramaticoItem;
-                    $copia_item->data_aula = $std->data_aula;
-                    $copia_item->conteudo = $std->conteudo;
-                    $copia_item->conteudo_programatico_id = $ID_copia;
-                    $copia_item->store();
-                }
-
-                new TMessage('info', "Conteúdo copiado com sucesso! <br> Verifique se todas as informações foram copiadas corretamente na disciplina de destino.");
+            $disciplinas = VwProfessordisciplinassemestre::getObjects($criteria);
+            
+            if($disciplinas)
+            {
+                $obj = new stdClass;
+                $obj->curso = $disciplinas[0]->NomeCurso;
+                $obj->turma = $disciplinas[0]->Turma;
+                $obj->etapa = $disciplinas[0]->CodEtapa;
+                $obj->status = 'Pendente';
                 
-            TTransaction::close();
+                TForm::sendData('form_ConteudoProgramatico', $obj);
+            }
             TTransaction::close();
         }
-        catch (Exception $e)
+        catch(Exception $e)
         {
-            $this->form->setData( $this->form->getData());
             new TMessage('error', $e->getMessage());
         }
     }
     
-    
-    public function onClear($param)
-    {
-        $this->form->clear(TRUE);
-        TSession::setValue(__CLASS__.'_items', array());
-        $this->onReload( $param );
-    }
-    
-
-    public function onSaveDetail( $param )
+    public static function onCopia($param)
     {
         try
         {
-            TTransaction::open('Felabs_DB');
-            
-            $data = $this->form->getData();
-            
-
-            $items = TSession::getValue(__CLASS__.'_items');
-            $key = empty($data->detail_id) ? 'X'.mt_rand(1000000000, 1999999999) : $data->detail_id;
-            
-            $items[ $key ] = array();
-            $items[ $key ]['id'] = $key;
-            $items[ $key ]['data_aula'] = $data->detail_data_aula;
-            $items[ $key ]['conteudo'] = $data->detail_conteudo;
-            
-            TSession::setValue(__CLASS__.'_items', $items);
-            
-            // clear detail form fields
-            $data->detail_id = '';
-            $data->detail_data_aula = '';
-            $data->detail_conteudo = '';
-            
-            TTransaction::close();
-            $this->form->setData($data);
-
-            $this->onSave();            
+            if(!empty($param['copia_disciplina']))
+            {
+                TTransaction::open('Felabs_DB');
+                
+                $criteria = new TCriteria;
+                $criteria->add(new TFilter('conteudo_programatico_id', '=', $param['copia_disciplina']));
+                $criteria->setProperty('order', 'data_aula');
+                $criteria->setProperty('direction','ASC');
+                $itens_copia = ConteudoProgramaticoItem::getObjects($criteria);
+                
+                TTransaction::close();
+                
+                $table_id = 'table_ConteudoProgramaticoItem';
+                TScript::create("ttable_clear('{$table_id}')");
+                
+                if($itens_copia)
+                {
+                    foreach($itens_copia as $item)
+                    {
+                        $data_aula = TDate::date2br($item->data_aula);
+                        $conteudo = $item->conteudo;
+                        
+                        $row =  "<td><input type='text' name='detail_data_aula[]' class='form-control tdate-field' value='{$data_aula}'></td>".
+                                "<td><textarea name='detail_conteudo[]' class='form-control' rows='3'>{$conteudo}</textarea></td>".
+                                "<td><button type='button' class='btn btn-default' onclick='ttable_remove_row(this)'><i class='fa fa-trash red'></i></button></td>";
+                                
+                        TScript::create("ttable_add_custom_row('{$table_id}', \"{$row}\")");
+                    }
+                }
+            }
         }
-        catch (Exception $e)
+        catch(Exception $e)
         {
-            $this->form->setData( $this->form->getData());
             new TMessage('error', $e->getMessage());
         }
     }
     
-
-    public static function onEditDetail( $param )
-    {
-        $items = TSession::getValue(__CLASS__.'_items');
-        
-        $item = $items[ $param['key'] ];
-        
-        $data = new stdClass;
-        $data->detail_id = $item['id'];
-        $data->detail_data_aula = $item['data_aula'];
-        $data->detail_conteudo = $item['conteudo'];
-        
-        TForm::sendData( 'form_ConteudoProgramatico', $data );
-    }
-    
-
-    public function onDeleteDetail( $param )
-    {
-        // reset items
-        //$data = new stdClass;
-        //$data->detail_data_aula = '';
-        //$data->detail_conteudo = '';
-
-               
-        // clear form data
-        //TForm::sendData('form_ConteudoProgramatico', $data );
-        
-        // get detail id
-        //$detail_id = $param['key'];
-
-
-        TTransaction::open('Felabs_DB'); 
-
-        $object = new ConteudoProgramaticoItem($param['key']); 
-
-        $parametro = [];
-        $parametro['key'] = $object->conteudo_programatico_id;
-
-        $object->delete(); 
-        TTransaction::close(); 
-        
-        new TMessage('info','Conteúdo removido');
-
-        TApplication::loadPage('ConteudoProgramaticoForm', 'onEdit', $parametro);
-    }
-
-
-    public function onReload($param)
-    {
-        $items = TSession::getValue(__CLASS__.'_items');
-        
-        $this->detail_list->clear(); 
-        
-        if ($items)
-        {
-            foreach ($items as $list_item)
-            {
-                $item = (object) $list_item;
-                
-                $row = $this->detail_list->addItem( $item );
-                $row->id = $list_item['id'];
-            }
-        }
-        
-        $this->loaded = TRUE;
-    }
-    
-
     public function onEdit($param)
     {
         try
         {
-            TTransaction::open('Felabs_DB');
-            
             if (isset($param['key']))
             {
-                $key = $param['key'];
+                $key = $param['key']; 
+                TTransaction::open('Felabs_DB'); 
+                $object = new ConteudoProgramatico($key); 
                 
-                $object = new ConteudoProgramatico($key);
-                $items  = ConteudoProgramaticoItem::where('conteudo_programatico_id', '=', $key)->load();
+                $mes = date("m", strtotime($object->data_reg));
+                $ano = date("Y", strtotime($object->data_reg));
+                $semestre = ($mes < 8) ? 1 : 2;
+                $loggedUnitProf = TSession::getValue('userunitid');
+
+                TTransaction::open('dados_fei');
+                $criteria = new TCriteria;
+                $criteria->add(new TFilter('CodGradeDisciplinaEtapaFrente', '=', $object->disciplina));
+                $criteria->add(new TFilter('Ano', '=', $ano));
+                $criteria->add(new TFilter('Semestre', '=', $semestre));
+                $criteria->add(new TFilter('CodEntidade', '=', $loggedUnitProf));
+
+                $nomesdisc = VwProfessordisciplinassemestre::getObjects($criteria);
                 
-                $session_items = array();
-         
-                foreach( $items as $item )
-                {
-                    $item_key = $item->id;
-                    $session_items[$item_key] = $item->toArray();
-                    $session_items[$item_key]['id'] = $item->id;
-                    $session_items[$item_key]['data_aula'] = $item->data_aula;
-                    $session_items[$item_key]['conteudo'] = $item->conteudo;
+                if (!empty($nomesdisc) && isset($nomesdisc[0])) {
+                    $object->nome_disciplina = $nomesdisc[0]->NomeDisciplina;
+                } else {
+                    $object->nome_disciplina = "Disciplina Cód: " . $object->disciplina;
                 }
-         
-                TSession::setValue(__CLASS__.'_items', $session_items);
+                TTransaction::close();
                 
                 $this->form->setData($object); 
-                $this->onReload( $param ); 
+                
+                $criteria1 = new TCriteria;
+                $criteria1->add(new TFilter('conteudo_programatico_id', '=', $object->id));
+                $criteria1->setProperty('order', 'data_aula');
+                $criteria1->setProperty('direction','ASC');
+                $items = ConteudoProgramaticoItem::getObjects($criteria1);
+                
+                $table_id = 'table_ConteudoProgramaticoItem';
+                if($items)
+                {
+                    foreach($items as $item)
+                    {
+                        $data_aula = TDate::date2br($item->data_aula);
+                        $conteudo = addslashes($item->conteudo);
+                        $conteudo = str_replace(array("\r", "\n"), array("", " "), $conteudo);
+                        
+                        $row =  "<td><input type='hidden' name='detail_id[]' value='{$item->id}'><input type='text' name='detail_data_aula[]' class='form-control tdate-field' value='{$data_aula}'></td>".
+                                "<td><textarea name='detail_conteudo[]' class='form-control' rows='3'>{$conteudo}</textarea></td>".
+                                "<td><button type='button' class='btn btn-default' onclick='ttable_remove_row(this)'><i class='fa fa-trash red'></i></button></td>";
+                                
+                        TScript::create("ttable_add_custom_row('{$table_id}', \"{$row}\")");
+                    }
+                }
+                
                 TTransaction::close(); 
             }
             else
             {
-                $this->form->clear(TRUE);
-                TSession::setValue(__CLASS__.'_items', null);
-                $this->onReload( $param );
+                $this->form->clear();
             }
         }
         catch (Exception $e) 
         {
-            new TMessage('error', $e->getMessage());
+            new TMessage('error', $e->getMessage()); 
             TTransaction::rollback();
         }
     }
     
-
-    public function onSave()
+    public function onSave($param)
     {
         try
         {
-            TTransaction::open('Felabs_DB');
+            TTransaction::open('Felabs_DB'); 
             
-            $data = $this->form->getData();
-            $master = new ConteudoProgramatico;
-
-
-            //$logged  = SystemUser::newFromLogin(TSession::getValue('login'));
-            $userid = TSession::getValue('userid');
-            $user = new SystemUser($userid);
-            
-/*          if(date('m') < 8)
-            {
-                $data->etapa = 1;
-            }
-            elseif(date('m') > 8)
-            {
-                $data->etapa = 2;
-            }
-*/
-            $data->system_user_id = $user->id; 
-            $data->data_reg = date('Y-m-d');
-
-
-            //TCombo::disableField('form_ConteudoProgramatico', 'disciplina');
-
-
-            $master->fromArray( (array) $data);
-            $this->form->validate(); 
+            $id = $param['id'];
+            $master = new ConteudoProgramatico($id);
+            $master->id = $param['id'];
+            $master->curso = $param['curso'];
+            $master->disciplina = $param['disciplina'];
+            $master->etapa = $param['etapa'];
+            $master->turma = $param['turma'];
+            $master->status = !empty($param['status']) ? $param['status'] : 'Pendente';
+            $master->system_user_id = !empty($param['system_user_id']) ? $param['system_user_id'] : TSession::getValue('userid');
+            $master->data_reg = !empty($param['data_reg']) ? $param['data_reg'] : date('Y-m-d');
             
             $master->store(); 
             
-            $old_items = ConteudoProgramaticoItem::where('conteudo_programatico_id', '=', $master->id)->load();
+            $criteria = new TCriteria;
+            $criteria->add(new TFilter('conteudo_programatico_id', '=', $master->id));
+            $old_items = ConteudoProgramaticoItem::getObjects($criteria);
             
             $keep_items = array();
-                        
-            $items = TSession::getValue(__CLASS__.'_items');
             
-            if( $items )
+            if(!empty($param['detail_data_aula']))
             {
-                foreach( $items as $item )
+                foreach($param['detail_data_aula'] as $key => $data_aula)
                 {
-                    if (substr($item['id'],0,1) == 'X' ) // new record
+                    if(empty($param['detail_id'][$key]))
                     {
                         $detail = new ConteudoProgramaticoItem;
                     }
                     else
                     {
-                        $detail = ConteudoProgramaticoItem::find($item['id']);
+                        $detail = ConteudoProgramaticoItem::find($param['detail_id'][$key]);
                     }
-                    $detail->data_aula  = $item['data_aula'];
-                    $detail->conteudo  = $item['conteudo'];
+                    $detail->data_aula  = TDate::date2us($data_aula);
+                    $detail->conteudo  = $param['detail_conteudo'][$key];
                     $detail->conteudo_programatico_id = $master->id;
                     $detail->store();
                     
@@ -514,25 +350,23 @@ class ConteudoProgramaticoForm extends TPage
             
             TTransaction::close(); 
             
-            // reload form and session items
             $this->onEdit(array('key'=>$master->id));
-            
             new TMessage('info', TAdiantiCoreTranslator::translate('Record saved'));
         }
         catch (Exception $e) 
         {
             new TMessage('error', $e->getMessage());
-            $this->form->setData( $this->form->getData() ); 
             TTransaction::rollback();
         }
     }
-
 
     public function show()
     {
         if (!$this->loaded AND (!isset($_GET['method']) OR $_GET['method'] !== 'onReload') )
         {
-            $this->onReload( func_get_arg(0) );
+            if (func_num_args() > 0) {
+                $this->onReload(func_get_arg(0));
+            }
         }
         parent::show();
     }

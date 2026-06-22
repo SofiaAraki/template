@@ -71,9 +71,8 @@ class AtividadeComplementarCurriculoForm extends TPage
         
         
         // creates the action button
-        $button1 = TButton::create('salvar', [$this, 'onSave'], 'Salvar', 'fa:save');
-        $button1->class = 'btn btn-sm btn-primary';
-        $button2 = TButton::create('voltar', ['CurriculoList','onReload'], 'Voltar', 'fas:arrow-alt-circle-left blue');
+        $button1 = TButton::create('voltar', ['CurriculoList','onReload'], 'Voltar', 'fas:arrow-alt-circle-left blue');
+        $button2 = TButton::create('salvar', [$this, 'onSave'], 'Salvar', 'fa:save green');
         $this->formGrid->addField($button1);
         $this->formGrid->addField($button2);
         

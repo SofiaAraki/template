@@ -193,9 +193,8 @@ class CurriculoForm extends TPage
         
 
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
         $this->form->addAction('Voltar', new TAction(['CurriculoList', 'onReload']), 'fa:arrow-left blue');
+        $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save green');
 
         
         // vertical box container

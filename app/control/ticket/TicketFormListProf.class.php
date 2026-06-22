@@ -19,7 +19,6 @@ class TicketFormListProf extends TPage
         $this->form->style = 'display: table;width:100%'; 
         $this->form->setFormTitle('Ticket');
 
-
         TTransaction::open('Felabs_DB');
 
         $loggedUnit = TSession::getValue('userunitid');
@@ -47,11 +46,6 @@ class TicketFormListProf extends TPage
         $data_reg = new THidden('data_reg');
         $anexo = new TMultiFile('anexo');
 
-      
-
-        //$combo = new TDBCombo('campo','banco','model','chave','valor','ordem',$criteria);
-
-
         //$system_user_id->setMinLength(5);
         $descricao->setSize('100%',100);
         $id->setEditable(FALSE);
@@ -65,37 +59,26 @@ class TicketFormListProf extends TPage
         $this->form->addQuickField('Departamento', $departamento, '50%');
         $this->form->addQuickField('Solicitante (Prof)', $system_user_id, '50%');
         $this->form->addQuickField('Categoria', $categoria, '50%', new TRequiredValidator);
-        //$this->form->addQuickField('Título', $titulo, '100%');
         $this->form->addQuickField('Descrição', $descricao, '50%', new TRequiredValidator);
         $this->form->addQuickField('Adicionar participante', $destino_user_id, '50%');
         $this->form->addQuickField('Anexar arquivo(s)', $anexo, '50%');
         $this->form->addQuickField('Status', $status, '100%');        
         $this->form->addQuickField('Data Reg', $data_reg, '100%');
 
-
         // set exit action for input_exit
         $change_action = new TAction(array($this, 'onChangeAction'));
         $categoria->setChangeAction($change_action);
-
          
         // create the form actions
-        $btn = $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addQuickAction(_t('New'),  new TAction(array($this, 'onClear')), 'bs:plus-sign green');
-        //$btn = $this->form->addQuickAction('Voltar', new TAction(array('TicketList', 'onReload')), 'far:arrow-alt-circle-left blue');
-        
+        $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'fa:save green');
         
         //creates a Datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid = new BootstrapDatagridWrapper($this->datagrid);
         $this->datagrid->style = 'width: 100%';
-        //$this->datagrid->datatable = 'true';
-        //$this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
-        
 
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'left');
-        //$column_titulo = new TDataGridColumn('titulo', 'Título', 'left');
         $column_descricao = new TDataGridColumn('descricao', 'Descrição', 'left');
         $column_system_user_id = new TDataGridColumn('system_user->name', 'Solicitante', 'left');
         $column_status = new TDataGridColumn('status', 'Status', 'left');
@@ -116,8 +99,6 @@ class TicketFormListProf extends TPage
 
         //add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
-        //$this->datagrid->addColumn($column_titulo);
-        //$this->datagrid->addColumn($column_descricao); MUITO GRANDE
         $this->datagrid->addColumn($column_system_user_id);
         $this->datagrid->addColumn($column_status);
         $this->datagrid->addColumn($column_departamento);
@@ -126,46 +107,20 @@ class TicketFormListProf extends TPage
         $this->datagrid->addColumn($column_ultima_edicao);
         $this->datagrid->addColumn($column_data_reg);
 
-
         // create abrir action
-        $action_abrir = new TDataGridAction(array($this, 'goTicketView'),$param);
-        //$action_edit->setUseButton(TRUE);
-        //$action_edit->setButtonClass('btn btn-default');
+        $action_abrir = new TDataGridAction(array($this, 'goTicketView'), ['key' => '{ticket_id']);
         $action_abrir->setLabel('Abrir Ticket');
         $action_abrir->setImage('fas:ticket-alt green fa-lg');
         $action_abrir->setField('id');
         $this->datagrid->addAction($action_abrir);
 
-           
-        // creates two datagrid actions
-        /*$action1 = new TDataGridAction(array($this, 'onEdit'));
-        //$action1->setUseButton(TRUE);
-        //$action1->setButtonClass('btn btn-default');
-        $action1->setLabel(_t('Edit'));
-        $action1->setImage('far:edit blue fa-lg');
-        $action1->setField('id');
-        
-        $action2 = new TDataGridAction(array($this, 'onDelete'));
-        //$action2->setUseButton(TRUE);
-        //$action2->setButtonClass('btn btn-default');
-        $action2->setLabel(_t('Delete'));
-        $action2->setImage('far:trash-alt red fa-lg');
-        $action2->setField('id');
-        
-        // add the actions to the datagrid
-        $this->datagrid->addAction($action1);
-        $this->datagrid->addAction($action2);*/
-        
-        
         // create the datagrid model
         $this->datagrid->createModel();
-        
         
         // creates the page navigation
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
-        
         
         // vertical box container
         $container = new TVBox;
@@ -176,7 +131,6 @@ class TicketFormListProf extends TPage
         
         parent::add($container);
     }
-
 
     public static function onChangeAction($param)
     {
@@ -196,7 +150,6 @@ class TicketFormListProf extends TPage
         }
     }
 
-
     public function goTicketView($param)
     {
         $parametros = [];
@@ -208,14 +161,12 @@ class TicketFormListProf extends TPage
         TApplication::loadPage('TicketView','onReload', $parametros);        
     }
 
-
     public function onReload($param = NULL)
     {
         try
         {
             TTransaction::open('Felabs_DB');
             
-            //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
             $userid = TSession::getValue('userid');
             $user = new SystemUser($userid);
         
@@ -292,40 +243,6 @@ class TicketFormListProf extends TPage
             TTransaction::rollback();
         }
     }
-    
-
-    public function onDelete($param)
-    {
-        $action = new TAction(array($this, 'Delete'));
-        $action->setParameters($param);
-        
-        new TQuestion(TAdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
-    }
-    
-
-    public function Delete($param)
-    {
-        try
-        {
-            $key = $param['key'];
-            
-            TTransaction::open('Felabs_DB');
-            
-            $object = new Ticket($key, FALSE);
-            $object->delete();
-            
-            TTransaction::close();
-            
-            $this->onReload( $param );
-            new TMessage('info', TAdiantiCoreTranslator::translate('Record deleted'));
-        }
-        catch (Exception $e)
-        {
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-            TTransaction::rollback();
-        }
-    }
-    
 
     public function onSave( $param )
     {
@@ -333,11 +250,9 @@ class TicketFormListProf extends TPage
         {
             TTransaction::open('Felabs_DB');
             
-            //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
             $loggedUnit = TSession::getValue('userunitid');
             $userid = TSession::getValue('userid');
             $user = new SystemUser($userid);
-        
             
             $this->form->validate();
             
@@ -369,78 +284,7 @@ class TicketFormListProf extends TPage
                 $object->anexo = $nomeArquivo;
             }
 
-            /////////////////////
-
             $numeroId = $user->systemuser_codlegado;
-
-
-            // TTransaction::open('dados_fei');
-
-            // $aluno = new FiProfessor($numeroId);
-            // //$alunoCurso = new VwAluno($numeroId);
-
-            // $anoAtual = date('Y');
-            // $mesAtual = date('m');
-
-            // if($mesAtual < 8)
-            // {
-            //     $semestreM = 1;
-            // }
-            // else
-            // {
-            //     $semestreM = 2;
-            // }
-
-            // if($alunoCurso->CodEntidade == 1)
-            // {
-            //     $semestreM = 1;
-            // }
-
-            // $criteria = new TCriteria;                        
-            // $criteria->add(new TFilter('Codaluno', '=', $numeroId));            
-            // $criteria->add(new TFilter('AnoMatricula', '=', $anoAtual));            
-            // $criteria->add(new TFilter('SemestreMatricula', '=', $semestreM));
-
-            // $alunoView = new TRepository('VwAluno');
-            // $alunoSemestre = $alunoView->load($criteria);
-
-            // $numeroCiclo = $alunoSemestre[0]->EtapaMatricula;
-            // $codEntidade = $alunoCurso->CodEntidade;
-
-            // if($numeroCiclo)
-            // {
-            //     $cicloAluno = " - CICLO ".$numeroCiclo;
-            // }
-
-            // if($alunoSemestre[0]->NomeCurso)
-            // {
-            //     $object-> matricula_aluno = $alunoSemestre[0]->NomeCurso.$cicloAluno;
-            // }
-            
-
-            // if(empty($alunoSemestre[0]->NomeCurso))
-            // {
-            //     $criteria1 = new TCriteria;                        
-            //     $criteria1->add(new TFilter('Codaluno', '=', $numeroId));            
-            //     $criteria1->add(new TFilter('AnoMatricula', '=', $anoAtual));            
-            //     $criteria1->add(new TFilter('SemestreMatricula', '=', $semestreM));
-    
-            //     $alunoView1= new TRepository('VwAluno');
-            //     $alunoSemestre1 = $alunoView1->load($criteria1);
-            //     $object-> matricula_aluno = $alunoSemestre1[0]->NomeCurso.$cicloAluno;
-            // }
-           
-            // if(empty($object->matricula_aluno))
-            // {
-            //     $object-> matricula_aluno = 'MATRÍCULA NÃO ENCONTRADA';
-            // }
-
-    
-            // TTransaction::close();
-
-
-
-            ////////////////////////
 
             $object->data_reg = date('Y-m-d H:i:s');
             $object->status = 'A';
@@ -449,9 +293,7 @@ class TicketFormListProf extends TPage
             $object->quem_abriu = $user->id;
             $object-> matricula_aluno = 'PROFESSOR';
 
-
             $object->store();
-
 
             $ticketItem = new TicketItem; //CRIA O PRIMEIRO ITEM COM INFORMAÇÕES DO TICKET
             $ticketItem->ticket_id = $object->id;
@@ -465,14 +307,12 @@ class TicketFormListProf extends TPage
     
             $ticketItem->data_reg = $object->data_reg;
             $ticketItem->store();
-           
 
             $ticketPart = new TicketParticipante; //ADICIONA ALUNO SOLICITANTE DO TICKET COMO PARTICIPANTE
             $ticketPart->ticket_id = $object->id;
             $ticketPart->system_user_id = $object->system_user_id;
             $ticketPart->store();
 
-			
             $data->id = $object->id;
             
             $this->form->setData($data);
@@ -488,41 +328,11 @@ class TicketFormListProf extends TPage
             TTransaction::rollback();
         }
     }
-    
 
     public function onClear( $param )
     {
         $this->form->clear(TRUE);
-    }
-    
-
-    public function onEdit( $param )
-    {
-        try
-        {
-            if (isset($param['key']))
-            {
-                $key = $param['key'];
-                
-                TTransaction::open('Felabs_DB');
-                
-                $object = new Ticket($key);
-                $this->form->setData($object);
-                
-                TTransaction::close();
-            }
-            else
-            {
-                $this->form->clear(TRUE);
-            }
-        }
-        catch (Exception $e)
-        {
-            new TMessage('error', $e->getMessage());
-            TTransaction::rollback();
-        }
-    }
-    
+    }    
 
     public function show()
     {

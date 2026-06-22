@@ -3,18 +3,16 @@
 class AgendamentoEquipamentoForm extends TPage
 {
     protected $form;
-    
 
     public function __construct( $param )
     {
         parent::__construct();
         
-        // creates the form
+        // cria o formulário
         $this->form = new BootstrapFormBuilder('form_AgendamentoEquipamento');
         $this->form->setFormTitle('Agendamento de Equipamento');
-        
 
-        // create the form fields
+        // cria os campos do formulário
         $id = new THidden('id');
         $usuario = new THidden('usuario');
         $data_evento = new TDate('data_evento');
@@ -26,14 +24,10 @@ class AgendamentoEquipamentoForm extends TPage
         $unidade = new TEntry('unidade');
         $data_reg = new THidden('data_reg');
 
-
         TTransaction::open('Felabs_DB');
-
-        $loggedProfUnit = TSession::getValue('userunitid'); //PEGA A ID DA UNIDADE DO USUARIO LOGADO
+        $loggedProfUnit = TSession::getValue('userunitid'); // PEGA A ID DA UNIDADE DO USUARIO LOGADO
         $unitName = new SystemUnit($loggedProfUnit);
-
         TTransaction::close();
-
 
         $hours = [];
         $hours['00:00'] = '00:00';
@@ -58,17 +52,16 @@ class AgendamentoEquipamentoForm extends TPage
         $inicio->addItems($hours);
         $termino->addItems($hours);
         
-
         $data_evento->addValidation('Data', new TRequiredValidator);
         $inicio->addValidation('Início', new TRequiredValidator);
         $termino->addValidation('Término', new TRequiredValidator);
         $equipamento_id->addValidation('Equipamento', new TRequiredValidator);
         $local->addValidation('Local', new TRequiredValidator);
 
-
         $local->placeholder = 'Ex. Sala 1, Salão Nobre, Laboratório 1, etc.';
         $unidade->setValue($unitName->name);
         $unidade->setEditable(FALSE);
+        
         $data_evento->setMask('dd/mm/yyyy'); 
         $data_evento->setSize('60%');
         $inicio->setSize('60%');
@@ -78,13 +71,9 @@ class AgendamentoEquipamentoForm extends TPage
         $observacoes->setSize('60%');
         $unidade->setSize('30%');
 
-
         $inicio->setChangeAction(new TAction(array($this, 'onChangeActionZera')));
-        
         $data_evento->setExitAction(new TAction(array($this, 'onChangeActionZeraData')));
-
         $termino->setChangeAction(new TAction(array($this, 'onChangeType')));
-
 
         $this->form->addFields([$id]);      
         $this->form->addFields([$usuario]);
@@ -97,134 +86,126 @@ class AgendamentoEquipamentoForm extends TPage
         $this->form->addFields([new TLabel('Unidade')], [$unidade]);        
         $this->form->addFields([$data_reg]);
 
-
         if (!empty($id))
         {
             $id->setEditable(FALSE);
         }
         
+        // Botões de Ação
+        $this->form->addAction('Voltar', new TAction(array('AgendamentoEquipamentoList', 'onReload')), 'fa:arrow-left blue');
+        $this->form->addAction(_t('Clear'),  new TAction(array($this, 'onClear')), 'fa:eraser red');
+        $btn = $this->form->addAction(('Salvar'), new TAction(array($this, 'onSave')), 'fa:save green');
         
-        // create the form actions
-        $btn = $this->form->addAction(('Salvar'), new TAction(array($this, 'onSave')), 'fas:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addAction(('Novo'),  new TAction(array($this, 'onClear')), 'fas:plus green');
-        
-        
-        // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';
-        //$container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         
         parent::add($container);
     }
 
-
     public static function onChangeActionZera($param) 
     {
-        if($param['data_evento'] == NULL)
+        if(empty($param['data_evento']))
         {
             new TMessage('error','Preencha o campo Data antes de prosseguir');
+            return;
         }
         
-        if($param['termino'])
+        if(!empty($param['termino']))
         {           
             $obj = new StdClass;
             $obj->termino = '00:00';
             $obj->equipamento_id = '';
-            //$obj->termino_minutos = '00';
             TForm::sendData('form_AgendamentoEquipamento', $obj);            
         }
     }
 
-
     public static function onChangeActionZeraData($param) 
     {
-        if($param['inicio'] != NULL || $param['termino'] != NULL)
+        if(!empty($param['inicio']) || !empty($param['termino']))
         {            
             $obj = new StdClass;
             $obj->inicio = '00:00';
             $obj->termino = '00:00';
-
+            $obj->equipamento_id = '';
             TForm::sendData('form_AgendamentoEquipamento', $obj);
         }
     }
 
-
     public static function onChangeType($param)
     {
-        TTransaction::open('Felabs_DB');
-
-        $param['data_evento'] = TDate::date2us($param['data_evento']);
-        
-
-        $inicio1 = $param['data_evento'].' '.$param['inicio'].':01';
-        $termino1 = $param['data_evento'].' '.$param['termino'].':01';
-
-        if($termino1 < $inicio1)
+        if (empty($param['data_evento']) || empty($param['inicio']) || empty($param['termino'])) 
         {
-            if($param['termino'] != '00:00')
-            {
-
-                new TMessage('error','O horário de término não pode ser menor que o horário de início');
-                $obj = new StdClass;
-                $obj->inicio = '00:00';
-                
-                TForm::sendData('form_AgendamentoEquipamento', $obj);
-            }
-
+            return;
         }
-        else
+
+        try 
         {
-            if($param['data_evento'] && $param['inicio'])
+            TTransaction::open('Felabs_DB');
+
+            $data_us = TDate::date2us($param['data_evento']);
+            $inicio1 = $data_us . ' ' . $param['inicio'] . ':01';
+            $termino1 = $data_us . ' ' . $param['termino'] . ':00';
+
+            if($termino1 <= $inicio1)
             {
-                $criteria2 = new TCriteria;
-                $criteria2->add(new TFilter('inicio', 'BETWEEN', $inicio1, $termino1), TExpression::OR_OPERATOR);
-                $criteria2->add(new TFilter('termino', 'BETWEEN', $inicio1, $termino1), TExpression::OR_OPERATOR);
-                    
-                $agendamentos2 = AgendamentoEquipamento::getObjects($criteria2); //ARRAY COM EQUIPAMENTOS JÁ RESERVADOS NA DATA E HORÁRIO ESCOLHIDO
-        
-          
-                $criteria3 = new TCriteria;
-        
-                foreach ($agendamentos2 as $linha)
+                if($param['termino'] != '00:00')
                 {
-                    $criteria3->add(new TFilter('id', '<>', $linha->equipamento_id), TExpression::AND_OPERATOR); 
+                    new TMessage('error','O horário de término não pode ser menor ou igual ao horário de início');
+                    $obj = new StdClass;
+                    $obj->inicio = '00:00';
+                    $obj->termino = '00:00';
+                    $obj->equipamento_id = '';
+                    TForm::sendData('form_AgendamentoEquipamento', $obj);
                 }
-        
-                $loggedUnit = TSession::getValue('userunitid'); //PEGA A ID DA UNIDADE DO USUARIO LOGADO
-        
-                if($loggedUnit == 12) //CNSC USA OS MESMOS EQUIP DA FFCL
-                {
-                    $loggedUnit = 2;
-                }
-        
-                $criteria3->add(new TFilter('unidade', '=', $loggedUnit), TExpression::AND_OPERATOR);
-                $criteria3->add(new TFilter('status', '=', 'S'), TExpression::AND_OPERATOR);
-        
-                $agendamentosTodosExceto = AgendamentoEquipamentoItem::getObjects($criteria3); //ARRAY COM TODOS EQUIPAMENTOS DA UNIDADE DO USUARIO LOGADO 
-        
-                $arrayEquip = [];
-        
-                foreach($agendamentosTodosExceto as $arrayEquipDisp)
-                {        
-                    $arrayEquip[$arrayEquipDisp->id] = $arrayEquipDisp->equipamento;
-                }
-    
-                if($param['inicio'] != $param['termino'] && $param['inicio'] < $param['termino'])
-                {        
-                    TCombo::reload('form_AgendamentoEquipamento', 'equipamento_id', $arrayEquip);        
-                }
-    
                 TTransaction::close();
+                return;
             }
-            else
+
+            // Nova lógica anti-conflito (Intersecção de intervalos de tempo)
+            $criteria2 = new TCriteria;
+            $criteria2->add(new TFilter('inicio', '<', $termino1));
+            $criteria2->add(new TFilter('termino', '>', $inicio1));
+            
+            // Se for uma edição, não deve conflitar com o próprio registro atual
+            if (!empty($param['id'])) {
+                $criteria2->add(new TFilter('id', '<>', $param['id']));
+            }
+
+            $agendamentos2 = AgendamentoEquipamento::getObjects($criteria2);
+
+            $criteria3 = new TCriteria;
+            foreach ($agendamentos2 as $linha)
             {
-                new TMessage('error','Os campos data e início devem estar preenchidos');
+                $criteria3->add(new TFilter('id', '<>', $linha->equipamento_id), TExpression::AND_OPERATOR); 
             }
+
+            $loggedUnit = TSession::getValue('userunitid');
+            if($loggedUnit == 12) 
+            {
+                $loggedUnit = 2; // CNSC usa os mesmos equipamentos da FFCL
+            }
+
+            $criteria3->add(new TFilter('unidade', '=', $loggedUnit), TExpression::AND_OPERATOR);
+            $criteria3->add(new TFilter('status', '=', 'S'), TExpression::AND_OPERATOR);
+
+            $agendamentosTodosExceto = AgendamentoEquipamentoItem::getObjects($criteria3);
+
+            $arrayEquip = [];
+            foreach($agendamentosTodosExceto as $arrayEquipDisp)
+            {        
+                $arrayEquip[$arrayEquipDisp->id] = $arrayEquipDisp->equipamento;
+            }
+
+            TCombo::reload('form_AgendamentoEquipamento', 'equipamento_id', $arrayEquip);        
+            TTransaction::close();
+        }
+        catch (Exception $e)
+        {
+            new TMessage('error', $e->getMessage());
+            TTransaction::rollback();
         }
     }
-
 
     public function onSave( $param )
     {
@@ -232,59 +213,58 @@ class AgendamentoEquipamentoForm extends TPage
         {
             TTransaction::open('Felabs_DB');
             
-            //$logged  = SystemUser::newFromLogin(TSession::getValue('login'));
             $userid = TSession::getValue('userid');
             $user = new SystemUser($userid);
-            $loggedUnitId = TSession::getValue('userunitid'); //PEGA A ID DA UNIDADE DO USUARIO LOGADO
+            $loggedUnitId = TSession::getValue('userunitid'); 
 
-            
             $this->form->validate(); 
             
-            $object = new AgendamentoEquipamento;  
             $data = $this->form->getData(); 
+            $data_us = TDate::date2us($data->data_evento);
 
-            $data->data_evento = TDate::date2us($data->data_evento);
-            $data->usuario = $user->id;
-            $data->data_reg = date('Y-m-d H:i:s');
-            $data->unidade = $loggedUnitId;
-            $data->inicio = $data->data_evento.' '.$data->inicio.':00';
-            $data->termino = $data->data_evento.' '.$data->termino.':00';
-
-
-            //$criteria3 = new TCriteria;
-            //$criteria3->add(new TFilter('equipamento_id', '=', $data->equipamento_id), TExpression::AND_OPERATOR);
-            //$criteria3->add(new TFilter('inicio', 'BETWEEN', $data->inicio, $data->termino), TExpression::OR_OPERATOR);
-            //$criteria3->add(new TFilter('termino', 'BETWEEN', $data->inicio, $data->termino), TExpression::OR_OPERATOR);
-            
-            //$agendamentos3 = AgendamentoEquipamento::getObjects($criteria3); //ARRAY COM EQUIPAMENTOS QUE ESTÃO RESERVADOS NO MESMO HORÁRIO - SEGURANÇA ADICIONAL
-
-
-            if($data->inicio > $data->termino)
-            {
-                new TMessage('error','O horário de início não pode ser maior que o horário de término');
-                //die();
+            $object = new AgendamentoEquipamento;  
+            if (!empty($data->id)) {
+                $object->load($data->id);
             }
 
-            elseif($data->inicio == $data->termino)
+            $inicio_full = $data_us.' '.$data->inicio.':00';
+            $termino_full = $data_us.' '.$data->termino.':00';
+
+            if($inicio_full >= $termino_full)
             {
-                new TMessage('error','O horário de início não pode ser igual ao horário de término');
-                //die();
+                throw new Exception('O horário de início não pode ser maior ou igual ao horário de término');
             }
-        
-            //elseif($agendamentos3 != NULL) //SEGURANÇA ADICIONAL PARA PREVENIR SALVAR O MESMO EQUIPAMENTO NO MESMO HORÁRIO
+
+            // Validação de segurança dupla ao salvar contra concorrência e sobreposição externa
+            $criteria3 = new TCriteria;
+            $criteria3->add(new TFilter('equipamento_id', '=', $data->equipamento_id));
+            $criteria3->add(new TFilter('inicio', '<', $termino_full));
+            $criteria3->add(new TFilter('termino', '>', $inicio_full));
             
-            else
-            {
-                $object->fromArray( (array) $data); 
-                $object->store(); 
-                
-                $data->id = $object->id;
-                
-                $this->form->setData($data); 
-                TTransaction::close(); 
-                
-                new TMessage('info', TAdiantiCoreTranslator::translate('Record saved'),TApplication::loadPage('AgendamentoEquipamentoList'));
-                }
+            if (!empty($data->id)) {
+                $criteria3->add(new TFilter('id', '<>', $data->id));
+            }
+            
+            $conflitos = AgendamentoEquipamento::getObjects($criteria3);
+            if (!empty($conflitos)) {
+                throw new Exception('Este equipamento já foi reservado por outro usuário neste mesmo período.');
+            }
+
+            $object->fromArray( (array) $data); 
+            $object->data_evento = $data_us;
+            $object->usuario = $user->id;
+            $object->data_reg = date('Y-m-d H:i:s');
+            $object->unidade = $loggedUnitId;
+            $object->inicio = $inicio_full;
+            $object->termino = $termino_full;
+
+            $object->store(); 
+            
+            $data->id = $object->id;
+            $this->form->setData($data); 
+            TTransaction::close(); 
+            
+            new TMessage('info', TAdiantiCoreTranslator::translate('Record saved'), TApplication::loadPage('AgendamentoEquipamentoList'));
         }
         catch (Exception $e) 
         {
@@ -293,13 +273,11 @@ class AgendamentoEquipamentoForm extends TPage
             TTransaction::rollback(); 
         }
     }
-    
 
     public function onClear( $param )
     {
         $this->form->clear(TRUE);
     }
-    
 
     public function onEdit( $param )
     {
@@ -308,12 +286,35 @@ class AgendamentoEquipamentoForm extends TPage
             if (isset($param['key']))
             {
                 $key = $param['key'];
-                
                 TTransaction::open('Felabs_DB');
                 
                 $object = new AgendamentoEquipamento($key);
+                
+                // Trata os campos compostos vindos do banco de dados para o formulário
+                if (!empty($object->inicio)) {
+                    $object->data_evento = TDate::us2date(substr($object->inicio, 0, 10));
+                    $object->inicio = substr($object->inicio, 11, 5);
+                }
+                if (!empty($object->termino)) {
+                    $object->termino = substr($object->termino, 11, 5);
+                }
+                
                 $this->form->setData($object);
                 
+                // Força o gatilho para listar o combo de equipamentos com o valor atual incluso
+                $param_fake = [
+                    'id' => $object->id,
+                    'data_evento' => $object->data_evento,
+                    'inicio' => $object->inicio,
+                    'termino' => $object->termino
+                ];
+                self::onChangeType($param_fake);
+                
+                // Restaura o ID selecionado após o reload do combo
+                $obj_equip = new StdClass;
+                $obj_equip->equipamento_id = $object->equipamento_id;
+                TForm::sendData('form_AgendamentoEquipamento', $obj_equip);
+
                 TTransaction::close();
             }
             else

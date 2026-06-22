@@ -44,7 +44,7 @@ class CompletaDisciplinaHistorico extends TStandardList
         $this->form->addFields( [new TLabel('Aluno:')], [$NomeAluno] );
         
         //$this->form->addAction((''), new TAction(array($this, 'onSearch')), 'fa:search');
-        $this->form->addAction('Voltar', new TAction(['DadoshistoricoalunoList', 'onReload']), 'fa:arrow-left red');
+        $this->form->addAction('Voltar', new TAction(['DadoshistoricoalunoList', 'onReload']), 'fa:arrow-left blue');
         //$this->form->clear(); 
         
         // keep the form filled with session data

@@ -1,120 +1,110 @@
 <?php
 
-
 class MeuCursoForm extends TPage
 {
     protected $form; 
     
-
-    public function __construct( $param )
+    public function __construct($param)
     {
-        parent::__construct();
+        parent::__construct();     
+        
+        // Instancia o formulário utilizando Bootstrap direto para melhor performance visual
+        //$this->form = new BootstrapFormBuilder('form_MeuCurso');
 
-        //var_dump($param);
-        //die;        
-        
-        // creates the form
-        $this->form = new TQuickForm('form_MeuCurso');
-        $this->form->class = 'tform'; 
-        $this->form = new BootstrapFormWrapper($this->form);
-        $this->form->style = 'display: table;width:100%'; 
-        
-        
-        // define the form title
-        $this->form->setFormTitle('MeuCurso');
-        
+        // Remove o TQuickForm, o class = tform e o BootstrapFormWrapper. Use apenas:
+        $this->form = new BootstrapFormBuilder('form_MeuCurso');
+        $this->form->style = 'width:100%';
 
-        // create the form fields
-        $id = new THidden('id');
-        $curso_id = new THidden('curso_id');
-        $filename = new TFile('filename');
-        $nome = new TEntry('nome');
-        $descricao = new THtmlEditor('descricao');
-        $tipo = new TCombo('tipo');
-        $data_reg = new THidden('data_reg');
+        // O próprio construtor gerencia o título principal do painel externo
+        $this->form->setFormTitle('Adicionar Arquivo'); 
+
+        if (isset($param['method']) && $param['method'] == 'mostrarInfo') {
+            $this->form->setFormTitle('Adicionar Informativo');
+        }
         
+        // Criação dos campos do formulário
+        $id         = new THidden('id');
+        $curso_id   = new THidden('curso_id');
+        $filename   = new TFile('filename');
+        $nome       = new TEntry('nome');
+        $descricao  = new THtmlEditor('descricao');
+        $tipo       = new TCombo('tipo');
+        $data_reg   = new THidden('data_reg');
         
-        $tipoItems = [];
-        $tipoItems['A'] = 'Atividades Complementares';
-        $tipoItems['C'] = 'Calendários';
-        $tipoItems['E'] = 'Estágio Supervisionado';
-        $tipoItems['G'] = 'Grade Curricular';
-        $tipoItems['H'] = 'Horário de Aulas';
-        $tipoItems['I'] = 'Informativo';
-        $tipoItems['O'] = 'Outros';
-        $tipoItems['P'] = 'Projeto Pedagógico do Curso';
-        $tipoItems['T'] = 'Trabalho de Conclusão de Curso (TCC)';
-        
+        // Definição dos itens do Combo Tipo
+        $tipoItems = [
+            'A' => 'Atividades Complementares',
+            'C' => 'Calendários',
+            'E' => 'Estágio Supervisionado',
+            'G' => 'Grade Curricular',
+            'H' => 'Horário de Aulas',
+            'I' => 'Informativo',
+            'O' => 'Outros',
+            'P' => 'Projeto Pedagógico do Curso',
+            'T' => 'Trabalho de Conclusão de Curso (TCC)'
+        ];
         $tipo->addItems($tipoItems);
         
-        $descricao->setSize('100%',100);     
+        $descricao->setSize('100%', 150);     
 
-        $curso_id->setValue((int)$param['curso']);
+        // Definição segura do valor inicial do curso_id
+        if (isset($param['curso'])) {
+            $curso_id->setValue((int)$param['curso']);
+        } elseif (TSession::getValue('cursoid')) {
+            $curso_id->setValue((int)TSession::getValue('cursoid'));
+        }
 
-        if($param['method'] == 'mostrarInfo')
-        {
+        // Verifica o método de abertura para preencher o tipo automaticamente
+        $method = isset($param['method']) ? $param['method'] : '';
+        if ($method == 'mostrarInfo') {
             $tipo->setValue('I');
         }
-
        
-        // add the fields
-        $this->form->addQuickField('Id', $id, '50%');
-        $this->form->addQuickField('Curso Id', $curso_id, '50%');
-        $this->form->addQuickField('Nome', $nome, '90%', new TRequiredValidator);
-        $this->form->addQuickField('Tipo', $tipo, '90%', new TRequiredValidator);
-        $this->form->addQuickField('Descrição', $descricao, '90%');
-        $this->form->addQuickField('Arquivo anexo', $filename, '90%');
-        $this->form->addQuickField('Data Reg', $data_reg, '90%');
+        // Adiciona os campos ao formulário de forma organizada
+        $this->form->addFields([$id], [$curso_id], [$data_reg]); // Escondidos em linha técnica
+        $this->form->addFields([new TLabel('Nome:')], [$nome]);
+        $this->form->addFields([new TLabel('Tipo:')], [$tipo]);
+        $this->form->addFields([new TLabel('Descrição:')], [$descricao]);
+        $this->form->addFields([new TLabel('Arquivo anexo:')], [$filename]);
 
+        // Validações obrigatórias
+        $nome->addValidation('Nome', new TRequiredValidator);
+        $tipo->addValidation('Tipo', new TRequiredValidator);
 
-        if (!empty($id))
-        {
-            $id->setEditable(FALSE);
-        }
-        
-
-        // create the form actions
-        $btn = $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'onSave')), 'far:save');
+        // Configuração das ações (Botões)
+        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'far:save white');
         $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addQuickAction('Voltar',  new TAction(array($this, 'onBack')), 'fa:arrow-circle-left blue');
+        
+        $this->form->addAction('Voltar', new TAction([$this, 'onBack']), 'fa:arrow-circle-left blue');
       
-
-        if($param['method'] == 'onEdit')
-        {
-            $this->form->addQuickAction('Excluir',  new TAction(array($this, 'onDelete'),$param), 'far:trash-alt red');
+        if ($method == 'onEdit' || isset($param['key'])) {
+            $this->form->addAction('Excluir', new TAction([$this, 'onDelete'], $param), 'far:trash-alt red');
         }
         
-        
-        // vertical box container
+        // Container de exibição da página
         $container = new TVBox;
         $container->style = 'width: 100%';
-        //$container->add(new TXMLBreadCrumb('menu.xml', 'MeuCursoView'));
 
+        $container->add($this->form);
 
-        if($param['method'] == 'mostrarInfo')
-        {
-            $container->add(TPanelGroup::pack('Adicionar Informativo', $this->form));
-        }
-        else
-        {
-            $container->add(TPanelGroup::pack('Adicionar Arquivo', $this->form));
-        }
-        
+        // if ($method == 'mostrarInfo') {
+        //     $container->add(TPanelGroup::pack('Adicionar Informativo', $this->form));
+        // } else {
+        //     $container->add(TPanelGroup::pack('Adicionar Arquivo', $this->form));
+        // }
         
         parent::add($container);
     }
-
 
     public function onBack()
     {       
         $parametro = [];
         $parametro['curso'] = TSession::getValue('cursoid');
         
-        TApplication::loadPage('MeuCursoView','verPagina',$parametro);
+        TApplication::loadPage('MeuCursoView', 'verPagina', $parametro);
     }
 
-
-    public function onSave( $param )
+    public function onSave($param)
     {
         try
         {
@@ -125,86 +115,74 @@ class MeuCursoForm extends TPage
             $object = new MeuCurso;  
             $data = $this->form->getData(); 
 
-            if($data->tipo != 'I' && empty($data->filename)) //SE FOR ARQUIVO E NÃO ANEXAR, EXIBE ERRO
-            {
+            if ($data->tipo != 'I' && empty($data->filename)) {
                 throw new Exception('O campo Anexo está vazio');
             }
 
             $data->data_reg = date('Y-m-d H:i:s');
 
+            // Recupera o ID do usuário logado na sessão para evitar erro de variável nula
+            $userId = TSession::getValue('userid');
 
-            if($data->id) //VERIFICA SE É UM REGISTRO EXISTENTE SENDO EDITADO
-            {
+            if ($data->id) {
                 $testa = new MeuCurso($data->id);
             }
      
-
-            if ($data->filename)
-            {
-                if($data->id)
-                {
-                    if($data->filename != $testa->filename) //VERIFICA SE O ANEXO COLADO É DIFERENTE DO ANEXO ANTERIOR
-                    {  
+            if ($data->filename) {
+                if (!empty($data->id) && isset($testa)) {
+                    // Se o arquivo enviado for diferente do antigo, processa a alteração
+                    if ($data->filename != $testa->filename) {  
                         $today = date("YmdHis");
-                        $source_file   = 'tmp/'.$data->filename;
-                        $nomeArquivo = 'meucurso_'.$today.'_'. $logged->id.'_'.$data->filename;
-                        $target_file   = 'files/meucurso/'.$nomeArquivo;
-                        $finfo         = new finfo(FILEINFO_MIME_TYPE);
+                        $source_file = 'tmp/'.$data->filename;
+                        $nomeArquivo = 'meucurso_'.$today.'_'.$userId.'_'.$data->filename;
+                        $target_file = 'files/meucurso/'.$nomeArquivo;
             
-                        // move to the target directory
+                        if (file_exists($source_file)) {
+                            rename($source_file, $target_file);
+                            $data->filename = $nomeArquivo;
+                        }
+                    }
+                } else {
+                    // Novo registro com upload de arquivo
+                    $today = date("YmdHis");
+                    $source_file = 'tmp/'.$data->filename;
+                    $nomeArquivo = 'meucurso_'.$today.'_'.$userId.'_'.$data->filename;
+                    $target_file = 'files/meucurso/'.$nomeArquivo;
+            
+                    if (file_exists($source_file)) {
                         rename($source_file, $target_file);
-            
-                        // update the photo_path
                         $data->filename = $nomeArquivo;
                     }
                 }
-                else
-                {
-                    $today = date("YmdHis");
-                    $source_file   = 'tmp/'.$data->filename;
-                    $nomeArquivo = 'meucurso_'.$today.'_'. $logged->id.'_'.$data->filename;
-                    $target_file   = 'files/meucurso/'.$nomeArquivo;
-                    $finfo         = new finfo(FILEINFO_MIME_TYPE);
-            
-                    // move to the target directory
-                    rename($source_file, $target_file);
-            
-                    // update the photo_path
-                    $data->filename = $nomeArquivo;
-                }
             }
 
-
-            $object->fromArray( (array) $data); 
+            $object->fromArray((array) $data); 
             $object->store(); 
-            
 
             $data->id = $object->id;
-            
             $this->form->setData($data); 
+            
             TTransaction::close(); 
             
             $parametro = [];
             $parametro['curso'] = TSession::getValue('cursoid');
 
-            new TMessage('info', 'Registro salvo',TApplication::loadPage('MeuCursoView','verPagina',$parametro)); 
+            new TMessage('info', 'Registro salvo com sucesso!', TAction::newFromMethod('MeuCursoView', 'verPagina', $parametro)); 
         }
         catch (Exception $e) 
         {
             new TMessage('error', $e->getMessage()); 
-            $this->form->setData( $this->form->getData() ); 
+            $this->form->setData($this->form->getData()); 
             TTransaction::rollback(); 
         }
     }
 
-
-    public function onClear( $param )
+    public function onClear($param)
     {
         $this->form->clear(TRUE);
     }
     
-
-    public function onEdit( $param )
+    public function onEdit($param)
     {
         try
         {
@@ -231,7 +209,6 @@ class MeuCursoForm extends TPage
         }
     }
 
-
     public function onDelete($param)
     {
         $action = new TAction(array($this, 'Delete'));
@@ -240,7 +217,6 @@ class MeuCursoForm extends TPage
         new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
     }
     
-
     public function Delete($param)
     {
         try
@@ -253,12 +229,11 @@ class MeuCursoForm extends TPage
             $object->delete(); 
             
             TTransaction::close();
-            //$this->onReload( $param ); 
             
             $parametro = [];
             $parametro['curso'] = TSession::getValue('cursoid');
 
-            new TMessage('info', AdiantiCoreTranslator::translate('Record deleted'),TApplication::loadPage('MeuCursoView','verPagina',$parametro));
+            new TMessage('info', AdiantiCoreTranslator::translate('Record deleted'), TAction::newFromMethod('MeuCursoView', 'verPagina', $parametro));
         }
         catch (Exception $e) 
         {
@@ -267,15 +242,13 @@ class MeuCursoForm extends TPage
         }
     }
 
-
-    public function mostrar( $param )
+    public function mostrar($param)
     {
-      
+        // Método opcional reservado para lógicas customizadas da view
     }
 
-
-    public function mostrarInfo( $param )
+    public function mostrarInfo($param)
     {
- 
+        // Método opcional reservado para lógicas customizadas da view
     }
 }

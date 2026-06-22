@@ -1,5 +1,4 @@
 <?php
-
 class WifiCadastroFormListProfessor extends TPage
 {
     protected $form; 
@@ -7,11 +6,9 @@ class WifiCadastroFormListProfessor extends TPage
     protected $pageNavigation;
     protected $loaded;
     
-
     public function __construct( $param )
     {
         parent::__construct();
-        
         
         // creates the form
         $this->form = new TQuickForm('form_WifiCadastro');
@@ -20,7 +17,6 @@ class WifiCadastroFormListProfessor extends TPage
         $this->form->style = 'display: table;width:100%'; 
         $this->form->setFormTitle('WifiCadastro');
         
-
         // create the form fields
         $id = new THidden('id');
         $nome = new THidden('nome');
@@ -31,37 +27,30 @@ class WifiCadastroFormListProfessor extends TPage
         $data_reg = new THidden('data_reg');
         $status = new THidden('status');
      
-
         $mac->setMask('AA:AA:AA:AA:AA:AA');
         $mac->forceUpperCase();
-        //E4:58:E7:D5:23:8E
-
 
         // add the fields
         $this->form->addQuickField('Id', $id, '50%');
         $this->form->addQuickField('Nome', $nome, '100%');
         $this->form->addQuickField('System user id', $system_user_id, '100%');
         $this->form->addQuickField('Mac do dispositivo', $mac, '100%');
-        //$this->form->addQuickField('',$label);
         $this->form->addQuickField('Unidade', $unidade, '100%');
         $this->form->addQuickField('Tipo', $tipo, '100%');
         $this->form->addQuickField('Data_reg', $data_reg, '100%');
         $this->form->addQuickField('Status', $status, '100%');
-
 
         // create the form actions
         $btn = $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save');
         $btn->class = 'btn btn-sm btn-primary';
         $this->form->addQuickAction('Ajuda',  new TAction(array($this, 'onHelp')), 'fa:info-circle');
 
-        
         // creates a Datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid = new BootstrapDatagridWrapper($this->datagrid);
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
         
-
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'left');
         $column_nome = new TDataGridColumn('nome', 'Nome', 'left');
@@ -71,7 +60,6 @@ class WifiCadastroFormListProfessor extends TPage
         $column_data_reg = new TDataGridColumn('data_reg', 'Data do registro', 'left');
         $column_status = new TDataGridColumn('status', 'Ativo', 'left');
         $column_system_user_id = new TDataGridColumn('system_user_id', 'Systemuserid', 'left');
-
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
@@ -83,7 +71,6 @@ class WifiCadastroFormListProfessor extends TPage
         $this->datagrid->addColumn($column_data_reg);
         //$this->datagrid->addColumn($column_system_user_id);
 
-        
         // creates two datagrid actions
         $action1 = new TDataGridAction(array($this, 'onEdit'));
         //$action1->setUseButton(TRUE);
@@ -91,7 +78,6 @@ class WifiCadastroFormListProfessor extends TPage
         $action1->setLabel(('Editar'));
         $action1->setImage('far:edit blue fa-lg');
         $action1->setField('id');
-
         
         $action2 = new TDataGridAction(array($this, 'onDelete'));
         //$action2->setUseButton(TRUE);
@@ -100,29 +86,24 @@ class WifiCadastroFormListProfessor extends TPage
         $action2->setImage('far:trash-alt red fa-lg');
         $action2->setField('id');
 
-
         $action_onoff = new TDataGridAction(array($this, 'Question'));
         $action_onoff->setButtonClass('btn btn-default');
         $action_onoff->setLabel('Solicitar exclusão');
         $action_onoff->setImage('far:trash-alt red fa-lg');
         $action_onoff->setField('id');
-
         
         // add the actions to the datagrid
         $this->datagrid->addAction($action1);
         //$this->datagrid->addAction($action2);
         $this->datagrid->addAction($action_onoff);
         
-        
         // create the datagrid model
         $this->datagrid->createModel();
-        
         
         // creates the page navigation
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
-        
         
         // vertical box container
         $container = new TVBox;
@@ -133,7 +114,6 @@ class WifiCadastroFormListProfessor extends TPage
         
         parent::add($container);
     }
-
 
     public function Question($param)
     {
@@ -154,7 +134,6 @@ class WifiCadastroFormListProfessor extends TPage
             new TQuestion('Você realmente deseja solicitar a exclusão deste endereço MAC?', $action1);
         }
     }
-
 
     public function onTurnOnOff($param)
     {
@@ -195,7 +174,6 @@ class WifiCadastroFormListProfessor extends TPage
 <li><b>Iphone:</b> No menu principal, abra "Ajustes". Vá em "Geral" e depois em "Sobre".</li> 
 <li><b>Notebook:</b> Abra o "Prompt de Comando", digite "ipconfig /all" (sem aspas) e tecle Enter (Enviar endereço MAC referente ao Wi-Fi).</li>');
     }
-
 
     public function onReload($param = NULL)
     {
@@ -289,7 +267,6 @@ class WifiCadastroFormListProfessor extends TPage
             TTransaction::rollback();
         }
     }
-    
 
     public function onDelete($param)
     {
@@ -298,7 +275,6 @@ class WifiCadastroFormListProfessor extends TPage
         
         new TQuestion(TAdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
     }
-    
 
     public function Delete($param)
     {
@@ -322,7 +298,6 @@ class WifiCadastroFormListProfessor extends TPage
             TTransaction::rollback(); 
         }
     }
-
 
     public function onSave( $param )
     {
@@ -430,13 +405,11 @@ class WifiCadastroFormListProfessor extends TPage
         }
     }
     
-
     public function onClear( $param )
     {
         $this->form->clear(TRUE);
     }
     
-
     public function onEdit( $param )
     {
         try
@@ -464,7 +437,6 @@ class WifiCadastroFormListProfessor extends TPage
         }
     }
     
-
     public function show()
     {
         if (!$this->loaded AND (!isset($_GET['method']) OR $_GET['method'] !== 'onReload') )

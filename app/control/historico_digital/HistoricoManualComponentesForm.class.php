@@ -641,7 +641,7 @@ class HistoricoManualComponentesForm extends TPage
     
     public static function onChangeSituacaoDisciplina($param)
     {
-        $situacao = $param['situacao'];
+        $situacao = $param['situacao'] ?? [];
 
         if($situacao == "Aprovado")
         {

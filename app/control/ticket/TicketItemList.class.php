@@ -5,10 +5,7 @@ class TicketItemList extends TPage
     private $form;
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
-    private $loaded;
-    private $deleteButton;
-    
+    private $loaded;   
 
     public function __construct()
     {
@@ -77,27 +74,6 @@ class TicketItemList extends TPage
         $this->datagrid->addColumn($column_descricao);
         $this->datagrid->addColumn($column_anexo);
         $this->datagrid->addColumn($column_data_reg);
-
-        
-        // create EDIT action
-        /*$action_edit = new TDataGridAction(array('TicketItemForm', 'onEdit'));
-        //$action_edit->setUseButton(TRUE);
-        //$action_edit->setButtonClass('btn btn-default');
-        $action_edit->setLabel(_t('Edit'));
-        $action_edit->setImage('far:edit blue fa-lg');
-        $action_edit->setField('id');
-        $this->datagrid->addAction($action_edit);*/
-        
-        
-        // create DELETE action
-        $action_del = new TDataGridAction(array($this, 'onDelete'));
-        //$action_del->setUseButton(TRUE);
-        //$action_del->setButtonClass('btn btn-default');
-        $action_del->setLabel(_t('Delete'));
-        $action_del->setImage('far:trash-alt red fa-lg');
-        $action_del->setField('id');
-        $this->datagrid->addAction($action_del);
-        
         
         // create the datagrid model
         $this->datagrid->createModel();
@@ -119,34 +95,6 @@ class TicketItemList extends TPage
         parent::add($container);
     }
     
-
-    public function onInlineEdit($param)
-    {
-        try
-        {
-            $field = $param['field'];
-            $key   = $param['key'];
-            $value = $param['value'];
-            
-            TTransaction::open('Felabs_DB');
-            
-            $object = new TicketItem($key);
-            $object->{$field} = $value;
-            $object->store(); 
-            
-            TTransaction::close();
-            
-            $this->onReload($param); 
-            new TMessage('info', "Record Updated");
-        }
-        catch (Exception $e)
-        {
-            new TMessage('error', $e->getMessage());
-            TTransaction::rollback();
-        }
-    }
-    
-
     public function onSearch()
     {
         $data = $this->form->getData();
@@ -212,7 +160,6 @@ class TicketItemList extends TPage
         $this->onReload($param);
     }
     
-
     public function onReload($param = NULL)
     {
         try
@@ -302,40 +249,7 @@ class TicketItemList extends TPage
             new TMessage('error', $e->getMessage());
             TTransaction::rollback();
         }
-    }
-    
-
-    public function onDelete($param)
-    {
-        $action = new TAction(array($this, 'Delete'));
-        $action->setParameters($param);
-        
-        new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
-    }
-    
-
-    public function Delete($param)
-    {
-        try
-        {
-            $key = $param['key'];
-            
-            TTransaction::open('Felabs_DB');
-            
-            $object = new TicketItem($key, FALSE);
-            $object->delete();
-            
-            TTransaction::close(); 
-            $this->onReload( $param ); 
-            new TMessage('info', AdiantiCoreTranslator::translate('Record deleted')); 
-        }
-        catch (Exception $e)
-        {
-            new TMessage('error', $e->getMessage()); 
-            TTransaction::rollback(); 
-        }
-    }
-    
+    }    
 
     public function show()
     {

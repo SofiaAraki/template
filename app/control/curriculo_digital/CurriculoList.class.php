@@ -5,10 +5,7 @@ class CurriculoList extends TPage
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
-    private $loaded;
-    private $deleteButton;
-    
+    private $loaded;   
 
     public function __construct()
     {

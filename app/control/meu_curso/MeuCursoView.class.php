@@ -1,13 +1,15 @@
 <?php
-
-
 class MeuCursoView extends TPage
 {
+    protected $form;
+    protected $form2;
+    private $datagrid;
+    private $datagrid2;
+    private $loaded;
 
     function __construct($param)
     {
         parent::__construct();
-
 
         if(empty($param['curso']) && empty($param['key']))
         {
@@ -15,13 +17,11 @@ class MeuCursoView extends TPage
         }
     }
 
-
     public function onCursoForm()
     {        
         TTransaction::open('Felabs_DB');
         
         $loggedUnit = TSession::getValue('userunitid');
-        //$logged  = SystemUser::newFromLogin(TSession::getValue('login'));
         $userid = TSession::getValue('userid');
         $user = new SystemUser($userid);
         
@@ -31,17 +31,11 @@ class MeuCursoView extends TPage
         $qform->style = 'padding:20px';
         
         $curso = new TCombo('curso');
-        //$ano = new TCombo('ano');
-        //$semestre = new TCombo('semestre');
-
         $curso->enableSearch();
 
         $qform->addQuickField('Curso', $curso);
-        //$qform->addQuickField('Ano', $ano);
-        //$qform->addQuickField('Semestre', $semestre);
-
+       
         $ano = date('Y');
-        
         $mes = date('m');
 
         if($mes < 8)
@@ -53,7 +47,6 @@ class MeuCursoView extends TPage
             $semestreAtual = 2;
         }
 
-
         TTransaction::open('dados_fei');
 
         $criteria = new TCriteria;
@@ -64,33 +57,26 @@ class MeuCursoView extends TPage
         }
         else
         {
-            //$criteria->add(new TFilter('Codaluno', '=', 999999999999999999999999));  //SE NAO FOR ALUNO, DEVE DAR 0 MATRÍCULAS E MOSTRAR TODOS OS CURSOS
             $criteria->add(new TFilter('Codaluno', '=', 0));
         }
-
 
         $criteria->add(new TFilter('CodEntidade', '=', $loggedUnit)); 
         $criteria->add(new TFilter('SemestreMatricula', '=', $semestreAtual)); 
         $criteria->add(new TFilter('AnoMatricula', '=', $ano)); 
-        //$criteria->add(new TFilter('CodCurso', '<>', 11)); 
            
         $matriculas = VwAluno::getObjects($criteria);
-
         $numeroMatriculas = count($matriculas);
-
         $parametro = [];
-   
 
-        if($numeroMatriculas == 1) //SE TEM UMA MATRÍCULA
+        if($numeroMatriculas == 1) 
         {
             $parametro['curso'] = $matriculas[0]->CodCurso;
             $this->verPagina($parametro);
         }
         
-        if($numeroMatriculas > 1) //SE TEM MAIS DE UMA MATRÍCULA
+        if($numeroMatriculas > 1) 
         {
             $items = [];
-
             foreach($matriculas as $matricula)
             {                
                 $items[$matricula->CodCurso] = $matricula->NomeCurso;
@@ -98,22 +84,17 @@ class MeuCursoView extends TPage
 
             $curso->addItems($items);
 
-
             $qform->addQuickAction('Ver Página do Curso', new TAction(array($this, 'onVerPagina')), 'fa:table');
             new TInputDialog('Por favor selecione o curso', $qform);
-            
         }
-        
-        elseif($numeroMatriculas == 0) //SE NÃO TEM MATRÍCULAS
+        elseif($numeroMatriculas == 0) 
         {
             $criteria1 = new TCriteria;                        
             $criteria1->add(new TFilter('CodEntidade', '=', $loggedUnit)); 
 
             $todosCursos = FiCurso::getObjects($criteria1);
 
-
             $items = [];
-
             foreach($todosCursos as $todoCurso)
             {
                 if($todoCurso->CodCurso != 11)
@@ -131,12 +112,11 @@ class MeuCursoView extends TPage
         TTransaction::close();
     }
 
-
     public function onVerPagina($param)
     {
         if(empty($param['curso']))
         {
-            new TMessage('info', 'Insira qual curso deseja visualizar',TApplication::loadPage('MeuCursoView'));
+            new TMessage('info', 'Insira qual curso deseja visualizar', TApplication::loadPage('MeuCursoView'));
         }
         else
         {
@@ -144,267 +124,173 @@ class MeuCursoView extends TPage
         }
     }
 
-
     public function verPagina($param)
     {
         TTransaction::open('Felabs_DB'); 
-        
-        //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
         $userid = TSession::getValue('userid');
         $user = new SystemUser($userid);
-        
         TTransaction::close(); 
 
-
         TSession::setValue('cursoid', $param['curso']);
-
-        $cabecalho = new TElement("section");
-        $cabecalho->class = "content-header";
-        $cabecalho->style = "padding: 0px 0px 0px 0px";
-        
 
         TTransaction::open('dados_fei');
         $cursoInfo = new FiCurso($param['curso']);
         TTransaction::close();
 
-        $cabecalho->add("<h1>
-        $cursoInfo->Nome
-        <small>Página do Curso</small>
-        </h1><br>");
+        // --- TÍTULO DA PÁGINA (Padrão do Aluno) ---
+        $cabecalho = new TElement('div');
+        $cabecalho->style = "margin-bottom: 25px; padding-left: 5px;";
+        $cabecalho->add("<h2 style='font-weight: 300; margin-bottom: 5px;'> <i class='fa fa-graduation-cap'></i> {$cursoInfo->Nome}</h2>");
 
+        // --- DATAGRID 1: INFORMATIVOS DO CURSO ---
+        $this->datagrid2 = new TQuickGrid;
+        $this->datagrid2->style = 'width: 100%; border-collapse: collapse;';
+        $this->datagrid2->addQuickColumn('Título', 'nome', 'left', '80%');
+        $this->datagrid2->addQuickColumn('Postado em', 'data_reg', 'center', '20%');
 
-        $this->form = new BootstrapFormBuilder('form_meucurso');
-        $this->form->setFormTitle('Arquivos para Download');
+        $action2 = new TDataGridAction(array($this, 'onInputDialog'));
+        $action2->setUseButton(TRUE);
+        $action2->setButtonClass('btn btn-sm btn-primary');
+        $action2->setImage('fa:eye white');
+        $this->datagrid2->addQuickAction('Visualizar', $action2, 'id', '');
 
-
-        $this->form2 = new BootstrapFormBuilder('form_meucurso2');
-        $this->form2->setFormTitle('Informativos do Curso');
-        
-
-        // creates one datagrid
+        // --- DATAGRID 2: ARQUIVOS PARA DOWNLOAD ---
         $this->datagrid = new TQuickGrid;
-        
-        // add the columns
-        //$this->datagrid->addQuickColumn('', 'id', 'center');
+        $this->datagrid->style = 'width: 100%; border-collapse: collapse;';
         $this->datagrid->addQuickColumn('', 'nome', 'left', '100%');
 
-
-        // creates one datagrid
-        $this->datagrid2 = new TQuickGrid;
-        
-        // add the columns
-        //$this->datagrid2->addQuickColumn('', 'id', 'center');
-        $this->datagrid2->addQuickColumn('Título', 'nome', 'left', '100%');
-        $this->datagrid2->addQuickColumn('Data da postagem', 'data_reg', 'left', '100%');
-     
-
-        $action1 = new TDataGridAction(array($this,'onDownload'));
+        $action1 = new TDataGridAction(array($this, 'onDownload'));
         $action1->setUseButton(TRUE);
-        $action1->setButtonClass('btn btn-default');
-        $action1->setImage('fa:download green');
-        
-        
-        $action2 = new TDataGridAction(array($this,'onInputDialog'));
-        $action2->setUseButton(TRUE);
-        $action2->setButtonClass('btn btn-default');
-        $action2->setImage('far:clone green');
+        $action1->setButtonClass('btn btn-sm btn-success');
+        $action1->setImage('fa:cloud-download-alt white');
+        $this->datagrid->addQuickAction('Baixar', $action1, 'id', '');
 
-
-        $action3 = new TDataGridAction(array('MeuCursoForm','onEdit'));
+        // Ações exclusivas de edição da Secretaria
+        $action3 = new TDataGridAction(array('MeuCursoForm', 'onEdit'));
         $action3->setUseButton(TRUE);
-        $action3->setButtonClass('btn btn-default');
-        $action3->setImage('fa:edit blue');        
-   
+        $action3->setButtonClass('btn btn-sm btn-warning');
+        $action3->setImage('fa:edit white');        
         
-        // add the actions
-        $this->datagrid->addQuickAction('Download', $action1, 'id', '');
-        $this->datagrid2->addQuickAction('Ver Informativo', $action2, 'id', '');
-
-
         if($user->funcao_legado != 'Aluno')
         {
             $this->datagrid->addQuickAction('Editar', $action3, 'id', '');
             $this->datagrid2->addQuickAction('Editar', $action3, 'id', ''); 
         }       
 
+        $this->datagrid->setGroupColumn('arquivosTipo', "<div><i class='fa fa-folder-open'></i> {arquivosTipo}</div>");
 
-        $this->datagrid->setGroupColumn('arquivosTipo', '<b><i>{arquivosTipo}</i></b>');
-
-        //$this->datagrid2->setGroupColumn('arquivosTipo', '<b><i>{arquivosTipo}</i></b>');
-
+        // Instanciação dos formulários/painéis estruturais mantendo os cabeçalhos de ação da secretaria
+        $this->form = new BootstrapFormBuilder('form_meucurso');
+        $this->form2 = new BootstrapFormBuilder('form_meucurso2');
 
         if($user->funcao_legado != 'Aluno')
         {
-            $this->form->addHeaderAction('Adicionar Arquivo',new TAction(array('MeuCursoForm','mostrar'),$param),'bs:plus-sign green');
-
-            $this->form2->addHeaderAction('Adicionar Informativo',new TAction(array('MeuCursoForm','mostrarInfo'),$param),'bs:plus-sign green');
+            $this->form->addHeaderAction('Adicionar Arquivo', new TAction(array('MeuCursoForm', 'mostrar'), $param), 'fa:plus-circle green');
+            $this->form2->addHeaderAction('Adicionar Informativo', new TAction(array('MeuCursoForm', 'mostrarInfo'), $param), 'fa:plus-circle green');
         }
-        
 
-        // creates the datagrid model
         $this->datagrid->createModel();
-
-
-        // creates the datagrid model
         $this->datagrid2->createModel();
 
-
+        // Envolve as datagrids no wrapper Bootstrap
         $this->form->addContent([new BootstrapDatagridWrapper($this->datagrid)]);
         $this->form2->addContent([new BootstrapDatagridWrapper($this->datagrid2)]);
-        
-        $panel = new TPanelGroup('Arquivos para Download');
-        $panel->add($this->form);
 
+        $panel_informativos = new TPanelGroup('Informativos do Curso');
+        $panel_informativos->add($this->form2);
+        $panel_informativos->style = 'margin-bottom: 25px; width: 100%;';
 
-        $panel2 = new TPanelGroup('Informativos');
-        $panel2->add($this->datagrid2);
-        
-        
-        // wrap the page content using vertical box
-        $vbox = new TVBox;
+        $panel_arquivos = new TPanelGroup('Arquivos para Download');
+        $panel_arquivos->add($this->form);
+        $panel_arquivos->style = 'width: 100%;';
 
-        $vbox1 = new TVBox;
-
-
-        //$vbox->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
-        $vbox->add($this->form2);
-        $vbox1->add($this->form);
-            
+        // --- CONTAINER VERTICAL SEM DIVISÃO DE COLUNAS (Igual do Aluno) ---
+        $mainContainer = new TElement('div');
+        $mainContainer->style = 'width: 100%;';
+        $mainContainer->add($panel_informativos);
+        $mainContainer->add($panel_arquivos);
 
         TTransaction::close();
 
-
-        // vertical box container
-        $container = new TVBox;
-        $container->style = 'width: 100%';
-        //$container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
-        $container->add($vbox);
-        $container->add($vbox1);
-  
-        
-        // add the template to the page
         parent::add($cabecalho);
-        parent::add($container);
+        parent::add($mainContainer);
+        
         $this->onReload($param);
     }
 
-
-    public function onInputDialog( $param )
+    public function onInputDialog($param)
     {      
-        TApplication::loadPage('MeuCursoInformativo','mostrar',$param);        
+        TApplication::loadPage('MeuCursoInformativo', 'mostrar', $param);        
     }
 
-
-    function onReload($param)
+    public function onReload($param)
     {
         $this->datagrid->clear();
+        $this->datagrid2->clear();
 
         TTransaction::open('Felabs_DB');
         
-        //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
-        $userid = TSession::getValue('userid');
-        $user = new SystemUser($userid);
-  
-
         $criteria = new TCriteria;
-        $criteria->add( new TFilter(curso_id, '=', $param['curso']));
+        $criteria->add(new TFilter('curso_id', '=', $param['curso']));
         $criteria->setProperty('order', 'tipo, id asc');
 
         $meuCursoObjs = MeuCurso::getObjects($criteria);
 
-
-        foreach($meuCursoObjs as $meuCursoObj) // CRIA REGISTROS DATAGRID COM INSCRIÇÕES EVENTOS MASTER
+        foreach($meuCursoObjs as $meuCursoObj) 
         { 
-            if($meuCursoObj->tipo != 'I') //ADICIONA INFORMATIVOS NA GRID ARQUIVOS
+            if($meuCursoObj->tipo != 'I') 
             {
                 $registros1 = new StdClass;
                 $registros1->id = $meuCursoObj->id;
                 $registros1->nome = $meuCursoObj->nome;
                 
 
-                if($meuCursoObj->tipo == 'A')
-                {
-                    $registros1->arquivosTipo = 'Atividades Complementares';
-                }
-                if($meuCursoObj->tipo == 'E')
-                {
-                    $registros1->arquivosTipo = 'Estágio Supervisionado';
-                }
-                if($meuCursoObj->tipo == 'P')
-                {
-                    $registros1->arquivosTipo = 'Projeto Pedagógico do Curso';
-                }
-                if($meuCursoObj->tipo == 'T')
-                {
-                    $registros1->arquivosTipo = 'Trabalho de Conclusão de Curso (TCC)';
-                }
-                if($meuCursoObj->tipo == 'G')
-                {
-                    $registros1->arquivosTipo = 'Grade Curricular';
-                }
-                if($meuCursoObj->tipo == 'C')
-                {
-                    $registros1->arquivosTipo = 'Calendários';
-                }
-                if($meuCursoObj->tipo == 'H')
-                {
-                    $registros1->arquivosTipo = 'Horários';
-                }
-                if($meuCursoObj->tipo == 'I')
-                {
-                    $registros1->arquivosTipo = 'Informativo';
-                }
-                if($meuCursoObj->tipo == 'O')
-                {
-                    $registros1->arquivosTipo = 'Outros';
-                }
+                if($meuCursoObj->tipo == 'A')  $registros1->arquivosTipo = 'Atividades Complementares';
+                if($meuCursoObj->tipo == 'E')  $registros1->arquivosTipo = 'Estágio Supervisionado';
+                if($meuCursoObj->tipo == 'P')  $registros1->arquivosTipo = 'Projeto Pedagógico do Curso';
+                if($meuCursoObj->tipo == 'T')  $registros1->arquivosTipo = 'Trabalho de Conclusão de Curso (TCC)';
+                if($meuCursoObj->tipo == 'G')  $registros1->arquivosTipo = 'Grade Curricular';
+                if($meuCursoObj->tipo == 'C')  $registros1->arquivosTipo = 'Calendários';
+                if($meuCursoObj->tipo == 'H')  $registros1->arquivosTipo = 'Horários';
+                if($meuCursoObj->tipo == 'O')  $registros1->arquivosTipo = 'Outros';
 
-                if($registros1)
+                if(isset($registros1->arquivosTipo)) 
                 {
                     $this->datagrid->addItem($registros1);
                 }
             }
 
-            /////////////////
-
-            if($meuCursoObj->tipo == 'I') //ADICIONA INFORMATIVOS NA GRID INFORMATIVOS
+            if($meuCursoObj->tipo == 'I') 
             {
                 $registros2 = new StdClass;
                 $registros2->id = $meuCursoObj->id;
                 $registros2->nome = $meuCursoObj->nome;
                 $registros2->data_reg = TDate::date2br($meuCursoObj->data_reg);           
             
-
-                if($registros2)
-                {
-                    $this->datagrid2->addItem($registros2);
-                }
+                $this->datagrid2->addItem($registros2);
             }
         }
 
         TTransaction::close();
     }
     
-
     public function onDownload($param)
     {
         try
         {
             $cursoId = TSession::getValue('cursoid');
-            
             $id = $param['id'];  
     
             TTransaction::open('Felabs_DB'); 
             $object = new MeuCurso($id); 
             TTransaction::close(); 
 
-           
             if(!empty($object->filename))
             {              
                 if (strtolower(substr($object->filename, -4)) == 'html')
                 {
-                    $win = TWindow::create( $object->filename, 0.8, 0.8 );
-                    $win->add( file_get_contents( "files/meucurso/".$object->filename ) );
+                    $win = TWindow::create($object->filename, 0.8, 0.8);
+                    $win->add(file_get_contents("files/meucurso/".$object->filename));
                     $win->show();
                 }
                 else
@@ -417,8 +303,7 @@ class MeuCursoView extends TPage
                 $parametros['key'] = $param['id'];
                 $parametros['curso'] = $cursoId;
 
-                TApplication::loadPage('MeuCursoView','verPagina',$parametros);
-                TTransaction::rollback();
+                TApplication::loadPage('MeuCursoView', 'verPagina', $parametros);
             }
             else
             {

@@ -467,7 +467,7 @@ class HistoricoManualInformacoesForm extends TPage
             $diplomado = new DiplomaDigitalDiplomado($param['dados_diplomado_id']);  
             $data->cod_aluno = $diplomado->cod_aluno;
                     
-            $curso = new DiplomaDigitalCurso($param['dados_curso_id']);    
+            $curso = new DiplomaDigitalCurso($param['dados_curso_id'] ?? []);    
             $data->cod_curso = $curso->codigo_curso_sistema;
             $data->dados_emissora_id = $curso->dados_emissora_id;
             

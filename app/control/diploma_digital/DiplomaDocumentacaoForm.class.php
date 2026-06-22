@@ -265,9 +265,8 @@ class DiplomaDocumentacaoForm extends TPage
         
          
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
         $this->form->addAction('Voltar', new TAction(array('DiplomaDocumentacaoList','onReload')), 'fas:arrow-alt-circle-left blue');
+        $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save green');
         
         
         // vertical box container
@@ -390,7 +389,7 @@ class DiplomaDocumentacaoForm extends TPage
     
     public static function onCargoSecretariaChange($param)
     {
-        $opcao_cargo_secretaria = $param['opcao_cargo_secretaria'];
+        $opcao_cargo_secretaria = $param['opcao_cargo_secretaria'] ?? [];
         
         if($opcao_cargo_secretaria == 'Utilizar cargo listado pelo MEC')
         {
@@ -442,7 +441,7 @@ class DiplomaDocumentacaoForm extends TPage
     
     public static function onCargoDiretorChange($param)
     {
-        $opcao_cargo_diretor = $param['opcao_cargo_diretor'];
+        $opcao_cargo_diretor = $param['opcao_cargo_diretor'] ?? [];
         
         if($opcao_cargo_diretor == 'Utilizar cargo listado pelo MEC')
         {

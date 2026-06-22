@@ -48,7 +48,7 @@ class ReqBolsaAlunoListGestor extends TPage
         $data_inicial->setSize(150);
         $data_final->setSize(150);
         $lbl_1->setSize(90);
-        $lbl_1->setFontStyle(b);
+        $lbl_1->setFontStyle('b');
         
         
         // keep the form filled during navigation with session data

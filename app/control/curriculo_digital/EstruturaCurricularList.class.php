@@ -6,11 +6,9 @@ class EstruturaCurricularList extends TPage
     private $pageNavigationEstruturaCurricular;
     private $loadedEstruturaCurricular;
 
- 
     private $datagridOptativas; 
     private $pageNavigationOptativas;
     private $loadedOptativas;
-
 
     public function __construct($param)
     {
@@ -280,7 +278,7 @@ class EstruturaCurricularList extends TPage
                     foreach($xml_curriculo as $tags_curriculo) 
                     { 
                         foreach($tags_curriculo->infEstruturaCurricular as $tags_unidades) 
-                        {
+                        {   
                             foreach($tags_unidades as $tag_unidade)
                             {
                                 $array_codigos[] = (string) $tag_unidade->Codigo;        

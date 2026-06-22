@@ -582,7 +582,7 @@ class DiplomaCursoForm extends TPage
     //Se selecionou a opção utilizar título não listado pelo MEC
     public static function onOpcaoTituloChange($param)
     {
-        $opcao_titulo = $param['opcao_titulo'];
+        $opcao_titulo = $param['opcao_titulo'] ?? [];
 
         $check_opcao_titulo = implode('', $opcao_titulo);
 
@@ -617,14 +617,14 @@ class DiplomaCursoForm extends TPage
     
     public static function onOpcaoAreaChange($param)
     {
-        $opcao_area = $param['opcao_area'];      
+        $opcao_area = $param['opcao_area'] ?? [];      
         
         if($opcao_area == "Curso possui formação por áreas")
         {
             //HABILITA
             TEntry::enableField('form_DiplomaDigitalCurso', 'termo_referencia_area');      
         }
-        elseif($opcao_codigo == "Curso não possui formação por áreas")
+        elseif($opcao_area == "Curso não possui formação por áreas")
         {
             //LIMPA
             TEntry::clearField('form_DiplomaDigitalCurso', 'termo_referencia_area');
@@ -645,7 +645,7 @@ class DiplomaCursoForm extends TPage
     
     public static function onOpcaoCodigoEmecChange($param)
     {
-        $opcao_codigo = $param['opcao_codigo_emec'];      
+        $opcao_codigo = $param['opcao_codigo_emec'] ?? [];      
         
         if($opcao_codigo == "Possui código EMEC")
         {
@@ -699,7 +699,7 @@ class DiplomaCursoForm extends TPage
     
     public static function onOpcaoAutorizacaoChange($param)
     {
-        $opcao_autorizacao_emec = $param['opcao_autorizacao_emec'];
+        $opcao_autorizacao_emec = $param['opcao_autorizacao_emec'] ?? [];
         
         if($opcao_autorizacao_emec == 'Utilizar informações sobre ato regulatório')
         {
@@ -802,7 +802,7 @@ class DiplomaCursoForm extends TPage
     
     public static function onOpcaoReconhecimentoChange($param)
     {
-        $opcao_reconhecimento_emec = $param['opcao_reconhecimento_emec'];
+        $opcao_reconhecimento_emec = $param['opcao_reconhecimento_emec'] ?? [];
         
         if($opcao_reconhecimento_emec == 'Utilizar informações sobre ato regulatório')
         {
@@ -905,7 +905,7 @@ class DiplomaCursoForm extends TPage
     
     public static function onOpcaoRenovacaoChange($param)
     {
-        $opcao_renovacao_emec = $param['opcao_renovacao_emec'];
+        $opcao_renovacao_emec = $param['opcao_renovacao_emec'] ?? [];
         
         if($opcao_renovacao_emec == 'Utilizar informações sobre ato regulatório')
         {

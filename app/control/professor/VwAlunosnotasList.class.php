@@ -56,13 +56,19 @@ class VwAlunosnotasList extends TPage
         $column_Resultado = new TDataGridColumn('Resultado', 'Result.', 'center');
         $column_TipoDis = new TDataGridColumn('TipoDis', 'Tipo Disc.', 'center');
         
-        // Transformer da Nota - ATUALIZADO PARA USAR A SESSÃO UNIFICADA
+        // Transformer da Nota - ATUALIZADO PARA EVITAR CONFLICTS DE TRANSACTION DO DRIVER
         $column_nota1->setTransformer( function($value, $object, $row)
         {
             $sessao = TSession::getValue('sessao_papeleta_unificada');
             $CodGradeDisciplinaEtapa_Frente = $sessao["CodGradeDisciplinaEtapa_Frente"] ?? '';
             
-            TTransaction::open('dados_fei');
+            // Abre uma transação apenas se já não houver uma ativa para evitar conflitos
+            $fechar_transacao = false;
+            if (!TTransaction::get()) {
+                TTransaction::open('dados_fei');
+                $fechar_transacao = true;
+            }
+            
             $sessao_bimestre = TSession::getValue('sessao_bimestre');
             $Bimestre = $sessao_bimestre["Bimestre"] ?? '2';
 
@@ -79,6 +85,10 @@ class VwAlunosnotasList extends TPage
             {
                 $Nota1 = $nota->Nota1;
                 $id = $nota->ID;
+            }
+
+            if ($fechar_transacao) {
+                TTransaction::close();
             }
 
             $widget = new TEntry('Nota1' . '_' . $object->CodDisciplina . '_'.$object->CodMatriculaEtapa.'_'.$object->TipoDis.'_'.$object->CodTurmaetapa.'_'.$CodGradeDisciplinaEtapa_Frente.'_'.$id);
@@ -101,7 +111,7 @@ class VwAlunosnotasList extends TPage
                 case 'A': return '<span class="label label-success">Aprovado</span>';
                 case 'R': return '<span class="label label-danger">Reprovado</span>';
                 case 'E': return '<span class="label label-warning">Exame</span>';
-                case 'F': return '<span class="label label-default">Falta</span>';
+                case 'RF': return '<span class="label label-default">Rep. Falta</span>';
                 case '':  return '<span class="label label-info">Pendente</span>';
                 default:  return $value;
             }
@@ -114,7 +124,6 @@ class VwAlunosnotasList extends TPage
                 case 'AT': return '<span class="label label-success">Atual</span>';
                 case 'DP': return '<span class="label label-danger">Dependencia</span>';
                 case 'AD': return '<span class="label label-warning">Adaptado</span>';
-                case 'F':  return '<span class="label label-default">Falta</span>';
                 case '':  return '<span class="label label-info">Pendente</span>';
                 default:  return $value;
             }
@@ -169,8 +178,16 @@ class VwAlunosnotasList extends TPage
             $Bimestre = $sessao_bimestre["Bimestre"] ?? '2';
 
             TTransaction::open('dados_fei'); 
+            
+            // CORREÇÃO: Força o SQL Server a suprimir contagens de registros (Evita o erro IMSSP)
+            $conn = TTransaction::get();
+            $conn->exec("SET NOCOUNT ON");
 
-            $object = FiNotasfaltasFrente::find($id);
+            $object = null;
+            // Só busca por ID se ele for um valor válido/preenchido numericamente
+            if (!empty($id) && is_numeric($id)) {
+                $object = FiNotasfaltasFrente::find($id);
+            }
 
             if ($object) 
             { 
@@ -178,11 +195,18 @@ class VwAlunosnotasList extends TPage
                 $object->store();               
                 TTransaction::close();
             } else {
-                $conn = TTransaction::get();
-                $result = $conn->query("SELECT * FROM FI_NotasFaltas_Frente WHERE (CodMatriculaEtapa = ".$CodMatriculaEtapa." AND CodDisciplina = ".$CodDisciplina." AND TipoDisciplina = '".$TipoDis."' AND Avaliacao = ".$Bimestre.")");
+                $repositoryFrente = new TRepository('FiNotasfaltasFrente');
+                $criteriaFrente = new TCriteria;
+                $criteriaFrente->add(new TFilter('CodMatriculaEtapa', '=', $CodMatriculaEtapa));
+                $criteriaFrente->add(new TFilter('CodDisciplina', '=', $CodDisciplina));
+                $criteriaFrente->add(new TFilter('TipoDisciplina', '=', $TipoDis));
+                $criteriaFrente->add(new TFilter('Avaliacao', '=', $Bimestre));
+                $objectsFrente = $repositoryFrente->load($criteriaFrente);
                 
                 $ID = NULL;
-                foreach ($result as $row) { $ID = $row['ID']; } 
+                if (!empty($objectsFrente)) {
+                    $ID = $objectsFrente[0]->ID; 
+                }
                 
                 if ($ID <> NULL){ 
                     $object = FiNotasfaltasFrente::find($ID);                    
@@ -207,11 +231,16 @@ class VwAlunosnotasList extends TPage
                     $notasfaltafrente->$column = $value;
                     $notasfaltafrente->CodGradeDisciplinaEtapa_Frente = $CodGradeDisciplinaEtapa_Frente; 
 
-                    $conn = TTransaction::get();
-                    $result = $conn->query("SELECT * FROM FI_NotasFaltas WHERE (CodMatriculaEtapa = ".$CodMatriculaEtapa." AND CodDisciplina = ".$CodDisciplina." AND TipoDisciplina = '".$TipoDis."' AND Avaliacao = ".$Bimestre.")");
-                    $contador = $result->rowCount();
+                    $repositoryNotas = new TRepository('FiNotasfaltas');
+                    $criteriaNotas = new TCriteria;
+                    $criteriaNotas->add(new TFilter('CodMatriculaEtapa', '=', $CodMatriculaEtapa));
+                    $criteriaNotas->add(new TFilter('CodDisciplina', '=', $CodDisciplina));
+                    $criteriaNotas->add(new TFilter('TipoDisciplina', '=', $TipoDis));
+                    $criteriaNotas->add(new TFilter('Avaliacao', '=', $Bimestre));
+                    
+                    $existeNota = $repositoryNotas->load($criteriaNotas);
 
-                    if ($contador == 0){
+                    if (empty($existeNota)){
                         $notasfalta->store();
                     }
                     $notasfaltafrente->store(); 
@@ -223,11 +252,11 @@ class VwAlunosnotasList extends TPage
         }
         catch (Exception $e)
         {
+            TTransaction::rollback();
             new TMessage('error', 'ERRO AO SALVAR AUTOMATICAMENTE: ' . $e->getMessage());
         }
     }
 
-    // ATUALIZADO PARA ENVIAR CORRETAMENTE OS DADOS PADRONIZADOS
     public function onFinalizarLançamento($param)
     {
         try 
@@ -247,7 +276,6 @@ class VwAlunosnotasList extends TPage
             $objects = $repository->load($criteria);
             
             if ($objects) {
-                // Ao ir para o PDF, garantimos que a sessão unificada mantém a estrutura limpa
                 TTransaction::close();
                 TApplication::loadPage('VwPapeletaReport');
             } else {

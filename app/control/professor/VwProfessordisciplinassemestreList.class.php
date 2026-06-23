@@ -4,7 +4,6 @@ class VwProfessordisciplinassemestreList extends TPage
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
     private $loaded;
 
     public function __construct($param)
@@ -69,13 +68,7 @@ class VwProfessordisciplinassemestreList extends TPage
         $action_papeleta->setImage('fas:file-pdf red');
         $action_papeleta->setField('CodComposto');
 
-        // TRAVA DE SEGURANÇA: Só exibe o botão se o usuário pertencer ao grupo Admin (geralmente ID 1)
-        $user_groups = TSession::getValue('usergroupids');
-        // Verifica se o grupo 1 (Administrador) está presente na lista de grupos do usuário
-        if (is_array($user_groups) && in_array(1, $user_groups)) 
-        {
-            $this->datagrid->addAction($action_papeleta);
-        }
+        $this->datagrid->addAction($action_papeleta);
 
         $this->datagrid->createModel();
 

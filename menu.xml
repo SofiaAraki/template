@@ -116,6 +116,10 @@
             <action>ProgramaEnsinoDisciplinaList</action>
             <icon>fas:book fa-fw</icon>
         </menuitem>
+        <menuitem label="Diário Eletronico">
+            <action>GerenciadorDisciplinaForm</action>
+            <icon>far:check-square fa-fw</icon>
+        </menuitem>
         <menuitem label="Diário de Classe">
             <action>HorarioAulasList</action>
             <icon>far:check-square fa-fw</icon>

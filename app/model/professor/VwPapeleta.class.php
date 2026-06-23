@@ -230,7 +230,5 @@ class VwPapeleta extends TRecord
         // returns the associated object
         return $this->fi_professor;
     }
-    
-
 
 }

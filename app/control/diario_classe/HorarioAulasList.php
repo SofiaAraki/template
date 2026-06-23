@@ -1,7 +1,7 @@
 <?php
 /**
  * HorarioAulasList Listing
- * @author  Pamella Scapim
+ * @author   Pamella Scapim
  */
 class HorarioAulasList extends TPage
 {
@@ -50,6 +50,7 @@ class HorarioAulasList extends TPage
         $action_faltas      = new TDataGridAction([$this, 'onSelectAula'], ['CodComposto'=>'{CodComposto}']);
         $action_conteudo    = new TDataGridAction([$this, 'onSelectConteudo'], ['CodComposto'=>'{CodComposto}']);
         $action_lista       = new TDataGridAction([$this, 'onSelectLista'], ['CodComposto'=>'{CodComposto}']);
+        $action_papeleta    = new TDataGridAction([$this, 'onSelectPapeleta'], ['CodComposto'=>'{CodComposto}']);
        
         $action_faltas->setLabel('Registrar Frequências');
         $action_faltas->setImage('fa:check green');
@@ -60,11 +61,15 @@ class HorarioAulasList extends TPage
         $action_lista->setLabel('Relatórios');
         $action_lista->setImage('fas:file');
 
+        $action_papeleta->setLabel('Papeleta 1º e 2º Bim.');
+        $action_papeleta->setImage('fas:file-pdf red');
+
         $action_group = new TDataGridActionGroup('Ações ', 'fa:th');
         
         $action_group->addAction($action_faltas);
         $action_group->addAction($action_conteudo);
         $action_group->addAction($action_lista);
+        $action_group->addAction($action_papeleta);
 
         $this->datagrid->addActionGroup($action_group);
         
@@ -243,11 +248,49 @@ class HorarioAulasList extends TPage
     }
     
     /**
+     * Carrega os dados da disciplina selecionada e abre o relatório do 1º e 2º Bimestre
+     */
+    public function onSelectPapeleta($param)
+    {
+        try 
+        {
+            $key = $param['key']; 
+
+            foreach ($this->datagrid->getItems() as $object)
+            {
+                if ($key == $object->CodComposto)
+                {
+                    // Alimenta a sessão 'sessao_papeleta' exigida pela classe do relatório
+                    TSession::setValue('sessao_papeleta', array(
+                        'CodDisciplina'  => $object->CodDisciplina,
+                        'CodTurmaetapa'  => $object->CodTurmaetapa,
+                        'NomeProfessor'  => $object->NomeProfessor,
+                        'Identificacao'  => $object->Identificacao,
+                        'NomeEntidade'   => TSession::getValue('userunitname') ?? 'Instituição de Ensino',
+                        'Periodo'        => $object->Periodo,
+                        'NomeDisciplina' => $object->NomeDisciplina,
+                        'NomeCurso'      => $object->NomeCurso,
+                        'key'            => $object->CodGradeDisciplinaEtapaFrente
+                    ));
+                    
+                    // Direciona imediatamente para a classe do relatório sem abrir telas intermediárias
+                    TApplication::loadPage('VwPapeletaReportAll');
+                    break;
+                }
+            }
+        } 
+        catch (Exception $e) 
+        {
+            new TMessage('error', $e->getMessage());
+        }
+    }
+    
+    /**
      * Inline record editing
      * @param $param Array containing:
-     *              key: object ID value
-     *              field name: object attribute to be updated
-     *              value: new attribute content 
+     * key: object ID value
+     * field name: object attribute to be updated
+     * value: new attribute content 
      */
     public function onInlineEdit($param)
     {

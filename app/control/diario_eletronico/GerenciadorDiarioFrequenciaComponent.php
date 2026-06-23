@@ -25,12 +25,12 @@ class GerenciadorDiarioFrequenciaComponent extends TElement
         $campoData->setSize('100%');
         $formDataAula->addFields([new TLabel('Data da Aula letiva:'), $campoData]);
         
-        $btnMudarData = $formDataAula->addAction('Alterar Data / Carregar', new TAction([$this, 'onMudarData']), 'fa:sync blue');
+        $btnMudarData = $formDataAula->addAction('Carregar', new TAction([$this, 'onMudarData']), 'fa:sync blue');
         $btnMudarData->class = 'btn btn-sm btn-default';
         $this->add($formDataAula);
 
         // 2. Bloco A: Conteúdo Diário (Formulário)
-        $this->formConteudo = new BootstrapFormBuilder('form_ConteudoDiarioClasse');
+        $this->formConteudo = new BootstrapFormBuilder('form_conteudo_diario');
         $this->formConteudo->setFormTitle('Registro do Conteúdo Programático Ministrado');
 
         $idConteudo = new THidden('id');
@@ -74,7 +74,7 @@ class GerenciadorDiarioFrequenciaComponent extends TElement
         }
     }
 
-    private function buscarConteudoData($turma, $disciplina, $data, $aula)
+    private function buscarConteudoData($turma, $disciplina, $data)
     {
         try {
             TTransaction::open('Felabs_DB');
@@ -106,7 +106,7 @@ class GerenciadorDiarioFrequenciaComponent extends TElement
             
             // Tratamento da data escolhida na sessão
             $data_escolhida = TSession::getValue('data_escolhida');
-            $dataAula = isset($data_escolhida['data_escolhida']) ? TDate::date2us($data_escolhida['data_escolhida']) : date('d/m/Y');
+            $dataAula = $data_escolhida['data_escolhida'] ?? date('d/m/Y');
             $aulaAtiva = isset($data_escolhida['aula_ativa']) ? $data_escolhida['aula_ativa'] : 1;
 
             if (empty($param['conteudo'])) {
@@ -138,7 +138,7 @@ class GerenciadorDiarioFrequenciaComponent extends TElement
             TTransaction::close();
 
             new TMessage('info', 'Conteúdo diário gravado com sucesso!');
-
+            TApplication::loadPage('GerenciadorDisciplinaForm', 'onReload', $param);
         } catch (Exception $e) {
             new TMessage('error', $e->getMessage());
             if (TTransaction::get() !== null) {

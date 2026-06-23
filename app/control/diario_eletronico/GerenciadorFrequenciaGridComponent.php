@@ -27,7 +27,7 @@ class GerenciadorFrequenciaGridComponent extends TElement
         $this->renderGrid($param);
     }
 
-    private function renderGrid($param)
+    public function renderGrid($param)
     {
         try {
             // Padronização arquitetural proposta: prioriza $param com fallback seguro na sessão
@@ -217,8 +217,7 @@ class GerenciadorFrequenciaGridComponent extends TElement
             
             TTransaction::close();
             
-            TToast::show('success', 'Frequência da turma gravada com sucesso!', 'bottom right', 'far:check-circle');
-
+            new TMessage('info', 'Frequência gravada com sucesso!');
         } catch (Exception $e) {
             if (TTransaction::get() !== null) TTransaction::rollback();
             new TMessage('error', 'Erro ao salvar: ' . $e->getMessage());

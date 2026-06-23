@@ -1,6 +1,6 @@
 <?php
 /**
- * VwPapeletaReportSemestre1 Report
+ * VwPapeletaReportAll
  * @author  FEI Team
  */
 class VwPapeletaReportAll extends TPage
@@ -85,7 +85,6 @@ class VwPapeletaReportAll extends TPage
             $NomeEntidade   = $sessao_papeleta["NomeEntidade"];
             $Periodo        = $sessao_papeleta["Periodo"] ?? ($sessao_papeleta["Periodoturma"] ?? '');
             $NomeDisciplina = $sessao_papeleta["NomeDisciplina"];
-            $CodGradeDisciplinaEtapa_Frente = $sessao_papeleta["key"] ?? ($sessao_papeleta["CodGradeDisciplinaEtapa_Frente"] ?? '');
 
             // Carrega os alunos matriculados na disciplina/turma através de VwAlunosnotas
             $repository = new TRepository('VwAlunosnotas');
@@ -98,8 +97,8 @@ class VwPapeletaReportAll extends TPage
             
             if ($objects)
             {
-                // Ajustado para 9 colunas
-                $widths = array(70, 270, 65, 65, 65, 65, 80, 80, 80);
+                // Ajustado para 10 colunas
+                $widths = array(70, 230, 60, 60, 60, 60, 60, 70, 70, 60);
                 
                 switch ($format)
                 {
@@ -123,21 +122,21 @@ class VwPapeletaReportAll extends TPage
 
                     // Cabeçalho da Papeleta
                     $tr->addRow();
-                    $tr->addCell($NomeEntidade, 'center', 'title', 9);
+                    $tr->addCell($NomeEntidade, 'center', 'title', 10);
                     $tr->addRow();
-                    $tr->addCell('PAPELETA DE LANÇAMENTO DE NOTAS E FALTAS', 'center', 'header', 9);
+                    $tr->addCell('PAPELETA DE LANÇAMENTO DE NOTAS E FALTAS', 'center', 'header', 10);
                     
                     $tr->addRow();
                     $tr->addCell('CURSO:', 'left', 'datae', 1);
                     $tr->addCell($sessao_papeleta["NomeCurso"] ?? '', 'left', 'datai', 5);
                     $tr->addCell('TURMA:', 'left', 'datae', 1);
-                    $tr->addCell($Identificacao, 'left', 'datai', 2);
+                    $tr->addCell($Identificacao, 'left', 'datai', 3);
                     
                     $tr->addRow();
                     $tr->addCell('DISCIPLINA:', 'left', 'datae', 1);
                     $tr->addCell($NomeDisciplina, 'left', 'datai', 5);
                     $tr->addCell('PERÍODO:', 'left', 'datae', 1);
-                    $tr->addCell($Periodo, 'left', 'datai', 2);
+                    $tr->addCell($Periodo, 'left', 'datai', 3);
                     
                     // Títulos das Colunas
                     $tr->addRow();
@@ -147,6 +146,7 @@ class VwPapeletaReportAll extends TPage
                     $tr->addCell('Faltas 1ºB', 'center', 'header');
                     $tr->addCell('Nota 2ºB', 'center', 'header');
                     $tr->addCell('Faltas 2ºB', 'center', 'header');
+                    $tr->addCell('Freq. %', 'center', 'header');
                     $tr->addCell('Média Final', 'center', 'header');
                     $tr->addCell('Situação', 'center', 'header');
                     $tr->addCell('Disc.', 'center', 'header');
@@ -160,48 +160,43 @@ class VwPapeletaReportAll extends TPage
                         $nota1 = '-'; $faltas1 = '0';
                         $nota2 = '-'; $faltas2 = '0';
                         $mediaFinal = '-';
+                        $frequencia = '-';
                         
-                        // 1. Busca dados específicos do 1º Bimestre (Frente)
-                        $repoNotas = new TRepository('FiNotasfaltasFrente');
-                        $crit1 = new TCriteria;
-                        $crit1->add(new TFilter('CodMatriculaEtapa', '=', $object->CodMatriculaEtapa));
-                        $crit1->add(new TFilter('CodDisciplina', '=', $object->CodDisciplina));
-                        $crit1->add(new TFilter('CodGradeDisciplinaEtapa_Frente', '=', $CodGradeDisciplinaEtapa_Frente));
-                        $crit1->add(new TFilter('Avaliacao', '=', '1')); 
-                        $res1 = $repoNotas->load($crit1);
-                        if ($res1) {
-                            $nota1 = !is_null($res1[0]->Nota1) ? $res1[0]->Nota1 : '-';
-                            $faltas1 = !is_null($res1[0]->Faltas) ? $res1[0]->Faltas : '0';
+                        // CORREÇÃO 1: Consultar Notas e Faltas diretamente de FiNotasFaltas (Igual ao Boletim)
+                        $NotasFaltas = FiNotasFaltas::where('CodMatriculaEtapa', '=', $object->CodMatriculaEtapa)
+                                                    ->where('CodDisciplina', '=', $object->CodDisciplina)
+                                                    ->load();
+                        
+                        if ($NotasFaltas) {
+                            foreach ($NotasFaltas as $NotaFalta) {
+                                if ($NotaFalta->Avaliacao == 1) {
+                                    $nota1 = !is_null($NotaFalta->Nota1) ? $NotaFalta->Nota1 : '-';
+                                    $faltas1 = !is_null($NotaFalta->Faltas) ? $NotaFalta->Faltas : '0';
+                                }
+                                if ($NotaFalta->Avaliacao == 2) {
+                                    $nota2 = !is_null($NotaFalta->Nota1) ? $NotaFalta->Nota1 : '-';
+                                    $faltas2 = !is_null($NotaFalta->Faltas) ? $NotaFalta->Faltas : '0';
+                                }
+                            }
                         }
                         
-                        // 2. Busca dados específicos do 2º Bimestre (Frente)
-                        $crit2 = new TCriteria;
-                        $crit2->add(new TFilter('CodMatriculaEtapa', '=', $object->CodMatriculaEtapa));
-                        $crit2->add(new TFilter('CodDisciplina', '=', $object->CodDisciplina));
-                        $crit2->add(new TFilter('CodGradeDisciplinaEtapa_Frente', '=', $CodGradeDisciplinaEtapa_Frente));
-                        $crit2->add(new TFilter('Avaliacao', '=', '2')); 
-                        $res2 = $repoNotas->load($crit2);
-                        if ($res2) {
-                            $nota2 = !is_null($res2[0]->Nota1) ? $res2[0]->Nota1 : '-';
-                            $faltas2 = !is_null($res2[0]->Faltas) ? $res2[0]->Faltas : '0';
-                        }
+                        // CORREÇÃO 2: Buscar Frequência e Média Final da View VwFiDisciplinasATADDP
+                        $repoSpecs = new TRepository('VwFiDisciplinasATADDP');
+                        $critSpecs = new TCriteria;
+                        $critSpecs->add(new TFilter('CodMatriculaEtapa', '=', $object->CodMatriculaEtapa));
+                        $critSpecs->add(new TFilter('CodDisciplina', '=', $object->CodDisciplina));
+                        $resSpecs = $repoSpecs->load($critSpecs);
                         
-                        // CORREÇÃO DA MÉDIA FINAL: 
-                        // Como a média global do período letivo fica salva na tabela FI_NotasFaltas (geral)
-                        $repoMedia = new TRepository('FiNotasfaltas');
-                        $critMedia = new TCriteria;
-                        $critMedia->add(new TFilter('CodMatriculaEtapa', '=', $object->CodMatriculaEtapa));
-                        $critMedia->add(new TFilter('CodDisciplina', '=', $object->CodDisciplina));
-                        $resMedia = $repoMedia->load($critMedia);
-                        if ($resMedia && !is_null($resMedia[0]->Media)) {
-                            $mediaFinal = $resMedia[0]->Media;
+                        if ($resSpecs) {
+                            $frequencia = !is_null($resSpecs[0]->Frequencia) ? $resSpecs[0]->Frequencia . '%' : '-';
+                            $mediaFinal = !is_null($resSpecs[0]->MediaSem) ? $resSpecs[0]->MediaSem : '-';
                         }
                         
                         // Transformer da Situação
                         $situacaoFormatada = '';
                         switch (trim(strtoupper($object->Resultado))) {
                             case 'A': case 'AP': case 'APROVADO': $situacaoFormatada = 'Aprovado'; break;
-                            case 'R': case 'RE': case 'REPROVADO': $situacaoFormatada = 'Reprovado'; break;
+                            case 'R': case 'RP': case 'REPROVADO': $situacaoFormatada = 'Reprovado'; break;
                             case 'E': case 'EXAME': $situacaoFormatada = 'Exame'; break;
                             case 'DP': case 'DEPENDENCIA': $situacaoFormatada = 'Dependência'; break;
                             case 'RF': case 'REPROVADO POR FALTA': $situacaoFormatada = 'Rep. Falta'; break;
@@ -227,21 +222,22 @@ class VwPapeletaReportAll extends TPage
                         $tr->addCell($faltas1, 'center', $style);
                         $tr->addCell($nota2, 'center', $style);
                         $tr->addCell($faltas2, 'center', $style);
-                        $tr->addCell($mediaFinal, 'center', $style); // Inserida a Média correta obtida via repositório
+                        $tr->addCell($frequencia, 'center', $style); 
+                        $tr->addCell($mediaFinal, 'center', $style); 
                         $tr->addCell($situacaoFormatada, 'center', $style);
-                        $tr->addCell($tipoDisciplinaFormatada, 'center', $style); // Ajustado para ler 'TipoDis'
+                        $tr->addCell($tipoDisciplinaFormatada, 'center', $style); 
                         
                         $colour = !$colour;
                     }
                     
-                    // Rodapé
+                    // Rodapé (Colspan 10)
                     $tr->addRow();
-                    $tr->addCell(date('d-m-Y h:i:s'), 'center', 'footer', 9);
+                    $tr->addCell(date('d-m-Y H:i:s'), 'center', 'footer', 10);
                     $tr->addRow(); $tr->addRow(); $tr->addRow();
                     $tr->addRow();
-                    $tr->addCell('______________', 'center', 'footer2', 9);
+                    $tr->addCell('______________', 'center', 'footer2', 10);
                     $tr->addRow();
-                    $tr->addCell($NomeProfessor, 'center', 'footer', 9);
+                    $tr->addCell($NomeProfessor, 'center', 'footer', 10);
                     
                     if (!file_exists("app/output/VwPapeletaAll.{$format}") OR is_writable("app/output/VwPapeletaAll.{$format}"))
                     {
@@ -258,7 +254,7 @@ class VwPapeletaReportAll extends TPage
             }
             else
             {
-                new TMessage('warning', 'NÃO EXISTEM NOTAS OU ALUNOS PARA ESTA DISCIPLINA!');
+                new TMessage('warning', 'Não exite lançamento registrado!');
             }
             
             $this->form->setData($formdata);

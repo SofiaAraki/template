@@ -41,8 +41,7 @@ class WifiCadastroFormListProfessor extends TPage
         $this->form->addQuickField('Status', $status, '100%');
 
         // create the form actions
-        $btn = $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addQuickAction('Salvar', new TAction(array($this, 'onSave')), 'far:save green');
         $this->form->addQuickAction('Ajuda',  new TAction(array($this, 'onHelp')), 'fa:info-circle');
 
         // creates a Datagrid

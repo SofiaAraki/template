@@ -61,8 +61,7 @@ class DiplomaDocumentacaoList extends TPage
         
         
         // add the search form actions
-        $btn = $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
         $this->form->addActionLink('Criar documentação', new TAction(['DiplomaDocumentacaoForm', 'onEdit']), 'fa:plus green');
         
         

@@ -132,7 +132,7 @@ class ConteudoProgramaticoFormEdit extends TPage
         //$btn = $this->form->addAction( _t('Save'),  new TAction([$this, 'onSave']), 'fa:save');
         //$btn->class = 'btn btn-sm btn-primary';
         //$this->form->addAction( _t('Clear'), new TAction([$this, 'onClear']), 'fa:eraser red');
-        $this->form->addAction('Voltar',new TAction(['ConteudoProgramaticoList','onReload']),'far:arrow-alt-circle-left blue');
+        $this->form->addAction('Voltar',new TAction(['ConteudoProgramaticoList','onReload']),'far:arrow-left blue');
 
         $copia_disciplina->addItems($items);
         $this->form->addFields( [new TLabel('Copiar Conteúdo para Disciplina:','#FF0000')], [$copia_disciplina] );

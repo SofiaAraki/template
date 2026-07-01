@@ -42,8 +42,7 @@ class ContratoAlunoListDigitalizacao extends TPage
         
         
         // add the search form actions
-        $btn = $this->form->addAction(_t('Find'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
         //$this->form->addActionLink(_t('New'), new TAction(['', 'onEdit']), 'fa:plus green');
         
         

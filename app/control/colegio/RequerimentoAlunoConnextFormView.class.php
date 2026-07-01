@@ -134,7 +134,7 @@ class RequerimentoAlunoConnextFormView extends TPage
 
 
         $this->form->addHeaderAction('Imprimir', new TAction(['RequerimentoAlunoConnextFormView', 'onPrint'],['key'=>$requerimento_aluno->Codaluno]), 'far:file-pdf red');
-        $this->form->addHeaderAction('Voltar', new TAction(['ReqMatriculaAlunoListConnext', 'onReload']), 'far:arrow-alt-circle-left blue');
+        $this->form->addHeaderAction('Voltar', new TAction(['ReqMatriculaAlunoListConnext', 'onReload']), 'fas:arrow-left blue');
         
         
         // vertical box container

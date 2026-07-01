@@ -465,6 +465,14 @@
             <action>ProgramaEnsinoDisciplinaListCoordenador</action>
             <icon>far:circle fa-fw</icon>
         </menuitem>
+        <menuitem label="Prova Integrada">
+            <action>CoordenadorPIList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
+        <menuitem label="Equivalencia">
+            <action>EquivalenciaList</action>
+            <icon>far:circle fa-fw</icon>
+        </menuitem>
         </menu>
     </menuitem>
 

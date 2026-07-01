@@ -116,9 +116,8 @@ class TarefaColegioFormList extends TPage
          **/
         
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addAction(_t('New'),  new TAction([$this, 'onEdit']), 'fa:eraser red');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'far:save green');
+        $this->form->addAction('Novo',  new TAction([$this, 'onEdit']), 'fa:eraser red');
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

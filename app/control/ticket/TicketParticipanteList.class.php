@@ -40,8 +40,7 @@ class TicketParticipanteList extends TPage
         $this->form->setData( TSession::getValue('TicketParticipante_filter_data') );
         
         // add the search form actions
-        $btn = $this->form->addAction(('Buscar'), new TAction([$this, 'onSearch']), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';        
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fas:search blue');
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
@@ -146,7 +145,6 @@ class TicketParticipanteList extends TPage
             $repository = new TRepository('SystemUser');
             $criteria = new TCriteria;
             $criteria->add(new TFilter('name', 'LIKE', "%{$data->system_user_id}%"));
-            //echo $criteria->dump();
             
             $users = $repository->load($criteria);
             TTransaction::close();
@@ -161,7 +159,6 @@ class TicketParticipanteList extends TPage
                     // Passa o array corretamente para o TFilter
                     $filter = new TFilter('system_user_id', 'IN', $userIds); 
                     TSession::setValue('TicketParticipanteList_filter_system_user_id', $filter);
-                    //var_dump($filter->dump());
                 }
             }
         

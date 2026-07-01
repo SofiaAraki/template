@@ -98,8 +98,8 @@ class ContratoFinanceiroFormList extends TPage
         }
         
         // Ações do formulário
-        $this->form->addActionLink(_t('Clear'), new TAction([$this, 'onClear']), 'fa:eraser red');
-        $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save green');
+        $this->form->addActionLink('Limpar', new TAction([$this, 'onClear']), 'fa:eraser red');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         
         // Criação da Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

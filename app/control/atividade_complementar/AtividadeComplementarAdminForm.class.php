@@ -265,11 +265,8 @@ class AtividadeComplementarAdminForm extends TWindow
             $id->setEditable(FALSE);
         }
 
-
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        
+        $btn = $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');        
         
         // vertical box container
         $container = new TVBox;

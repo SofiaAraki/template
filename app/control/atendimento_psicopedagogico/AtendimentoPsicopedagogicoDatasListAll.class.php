@@ -47,9 +47,7 @@ class AtendimentoPsicopedagogicoDatasListAll extends TPage
         $this->form->setData( TSession::getValue('AtendimentoPsicopedagogicoDatas_filter_data') );
         
         // add the search form actions
-        $btn = $this->form->addQuickAction(('Buscar'), new TAction(array($this, 'onSearch')), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addQuickAction(('Novo Agendamento'),  new TAction(array('AtendimentoPsicopedagogicoAgendamentoForm', 'onEdit')), 'fa:plus #69aa46');
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search blue');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;

@@ -44,9 +44,8 @@ class TicketCategoriaFormList extends TPage
         $this->form->addQuickField('Mensagem pré-definida', $exemplo_msg, '100%');
 
         // create the form actions
-        $btn = $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $btn = $this->form->addQuickAction('Voltar', new TAction(array('TicketList', 'onReload')), 'far:arrow-alt-circle-left blue');
+        $this->form->addQuickAction('Voltar', new TAction(array('TicketList', 'onReload')), 'fas:arrow-left blue');
+        $this->form->addQuickAction('Salvar', new TAction(array($this, 'onSave')), 'far:save green');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;

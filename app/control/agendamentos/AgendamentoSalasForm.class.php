@@ -135,7 +135,7 @@ class AgendamentoSalasForm extends TWindow
 
         // create an action button (save)
         $save_button=new TButton('save');
-        $save_button->setAction(new TAction(array($this, 'onSave')), _t('Save'));
+        $save_button->setAction(new TAction(array($this, 'onSave')), ('Salvar'));
         $save_button->setImage('fa:save green');
 
         $this->form->setFields(array($id, $usuario, $sala_id, $data_evento, $inicio_hora, $inicio_minutos,$termino_hora,$termino_minutos,$descricao,$calendario_options,$unidade,$data_reg,$save_button));

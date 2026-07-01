@@ -62,9 +62,7 @@ class DiplomaRegistradoList extends TPage
         
         
         // add the search form actions
-        $btn = $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
 
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

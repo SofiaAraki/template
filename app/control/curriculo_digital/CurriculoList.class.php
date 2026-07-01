@@ -56,10 +56,8 @@ class CurriculoList extends TPage
         
         
         // add the search form actions
-        $btn = $this->form->addAction(_t('Find'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        $btn = $this->form->addActionLink('Instruções', new TAction([$this, 'onShowInstrucoes']), 'fas:align-justify');
-        $btn->class = 'btn btn-sm btn-success';
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
+        $this->form->addActionLink('Instruções', new TAction([$this, 'onShowInstrucoes']), 'fas:align-justify orange');
         $this->form->addActionLink('Cadastrar currículo', new TAction(['CurriculoForm', 'onEdit']), 'fa:plus green');
         
         

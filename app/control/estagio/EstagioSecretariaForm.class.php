@@ -226,8 +226,7 @@ class EstagioSecretariaForm extends TPage
 
          
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         $this->form->addAction('Voltar', new TAction(['EstagioSecretariaList', 'onReload']), 'fa:arrow-left blue');
         
         

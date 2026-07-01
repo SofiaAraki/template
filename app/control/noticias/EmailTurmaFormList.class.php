@@ -93,9 +93,8 @@ class EmailTurmaFormList extends TPage
         $this->form->addQuickField('Anexo', $anexo,  '70%' );
          
         // create the form actions
-        $btn = $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'Question')), 'fas:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addQuickAction(_t('New'),  new TAction(array($this, 'onClear')), 'fas:plus green');
+        $this->form->addQuickAction('Limpar',  new TAction(array($this, 'onClear')), 'fas:eraser red');
+        $this->form->addQuickAction('Salvar', new TAction(array($this, 'Question')), 'fas:save green');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;

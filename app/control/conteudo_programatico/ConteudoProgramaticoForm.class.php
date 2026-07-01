@@ -130,15 +130,15 @@ class ConteudoProgramaticoForm extends TPage
         $disciplina->setChangeAction(new TAction(array($this, 'onChangeDisciplina')));
         
         // create the form actions
-        $this->form->addHeaderAction(_t('Save'), new TAction(array($this, 'onSave')), 'fa:floppy-o bridge blue');
+        $this->form->addHeaderAction('Salvar', new TAction(array($this, 'onSave')), 'fa:floppy-o bridge blue');
         
         if($user->funcao_legado == 'Professor')
         {
-            $this->form->addHeaderAction('Voltar', new TAction(['ConteudoProgramaticoList','onReload']), 'far:arrow-alt-circle-left blue');
+            $this->form->addHeaderAction('Voltar', new TAction(['ConteudoProgramaticoList','onReload']), 'far:arrow-left blue');
         }
         else
         {
-            $this->form->addHeaderAction('Voltar', new TAction(['ConteudoProgramaticoListAll','onReload']), 'far:arrow-alt-circle-left blue');
+            $this->form->addHeaderAction('Voltar', new TAction(['ConteudoProgramaticoListAll','onReload']), 'far:arrow-left blue');
         }
         
         // vertical box container

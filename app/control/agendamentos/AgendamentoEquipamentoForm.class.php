@@ -93,8 +93,8 @@ class AgendamentoEquipamentoForm extends TPage
         
         // Botões de Ação
         $this->form->addAction('Voltar', new TAction(array('AgendamentoEquipamentoList', 'onReload')), 'fa:arrow-left blue');
-        $this->form->addAction(_t('Clear'),  new TAction(array($this, 'onClear')), 'fa:eraser red');
-        $btn = $this->form->addAction(('Salvar'), new TAction(array($this, 'onSave')), 'fa:save green');
+        $this->form->addAction('Limpar',  new TAction(array($this, 'onClear')), 'fa:eraser red');
+        $this->form->addAction('Salvar', new TAction(array($this, 'onSave')), 'fa:save green');
         
         $container = new TVBox;
         $container->style = 'width: 100%';

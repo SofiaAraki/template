@@ -232,7 +232,7 @@ class RequerimentoMatriculaNSC extends TPage
         // create the form actions
         //$btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'far:save');
         //$btn->class = 'btn btn-sm btn-primary';
-        $this->form->addAction('Voltar', new TAction(['ReqMatriculaAlunoList', 'onReload']), 'far:arrow-alt-circle-left blue');
+        $this->form->addAction('Voltar', new TAction(['ReqMatriculaAlunoList', 'onReload']), 'fas:arrow-left blue');
 
 
         

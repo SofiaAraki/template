@@ -40,10 +40,8 @@ class CadastroVeiculoListProf extends TPage
         
         
         // add the search form actions
-        $btn = $this->form->addAction(('Buscar'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addActionLink(_t('New'), new TAction(['CadastroVeiculoForm', 'onEdit']), 'fa:plus green');
-        $this->form->addAction(('Novo Cadastro'),  new TAction(array('CadastroVeiculoFormProf', 'onEdit')), 'fa:plus #69aa46');
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
+        $this->form->addAction('Novo Cadastro',  new TAction(array('CadastroVeiculoFormProf', 'onEdit')), 'fa:plus green');
         
         
         // creates a Datagrid

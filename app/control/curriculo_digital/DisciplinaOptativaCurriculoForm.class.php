@@ -279,7 +279,7 @@ class DisciplinaOptativaCurriculoForm extends TPage
         
 
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         $btn->class = 'btn btn-sm btn-primary';
         $this->form->addAction(_t('Back'), new TAction([$this, 'onBackList']), 'fa:arrow-left');
         

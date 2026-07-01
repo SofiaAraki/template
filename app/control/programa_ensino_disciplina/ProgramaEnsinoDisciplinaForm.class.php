@@ -158,8 +158,8 @@ class ProgramaEnsinoDisciplinaForm extends TPage
         $bibliografia_complementar->setSize('100%', 200);
          
         // Ações globais do formulário
-        $this->form->addAction(_t('Back'), new TAction(['ProgramaEnsinoDisciplinaList', 'onReload']), 'fa:arrow-left blue');
-        $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save green');
+        $this->form->addAction('Voltar', new TAction(['ProgramaEnsinoDisciplinaList', 'onReload']), 'fa:arrow-left blue');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         
         if (!$isEdit) {
             $objValoresIniciais = new StdClass;

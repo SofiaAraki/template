@@ -138,7 +138,7 @@ class RequerimentoAlunoAngloFormView extends TPage
         //$this->form->addFields();
 
         $this->form->addHeaderAction('Imprimir', new TAction(['RequerimentoAlunoAngloFormView', 'onPrint'],['key'=>$requerimento_aluno->Codaluno]), 'far:file-pdf red');
-        $this->form->addHeaderAction('Voltar', new TAction(['ReqMatriculaAlunoListAnglo', 'onReload']), 'far:arrow-alt-circle-left blue');
+        $this->form->addHeaderAction('Voltar', new TAction(['ReqMatriculaAlunoListAnglo', 'onReload']), 'fas:arrow-left blue');
         
         // vertical box container
         $container = new TVBox;

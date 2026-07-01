@@ -44,10 +44,7 @@ class TicketItemList extends TPage
         $this->form->setData( TSession::getValue('TicketItem_filter_data') );
         
         // add the search form actions
-        $btn = $this->form->addQuickAction(('Buscar'), new TAction(array($this, 'onSearch')), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addQuickAction(_t('New'),  new TAction(array('TicketItemForm', 'onEdit')), 'bs:plus-sign green');
-        
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fas:search blue');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;

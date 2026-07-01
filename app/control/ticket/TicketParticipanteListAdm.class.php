@@ -35,7 +35,7 @@ class TicketParticipanteListAdm extends TPage
         $this->form->setData( TSession::getValue('TicketParticipante_filter_data') );
         
         // Add the search form actions
-        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fas:search');        
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fas:search blue');        
         
         // Creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

@@ -50,8 +50,7 @@ class WifiCadastroFormList extends TPage
 
 
         // create the form actions
-        $btn = $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save green');
         $this->form->addQuickAction('Ajuda',  new TAction(array($this, 'onHelp')), 'fa:info-circle');
 
         

@@ -94,7 +94,7 @@ class TicketFormListAluno extends TPage
         $categoria->setChangeAction($change_action);
 
         // create the form actions
-        $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'fa:save green');
+        $this->form->addQuickAction('Salvar', new TAction(array($this, 'onSave')), 'fa:save green');
         
         //creates a Datagrid
         $this->datagrid = new TDataGrid;

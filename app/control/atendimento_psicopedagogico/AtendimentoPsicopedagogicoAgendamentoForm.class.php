@@ -96,10 +96,7 @@ class AtendimentoPsicopedagogicoAgendamentoForm extends TPage
         
 
         // create the form actions
-        $btn = $this->form->addAction(('Agendar'), new TAction(array($this, 'onSave')), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addAction(_t('New'),  new TAction(array($this, 'onClear')), 'bs:plus-sign green');
-        
+        $this->form->addAction('Agendar', new TAction(array($this, 'onSave')), 'far:save green');
         
         // vertical box container
         $container = new TVBox;

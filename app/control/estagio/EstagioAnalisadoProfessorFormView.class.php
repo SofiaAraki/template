@@ -104,6 +104,15 @@ class EstagioAnalisadoProfessorFormView extends TWindow
             $text_status_estagio  = new TTextDisplay($object->status_estagio, null, '', '');
             $text_observacao = new TTextDisplay($object->observacao, null, '', '');
 
+            // Adiciona um destaque visual ao Status da atividade
+            $text_status_estagio = new TTextDisplay($object->status_estagio, '', '', '');
+            if(trim($object->status_estagio) == 'Aprovado') {
+                $text_status_estagio->style = 'color: #00ffaa; font-weight: bold;';
+            }
+            else if(trim($object->status_estagio) == 'Reprovado') {
+                $text_status_estagio->style = 'color: #ff0000; font-weight: bold;';
+            }
+
             $row = $this->form->addFields( [ $label_prof_responsavel, $text_prof_responsavel ],
                                            [ $label_titulacao_responsavel, $text_titulacao_responsavel ], 
                                            [ $label_status_estagio, $text_status_estagio ] );

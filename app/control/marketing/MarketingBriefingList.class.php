@@ -47,9 +47,8 @@ class MarketingBriefingList extends TPage
         $this->form->setData( TSession::getValue(__CLASS__ . '_filter_data') );
         
         // add the search form actions
-        $btn = $this->form->addAction(_t('Find'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addActionLink(_t('New'), new TAction(['MarketingBriefingFormList_MKT', 'onEdit']), 'fa:plus green');
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
+        $this->form->addActionLink('Novo', new TAction(['MarketingBriefingFormList_MKT', 'onEdit']), 'fa:plus green');
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

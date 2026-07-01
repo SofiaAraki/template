@@ -209,9 +209,7 @@ class EstagioAnaliseProfessorForm extends TWindow
 
 
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        
+        $btn = $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');        
         
         // vertical box container
         $container = new TVBox;
@@ -521,7 +519,8 @@ TDate::date2br($object->data_termino) . ' teve seu status ' . $object->status_es
                 $mail->setSubject('Avaliação de Estágio');
                 $mail->setTextBody($corpoEmail);  
                 
-                $mail->addAddress($aluno->Email);                  
+                $mail->addAddress($aluno->Email);
+                  
                 $mail->SetUseSmtp();
                 $mail->SetSmtpHost($prefs['smtp_host'], $prefs['smtp_port']);
                 $mail->SetSmtpUser($prefs['smtp_user'], $prefs['smtp_pass']);

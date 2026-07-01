@@ -45,8 +45,7 @@ class AtividadeComplementarSecretariaList extends TPage
         $this->form->setData( TSession::getValue(__CLASS__ . '_filter_data') );
         
         // add the search form actions
-        $btn = $this->form->addAction(_t('Find'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
         $this->form->addActionLink('Adicionar atividade', new TAction(['AtividadeComplementarSecretariaForm', 'onEdit']), 'fa:plus green');
         
         // creates a Datagrid

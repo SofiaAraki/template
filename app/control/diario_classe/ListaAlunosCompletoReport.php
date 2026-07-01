@@ -79,10 +79,9 @@ class ListaAlunosCompletoReport extends TPage
         $output_type->setSize(70);
         
         // add the action button
-        $btn = $this->form->addAction(('Imprimir Lista de Alunos'), new TAction(array($this, 'onGenerateListaAlunos')), 'fa:users');
-        $btn->class = 'btn btn-sm btn-primary';
-        $btn = $this->form->addAction(('Imprimir Conteúdo Programático'), new TAction(array($this, 'onGenerateConteudo')), 'fa:list-ul');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addActionLink('Voltar',  new TAction(['HorarioAulasList', 'onReload']), 'fa:arrow-left blue');
+        $this->form->addAction('Imprimir Lista de Alunos', new TAction(array($this, 'onGenerateListaAlunos')), 'fa:users orange');
+        $this->form->addAction('Imprimir Conteúdo Programático', new TAction(array($this, 'onGenerateConteudo')), 'fa:list-ul red');
         
         // vertical box container
         $container = new TVBox;

@@ -29,8 +29,7 @@ class VwProfessordisciplinassemestreList extends TPage
         $this->form->setData( TSession::getValue('VwProfessordisciplinassemestre_filter_data') );
 
         // actions
-        $btn = $this->form->addQuickAction(('Buscar'), new TAction(array($this, 'onSearch')), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fas:search blue');
         
         // Datagrid
         $this->datagrid = new TDataGrid;
@@ -57,7 +56,7 @@ class VwProfessordisciplinassemestreList extends TPage
         $action_select->setUseButton(FALSE);
         $action_select->setButtonClass('btn btn-default');
         $action_select->setLabel('Selecionar');
-        $action_select->setImage('fas:check-circle blue');
+        $action_select->setImage('fas:check-circle green');
         $action_select->setField('CodComposto');
         $this->datagrid->addAction($action_select);
 
@@ -68,7 +67,7 @@ class VwProfessordisciplinassemestreList extends TPage
         $action_papeleta->setImage('fas:file-pdf red');
         $action_papeleta->setField('CodComposto');
 
-        $this->datagrid->addAction($action_papeleta);
+        //$this->datagrid->addAction($action_papeleta);
 
         $this->datagrid->createModel();
 

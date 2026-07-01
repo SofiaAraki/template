@@ -71,15 +71,13 @@ class MeuCursoForm extends TPage
         $nome->addValidation('Nome', new TRequiredValidator);
         $tipo->addValidation('Tipo', new TRequiredValidator);
 
-        // Configuração das ações (Botões)
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'far:save white');
-        $btn->class = 'btn btn-sm btn-primary';
-        
-        $this->form->addAction('Voltar', new TAction([$this, 'onBack']), 'fa:arrow-circle-left blue');
-      
+        // Configuração das ações (Botões)       
+        $this->form->addAction('Voltar', new TAction([$this, 'onBack']), 'fa:arrow-left blue');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
+
         if ($method == 'onEdit' || isset($param['key'])) {
             $this->form->addAction('Excluir', new TAction([$this, 'onDelete'], $param), 'far:trash-alt red');
-        }
+        }   
         
         // Container de exibição da página
         $container = new TVBox;

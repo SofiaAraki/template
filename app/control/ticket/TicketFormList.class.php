@@ -66,8 +66,8 @@ class TicketFormList extends TPage
         $categoria->setChangeAction($change_action);
 
         // create the form actions
-        $this->form->addQuickAction(_t('Back'), new TAction(array('TicketList', 'onReload')), 'far:arrow-alt-circle-left blue');
-        $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'onSave')), 'fa:save green');
+        $this->form->addQuickAction('Voltar', new TAction(array('TicketList', 'onReload')), 'fas:arrow-left blue');
+        $this->form->addQuickAction('Salvar', new TAction(array($this, 'onSave')), 'fa:save green');
         
         // vertical box container
         $container = new TVBox;

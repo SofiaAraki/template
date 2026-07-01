@@ -52,11 +52,6 @@ class NoticiasFormList extends TPage
         ];
         $publico->addItems($itens_publico);
 
-        // Definição de tamanhos dos campos
-        $titulo->setSize('100%');
-        $data_expira->setSize('100%');
-        $conteudo->setSize('100%', 150);
-
         // --- ADICIONANDO CAMPOS AO FORMULÁRIO ---
         $this->form->addQuickField('Id', $id, 100);
         $this->form->addQuickField('Data Postagem', $data_postagem, 200);
@@ -69,24 +64,22 @@ class NoticiasFormList extends TPage
         $this->form->addQuickField('Público Alvo', $publico, 200, new TRequiredValidator);
         $this->form->addQuickField('Conteúdo', $conteudo, 500, new TRequiredValidator);
 
+        $this->form->addQuickField('Enviar E-mail?', $email);
+
         // --- AÇÕES DO FORMULÁRIO ---
-        $this->form->addQuickAction('Salvar e Publicar', new TAction([$this, 'onSave']), 'fa:upload');
-        $this->form->addQuickAction('Limpar', new TAction([$this, 'onClear']), 'fa:eraser green');
+        $this->form->addQuickAction('Limpar', new TAction([$this, 'onClear']), 'fa:eraser red');
+        $this->form->addQuickAction('Publicar', new TAction([$this, 'onSave']), 'fa:upload green');
         
-        // --- CONFIGURAÇÃO DA DATAGRID ---
-        $this->datagrid = new TDataGrid;
-        $this->datagrid->style = 'width: 100%';
-        $this->datagrid->setHeight(320);
+        // --- CONFIGURAÇÃO DA DATAGRID (Padrão Bootstrap do Tutor) ---
+        $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
         
-        // Criando as colunas da Datagrid
-        $column_data_postagem = new TDataGridColumn('data_postagem', 'Data da postagem', 'left');
-        $column_data_expira   = new TDataGridColumn('data_expira', 'Data de expiração', 'left');
-        $column_titulo        = new TDataGridColumn('titulo', 'Título', 'left');
-        $column_conteudo      = new TDataGridColumn('conteudo', 'Conteúdo', 'left');
-        $column_autor         = new TDataGridColumn('system_user->name', 'Autor', 'left');
-        $column_data_edicao   = new TDataGridColumn('data_edicao', 'Data da edição', 'left');
-        $column_unidade       = new TDataGridColumn('unidade', 'Unidade', 'left');
-        $column_publico       = new TDataGridColumn('publico', 'Público Alvo', 'left');
+        // Criando as colunas da Datagrid com as larguras em porcentagem idênticas ao Tutor
+        $column_data_postagem = new TDataGridColumn('data_postagem', 'Postagem', 'center', '15%');
+        $column_data_expira   = new TDataGridColumn('data_expira', 'Expiração', 'center', '15%');
+        $column_titulo        = new TDataGridColumn('titulo', 'Título', 'left', '25%');
+        $column_conteudo      = new TDataGridColumn('conteudo', 'Conteúdo', 'left', '25%');
+        $column_autor         = new TDataGridColumn('system_user->name', 'Autor', 'left', '10%');
+        $column_unidade       = new TDataGridColumn('unidade', 'Unidade', 'center', '10%');
 
         // Adicionando as colunas à Datagrid
         $this->datagrid->addColumn($column_data_postagem);
@@ -94,45 +87,37 @@ class NoticiasFormList extends TPage
         $this->datagrid->addColumn($column_titulo);
         $this->datagrid->addColumn($column_conteudo);
         $this->datagrid->addColumn($column_autor);
-        $this->datagrid->addColumn($column_data_edicao);
         $this->datagrid->addColumn($column_unidade);
-        $this->datagrid->addColumn($column_publico);
         
-        // Ação de Editar
-        $action1 = new TDataGridAction([$this, 'onEdit']);
+        // Ações da Datagrid configuradas como botões limpos (setUseButton)
+        $action1 = new TDataGridAction([$this, 'onEdit'], ['id'=>'{id}']);
         $action1->setUseButton(TRUE);
-        $action1->setButtonClass('btn btn-default');
-        $action1->setLabel(_t('Edit'));
-        $action1->setImage('far:edit blue fa-lg');
-        $action1->setField('id');
+        $this->datagrid->addAction($action1, _t('Edit'), 'far:edit blue');
         
-        // Ação de Excluir
-        $action2 = new TDataGridAction([$this, 'onDelete']);
+        $action2 = new TDataGridAction([$this, 'onDelete'], ['id'=>'{id}']);
         $action2->setUseButton(TRUE);
-        $action2->setButtonClass('btn btn-default');
-        $action2->setLabel(_t('Delete'));
-        $action2->setImage('far:trash-alt red fa-lg');
-        $action2->setField('id');
+        $this->datagrid->addAction($action2, _t('Delete'), 'far:trash-alt red');
         
-        $this->datagrid->addAction($action1);
-        $this->datagrid->addAction($action2);
-        
+        // Cria o modelo da Datagrid
         $this->datagrid->createModel();
         
         // --- PAGINAÇÃO ---
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction([$this, 'onReload']));
-        $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
-        // --- MONTAGEM DO LAYOUT (CONTAINER) ---
-        $container = new TVBox;
-        $container->style = 'width: 100%';
-        $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
-        $container->add(TPanelGroup::pack('Novo Informativo', $this->form));
-        $container->add($this->datagrid);
-        $container->add($this->pageNavigation);
+        // --- PANEL DA GRID (Igual ao Tutor) ---
+        $panel_grid = new TPanelGroup('Informativos Postados');
+        $panel_grid->add($this->datagrid)->style = 'overflow-x:auto';
+        $panel_grid->addFooter($this->pageNavigation);
+
+        // --- MONTAGEM DO LAYOUT FINAL (CONTAINER) ---
+        $vbox = new TVBox;
+        $vbox->style = 'width: 100%';
+        $vbox->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $vbox->add(TPanelGroup::pack('Novo Informativo', $this->form));
+        $vbox->add($panel_grid); // Adiciona o painel formatado da Grid
         
-        parent::add($container);
+        parent::add($vbox);
     }
 
     /**
@@ -154,7 +139,7 @@ class NoticiasFormList extends TPage
             if (empty($param['order']))
             {
                 $param['order'] = 'id';
-                $param['direction'] = 'asc';
+                $param['direction'] = 'desc';
             }
             
             $criteria->setProperties($param); 
@@ -275,7 +260,7 @@ class NoticiasFormList extends TPage
             $object->store(); 
 
             // Se a opção de envio por e-mail estiver marcada
-            if ($param['email'] != NULL) 
+            if ($param['email'])
             {
                 $members = SystemUser::getInGroups([new SystemGroup(1)]);
                 $options = [];

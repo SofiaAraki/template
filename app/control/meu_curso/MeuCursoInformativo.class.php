@@ -67,15 +67,15 @@ class MeuCursoInformativo extends TPage
         // 3. AÇÕES DO FORMULÁRIO (Botão padrão no rodapé)
         if($user->funcao_legado == 'Aluno')
         {
-            $this->form->addAction('Voltar para Meu Curso', new TAction(array('MeuCursoViewAluno', 'verPagina'), $param), 'fa:arrow-left');
+            $this->form->addAction('Voltar para Meu Curso', new TAction(array('MeuCursoViewAluno', 'verPagina'), $param), 'fa:arrow-left blue');
         }
         elseif($user->funcao_legado == 'Professor')
         {
-            $this->form->addAction('Voltar para Meu Curso', new TAction(array('MeuCursoViewProfessor', 'verPagina'), $param), 'fa:arrow-left');
+            $this->form->addAction('Voltar para Meu Curso', new TAction(array('MeuCursoViewProfessor', 'verPagina'), $param), 'fa:arrow-left blue');
         }
         else
         {
-            $this->form->addAction('Voltar para Meu Curso', new TAction(array('MeuCursoView', 'verPagina'), $param), 'fa:arrow-left');
+            $this->form->addAction('Voltar para Meu Curso', new TAction(array('MeuCursoView', 'verPagina'), $param), 'fa:arrow-left blue');
         }
 
         $container = new TVBox;

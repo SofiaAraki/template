@@ -58,8 +58,7 @@ class AgendamentoEquipamentoList extends TPage
         
         
         // add the search form actions
-        $btn = $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fas:search blue');
         $this->form->addQuickAction('Agendar Equipamento',  new TAction(array('AgendamentoEquipamentoForm', 'onEdit')), 'fas:plus green');
         
         

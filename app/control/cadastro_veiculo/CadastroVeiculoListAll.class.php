@@ -45,14 +45,8 @@ class CadastroVeiculoListAll extends TPage
 
         
         // add the search form actions
-        $btn = $this->form->addAction(('Buscar'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addAction('Exportar Cadastros',  new TAction(array('RelatorioCadastroVeiculo', 'mostrar')), 'fa:table' );
-        //$this->form->addAction('Exportar Requerimentos',  new TAction(array($this, 'onExportCSV')), 'fa:table' );
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
         $this->form->addAction('Gerar Relatório', new TAction(array($this, 'dialogRelatorio')), 'far:file-pdf red');
-        //$this->form->addActionLink(_t('New'), new TAction(['CadastroVeiculoForm', 'onEdit']), 'fa:plus green');
-        //$this->form->addAction(('Novo Cadastro'),  new TAction(array('CadastroVeiculoForm', 'onEdit')), 'fa:plus #69aa46');
-        
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

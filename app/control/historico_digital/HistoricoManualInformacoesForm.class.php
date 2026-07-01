@@ -389,7 +389,7 @@ class HistoricoManualInformacoesForm extends TPage
         
 
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         $btn->class = 'btn btn-sm btn-primary';
         $this->form->addAction('Voltar', new TAction(array('HistoricoManualList','onReload')), 'fas:arrow-alt-circle-left blue');
         

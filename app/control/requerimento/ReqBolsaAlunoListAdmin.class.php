@@ -31,7 +31,7 @@ class ReqBolsaAlunoListAdmin extends TPage
         $this->form->setData( TSession::getValue('Aluno_filter_data') );
         
         // add the search form actions
-        $this->form->addQuickAction(('Buscar'), new TAction(array($this, 'onSearch')), 'fa:search');
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search blue');
         
                 
         // creates a Datagrid

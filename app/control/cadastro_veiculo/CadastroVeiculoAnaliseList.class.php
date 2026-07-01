@@ -1,5 +1,4 @@
 <?php
-
 class CadastroVeiculoAnaliseList extends TPage
 {
     private $form; 
@@ -8,7 +7,6 @@ class CadastroVeiculoAnaliseList extends TPage
     private $formgrid;
     private $loaded;
     private $deleteButton;
-    
 
     public function __construct()
     {
@@ -18,19 +16,16 @@ class CadastroVeiculoAnaliseList extends TPage
         // creates the form
         $this->form = new BootstrapFormBuilder('form_CadastroVeiculo');
         $this->form->setFormTitle('Cadastro de Veículos');
-        
 
         // create the form fields
         $placa = new TEntry('placa');
         $nome = new TEntry('nome');
         $proprietario = new TEntry('proprietario');
 
-
         // add the fields
         $this->form->addFields( [ new TLabel('Nome') ], [ $nome ] );
         $this->form->addFields( [ new TLabel('Proprietário') ], [ $proprietario ] );
         $this->form->addFields( [ new TLabel('Placa') ], [ $placa ] );
-
 
         // set sizes
         $placa->setSize('25%');
@@ -43,13 +38,8 @@ class CadastroVeiculoAnaliseList extends TPage
         // keep the form filled during navigation with session data
         $this->form->setData( TSession::getValue('CadastroVeiculo_filter_data') );
         
-        
         // add the search form actions
-        $btn = $this->form->addAction(('Buscar'), new TAction([$this, 'onSearch']), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addActionLink(_t('New'), new TAction(['CadastroVeiculoForm', 'onEdit']), 'fa:plus green');
-        //$this->form->addAction(('Novo Cadastro'),  new TAction(array('CadastroVeiculoForm', 'onEdit')), 'fa:plus #69aa46');
-        
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fas:search blue');
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

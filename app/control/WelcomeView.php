@@ -121,7 +121,6 @@ class WelcomeView extends TPage
             $linkDiario  = $isProfessor ? 'index.php?class=HorarioAulasList' : 'index.php?class=BoletimNovoList';
             $linkETicket = $isProfessor ? 'index.php?class=TicketFormListProf' : 'index.php?class=TicketFormListAluno';
 
-            // Usando TPanelGroup nativo para os cards, que herdam as cores automaticamente
             $row1->add($this->column($this->card('Moodle', 'fa-graduation-cap', $linkMoodle, true)));
             $row1->add($this->column($this->card($labelDiario, 'fa-book', $linkDiario)));
             $row1->add($this->column($this->card('E-Ticket', 'fa-ticket-alt', $linkETicket)));
@@ -180,7 +179,6 @@ class WelcomeView extends TPage
                 $noticias = Noticias::getObjects($criteriaNoticias);
                 if (!empty($noticias)) 
                 {
-                    $container->add('<br><hr><h4 class="text-muted"><i class="fa fa-bullhorn"></i> Mural de Avisos Informativos</h4><br>');
                     $noticias = array_reverse($noticias);
 
                     foreach ($noticias as $noticia)
@@ -287,7 +285,6 @@ class WelcomeView extends TPage
         return $col;
     }
 
-    // REMOVIDO TODO CSS FIXO: Agora o componente gera painéis puros estruturados nativamente no framework
     private function card($titulo, $icone, $url, $targetBlank = false)
     {
         $panel = new TPanelGroup($titulo);
@@ -308,5 +305,21 @@ class WelcomeView extends TPage
         $panel->add($center);
         
         return $panel;
+    }
+
+    /**
+     * Ciclo final de exibição da página no Adianti
+     */
+    public function show()
+    {
+        parent::show();
+        
+        if (!TSession::getValue('aviso_exibido'))
+        {
+            // CORREÇÃO AQUI: Remove o 'onShow' para o construtor assumir o controle perfeito do Ajax
+            TApplication::loadPage('AvisoModalView');
+            
+            TSession::setValue('aviso_exibido', true);
+        }
     }
 }

@@ -275,8 +275,8 @@ class ContratoFinanceiroListMatricula extends TPage
         }
 
         // create the form actions
-        $this->form->addActionLink(_t('Back'),  new TAction(['ContratoFinanceiroAdm', 'onReload']), 'fa:arrow-alt-circle-left blue');
-        $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save green');
+        $this->form->addActionLink('Voltar',  new TAction(['ContratoFinanceiroAdm', 'onReload']), 'fas:arrow-left blue');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
 
         // vertical box container
         $container = new TVBox;

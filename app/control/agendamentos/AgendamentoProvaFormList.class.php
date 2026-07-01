@@ -76,9 +76,9 @@ class AgendamentoProvaFormList extends TPage
         $this->form->addQuickField('Data do registro', $data_reg, '50%');
         $this->form->addQuickField('Anexar arquivo', $filename, '50%');        
         
-        $this->form->addQuickAction('Voltar', new TAction(array('AgendamentoProvaListProfessor', 'onReload')), 'far:arrow-alt-circle-left blue');
-        $this->form->addQuickAction(_t('Clear'), new TAction(array($this, 'onClear')), 'fa:eraser red');
-        $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'onSave')), 'far:save green');
+        $this->form->addQuickAction('Voltar', new TAction(array('AgendamentoProvaListProfessor', 'onReload')), 'fa:arrow-left blue');
+        $this->form->addQuickAction('Limpar', new TAction(array($this, 'onClear')), 'fa:eraser red');
+        $this->form->addQuickAction('Salvar', new TAction(array($this, 'onSave')), 'far:save green');
         
         $container = new TVBox;
         $container->style = 'width: 100%';

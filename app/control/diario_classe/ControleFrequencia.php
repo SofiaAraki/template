@@ -60,7 +60,7 @@ class ControleFrequencia extends TStandardList
         $row->layout = ['col-sm-4', 'col-sm-3', 'col-sm-5' ];
  
         $this->form->setData( TSession::getValue('Diario_filter_data') );
-        $this->form->addActionLink( 'Listar Disciplinas',  new TAction(['HorarioAulasList', 'onReload']), 'fa:reply blue');
+        $this->form->addActionLink( 'Listar Disciplinas',  new TAction(['HorarioAulasList', 'onReload']), 'fa:arrow-left blue');
         // create the datagrid form wrapper
         $this->formDatagrid = new TForm('datagrid_form');
         

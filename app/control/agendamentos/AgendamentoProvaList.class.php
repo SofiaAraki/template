@@ -58,10 +58,7 @@ class AgendamentoProvaList extends TPage
         
         
         // add the search form actions
-        $btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addQuickAction('Novo Agendamento',  new TAction(array('AgendamentoProvaFormList', 'onEdit')), 'bs:plus-sign green');
-        
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search blue');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;

@@ -40,8 +40,7 @@ class ConteudoProgramaticoListAll extends TPage
         $this->form->setData( TSession::getValue('ConteudoProgramatico_filter_data') );
         
         // add the search form actions
-        $btn = $this->form->addQuickAction(('Buscar'), new TAction(array($this, 'onSearch')), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';        
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fas:search blue');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;

@@ -37,7 +37,7 @@ class ConteudoProgramaticoList extends TPage
         
         // keep the search data in the session
         
-        $this->form->addQuickAction(_t('Search'), new TAction(array($this, 'onSearch')), 'fa:search blue');
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search blue');
         $this->form->addQuickAction('Cadastrar Novo', new TAction(array('ConteudoProgramaticoForm', 'onEdit')), 'fa:plus green');
         
         // creates a Datagrid

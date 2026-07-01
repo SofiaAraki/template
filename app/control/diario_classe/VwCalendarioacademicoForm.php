@@ -93,10 +93,8 @@ class VwCalendarioacademicoForm extends TPage
         $Data->setSize('30%');
          
         // create the form actions
-        
-        $btn = $this->form->addAction(('Lançar Frequências'), new TAction([$this, 'onSave']), 'fa:check');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addActionLink( 'Listar Disciplinas',  new TAction(['HorarioAulasList', 'onReload']), 'fa:reply blue');
+        $this->form->addActionLink('Voltar',  new TAction(['HorarioAulasList', 'onReload']), 'fa:arrow-left blue');
+        $this->form->addAction('Lançar Frequências', new TAction([$this, 'onSave']), 'fa:check green');
                 
         // vertical box container
         $container = new TVBox;

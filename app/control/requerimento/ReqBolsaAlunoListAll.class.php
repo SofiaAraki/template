@@ -55,12 +55,12 @@ class ReqBolsaAlunoListAll extends TPage
         
         
         // add the search form actions
-        $this->form->addQuickAction(('Buscar'), new TAction(array($this, 'onSearch')), 'fa:search');
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search blue');
         //$this->form->addQuickAction('Exportar Requerimentos',  new TAction(array($this, 'onExportCSV')), 'fa:table' );
         
         
         //Se admin, exporta CSV com dados do socioeconômico, se não, exporta CSV só com dados básicos
-        $this->form->addQuickAction('Exportar Requerimentos', new TAction(array($this, 'onVerificaPermissao')), 'fa:table' );
+        $this->form->addQuickAction('Exportar Requerimentos', new TAction(array($this, 'onVerificaPermissao')), 'fa:table orange');
         
         
         // creates a Datagrid

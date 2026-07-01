@@ -134,9 +134,8 @@ Outras informações relevantes:';
          **/
         
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addActionLink(_t('New'),  new TAction([$this, 'onEdit']), 'fa:eraser red');
+        $this->form->addActionLink('Limpar',  new TAction([$this, 'onEdit']), 'fa:eraser red');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

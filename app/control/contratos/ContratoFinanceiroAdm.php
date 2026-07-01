@@ -52,8 +52,7 @@ class ContratoFinanceiroAdm extends TPage
         $this->form->setData(TSession::getValue(__CLASS__ . '_filter_data'));
         
         // Ações do formulário
-        $btn = $this->form->addAction(_t('Find'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
         $this->form->addActionLink('Cadastrar Contrato', new TAction(['ContratoFinanceiroListMatricula', 'onShow']), 'fa:plus-square green');
         
         // Inicialização da Datagrid

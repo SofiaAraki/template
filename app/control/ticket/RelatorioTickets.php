@@ -49,7 +49,7 @@ class RelatorioTickets extends TPage
         $data_ticket->setDatabaseMask('yyyy-mm-dd'); // Define o formato para o banco de dados
 
         
-        $this->form->addAction( 'Gerar Relatório', new TAction(array($this, 'onGenerate')), 'fa:download blue');
+        $this->form->addAction('Gerar Relatório', new TAction(array($this, 'onGenerate')), 'fa:download');
         
         // wrap the page content using vertical box
         $vbox = new TVBox;

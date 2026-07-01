@@ -63,9 +63,7 @@ class AgendamentoSalasList extends TPage
         $this->form->setData( TSession::getValue('AgendamentoSalas_filter_data') );
         
         // add the search form actions
-        $btn = $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search blue');        
         $this->form->addQuickAction('Novo Agendamento',  new TAction(array($this, 'onHelp')), 'fa:info-circle');
         
         // creates a Datagrid

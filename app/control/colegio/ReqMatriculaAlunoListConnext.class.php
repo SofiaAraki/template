@@ -39,9 +39,7 @@ class ReqMatriculaAlunoListConnext extends TPage
         $this->form->setData( TSession::getValue('FiAluno_filter_data') );
         
         // add the search form actions
-        $btn = $this->form->addAction(('Buscar Aluno'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-
+        $this->form->addAction('Buscar Aluno', new TAction([$this, 'onSearch']), 'fa:search blue');
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

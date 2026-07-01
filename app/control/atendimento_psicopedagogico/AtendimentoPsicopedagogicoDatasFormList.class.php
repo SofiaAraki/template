@@ -93,8 +93,8 @@ class AtendimentoPsicopedagogicoDatasFormList extends TPage
          **/
          
         // create the form actions
-        $this->form->addQuickAction(_t('Clear'),  new TAction(array($this, 'onClear')), 'fa:eraser red');
-        $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'onSave')), 'fa:save green');
+        $this->form->addQuickAction('Limpar',  new TAction(array($this, 'onClear')), 'fa:eraser red');
+        $this->form->addQuickAction('Salvar', new TAction(array($this, 'onSave')), 'fa:save green');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;

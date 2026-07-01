@@ -116,9 +116,7 @@ class CadastroVeiculoForm extends TPage
         
 
         // create the form actions
-        $btn = $this->form->addAction(('Salvar'), new TAction([$this, 'onSave']), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        //$this->form->addAction(_t('New'),  new TAction([$this, 'onEdit']), 'fa:eraser red');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'far:save green');
 
         
         // vertical box container

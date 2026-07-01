@@ -59,6 +59,7 @@ class EnvioContratoIES extends TPage
          // add the actions
         $this->form->addAction( 'Enviar Documento', new TAction([$this, 'onSave']), 'fa:save green');
         //$this->form->addActionLink( 'Clear', new TAction([$this, 'onEdit']), 'fa:eraser red');
+        
         $vbox = new TVBox;
         $vbox->style = 'width: 100%';
        // $vbox->add(new TXMLBreadCrumb('menu.xml', 'ProductList'));

@@ -49,12 +49,12 @@ class AtividadeList extends TPage
 
         if($user->funcao_legado == "Professor") //PROF
         {
-            $this->form->addAction('Voltar', new TAction(['AtividadeProfessorDisciplinasList', 'onReload']), 'far:arrow-alt-circle-left blue');
+            $this->form->addAction('Voltar', new TAction(['AtividadeProfessorDisciplinasList', 'onReload']), 'fa:arrow-left blue');
             $this->form->addAction('Adicionar Conteudo', new TAction(['AtividadeForm', 'mostrar']), 'fa:plus green');
         }
         elseif($user->funcao_legado == "Aluno") //ALUNO
         {
-            $this->form->addAction('Voltar', new TAction(['AtividadeAlunoDisciplinasList', 'onReload']), 'far:arrow-alt-circle-left blue');
+            $this->form->addAction('Voltar', new TAction(['AtividadeAlunoDisciplinasList', 'onReload']), 'fa:arrow-left blue');
         }
         
         // creates a Datagrid

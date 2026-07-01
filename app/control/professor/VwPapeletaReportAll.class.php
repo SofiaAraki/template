@@ -51,8 +51,8 @@ class VwPapeletaReportAll extends TPage
         $Periodo->setEditable(FALSE);
         $NomeCurso->setEditable(FALSE);
 
+        $this->form->addQuickAction('Voltar', new TAction(array('HorarioAulasList','onReload')), 'fa:arrow-left blue');
         $this->form->addQuickAction('Gerar Relatório', new TAction(array($this, 'onGenerate')), 'far:file-pdf red');
-        $this->form->addQuickAction('Voltar para a Listagem', new TAction(array('VwProfessordisciplinassemestreList','onReload')), 'fas:list blue');
 
         $sessao_papeleta = TSession::getValue('sessao_papeleta');
         

@@ -74,18 +74,13 @@ class ConteudoDiarioClasseForm extends TPage
          **/
         
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addActionLink(('Novo Registro'),  new TAction([$this, 'onEdit']), 'fa:eraser red');
-        $this->form->addActionLink( 'Listar Disciplinas',  new TAction(['HorarioAulasList', 'onReload']), 'fa:reply blue');
-        
+        $this->form->addActionLink('Voltar',  new TAction(['HorarioAulasList', 'onReload']), 'fa:arrow-left blue');
+        $this->form->addActionLink('Limpar',  new TAction([$this, 'onEdit']), 'fa:eraser red');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
-        $this->datagrid->style = 'width: 100%';
-        // $this->datagrid->datatable = 'true';
-        // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
-        
+        $this->datagrid->style = 'width: 100%'; 
 
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'ID', 'left');

@@ -93,11 +93,11 @@ class ConteudoProgramaticoFormView extends TPage
         
         if($user->funcao_legado == 'Professor')
         {
-            $this->form->addHeaderAction('Voltar', new TAction(['ConteudoProgramaticoList','onReload']), 'far:arrow-alt-circle-left blue');
+            $this->form->addHeaderAction('Voltar', new TAction(['ConteudoProgramaticoList','onReload']), 'fas:arrow-left blue');
         }
         else
         {
-            $this->form->addHeaderAction('Voltar', new TAction(['ConteudoProgramaticoListAll','onReload']), 'far:arrow-alt-circle-left blue');
+            $this->form->addHeaderAction('Voltar', new TAction(['ConteudoProgramaticoListAll','onReload']), 'fas:arrow-left blue');
         }
         
         $this->form->addHeaderAction('Editar', new TAction(['ConteudoProgramaticoForm', 'onEdit'],['key'=>$conteudo->id]), 'far:edit blue fa-lg');

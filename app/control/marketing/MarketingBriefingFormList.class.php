@@ -101,8 +101,8 @@ class MarketingBriefingFormList extends TPage
         }
         
         // create the form actions
-        $this->form->addActionLink(_t('Clear'), new TAction([$this, 'onEdit']), 'fa:eraser red');
-        $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save green');
+        $this->form->addActionLink('Limpar', new TAction([$this, 'onEdit']), 'fa:eraser red');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

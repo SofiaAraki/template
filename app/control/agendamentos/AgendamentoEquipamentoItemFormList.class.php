@@ -71,8 +71,8 @@ class AgendamentoEquipamentoItemFormList extends TPage
         $imagem->setSize('100%');
 
         // Ações do formulário
-        $this->form->addAction(_t('Clear'), new TAction(array($this, 'onClear')), 'fa:eraser red');
-        $this->form->addAction(_t('Save'), new TAction(array($this, 'onSave')), 'far:save green');
+        $this->form->addAction('Limpar', new TAction(array($this, 'onClear')), 'fa:eraser red');
+        $this->form->addAction('Salvar', new TAction(array($this, 'onSave')), 'far:save green');
         
         // Cria a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

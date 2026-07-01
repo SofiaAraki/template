@@ -34,9 +34,8 @@ class AgendamentoEquipamentoListSecretaria extends TPage
         $this->form->setData(TSession::getValue('AgendamentoEquipamento_filter_data'));
         
         // Add the search form actions
-        $btn = $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addQuickAction(_t('New'), new TAction(array('AgendamentoEquipamentoForm', 'onEdit')), 'fa:plus green');
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search blue');
+        $this->form->addQuickAction('Novo', new TAction(array('AgendamentoEquipamentoForm', 'onEdit')), 'fa:plus green');
         $this->form->addQuickAction('Imprimir', new TAction(array($this, 'onPrint')), 'fa:print orange');
         
         // Creates a Datagrid

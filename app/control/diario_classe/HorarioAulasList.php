@@ -63,7 +63,7 @@ class HorarioAulasList extends TPage
         $action_lista->setLabel('Relatório: Lista de Alunos');
         $action_lista->setImage('fas:file-alt blue');
 
-        $action_papeleta->setLabel('Relatório: Papeleta (1º e 2º Bimestre)');
+        $action_papeleta->setLabel('Relatório: Papeleta Geral');
         $action_papeleta->setImage('fas:file-pdf red');
 
         // Criando o grupo principal de ações

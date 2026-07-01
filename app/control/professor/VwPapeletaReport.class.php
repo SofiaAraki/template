@@ -78,10 +78,8 @@ class VwPapeletaReport extends TPage
         $output_type->setLayout('horizontal');
         
         // add the action button
-        $btn = $this->form->addQuickAction(('Imprimir Papeleta'), new TAction(array($this, 'onGenerate')), 'fa:cog');
-        $btn->class = 'btn btn-warning btn-sm';
-
-        $this->form->addQuickAction('Voltar para a Lista de Disciplinas',  new TAction(array('VwProfessordisciplinassemestreList','onReload')), 'fa:list blue');
+        $this->form->addQuickAction('Voltar',  new TAction(array('VwProfessordisciplinassemestreList','onReload')), 'fas:arrow-left blue');
+        $this->form->addQuickAction('Imprimir Papeleta', new TAction(array($this, 'onGenerate')), 'far:file-pdf red');
         
         // vertical box container
         $container = new TVBox;

@@ -43,8 +43,7 @@ class HistoricoManualList extends TPage
         
         
         // add the search form actions
-        $btn = $this->form->addAction(('Buscar Histórico'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
         $this->form->addActionLink('Criar histórico manual', new TAction(['HistoricoManualInformacoesForm', 'onEdit']), 'fa:plus green');
         
         

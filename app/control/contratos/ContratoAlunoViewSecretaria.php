@@ -27,7 +27,7 @@ class ContratoAlunoViewSecretaria extends TPage
             $vbox->style = 'padding: 25px';
             //$vbox->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
             $panel = new TPanelGroup('Contrato Financeiro - Secretaria');
-            $panel->addHeaderActionLink('Voltar para Lista', new TAction([$this, 'onBackForm']), 'fa:arrow-left black' );
+            $panel->addHeaderActionLink('Voltar para Lista', new TAction([$this, 'onBackForm']), 'fa:arrow-left blue' );
             $panel->addHeaderActionLink('Download Doc. Indentificação', new TAction([$this, 'downloadArquivo']), 'fa:download green' );
             $panel->addHeaderActionLink('Salvar Contrato', new TAction([$this, 'onExportPDF']), 'far:file-pdf red' );
             $panel->addHeaderActionLink('Enviar Contrato Assinado pela IES', new TAction([$this, 'onEnvioContratoIES']), 'fa:upload blue' );

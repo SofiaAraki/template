@@ -29,7 +29,7 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
         $this->form->setData( TSession::getValue('ProgramaEnsinoDisciplina_filter_data') );
         
         // add the search form actions
-        $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search blue');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;

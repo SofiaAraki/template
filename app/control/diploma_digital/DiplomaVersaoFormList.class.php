@@ -144,9 +144,7 @@ class DiplomaVersaoFormList extends TPage
         
         
         // create the form actions
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

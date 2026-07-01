@@ -56,7 +56,7 @@ class ReqBolsaAlunoListGestor extends TPage
         
         
         // add the search form actions
-        $this->form->addQuickAction(('Buscar'), new TAction(array($this, 'onSearch')), 'fa:search');
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fa:search blue');
                 
         
         // creates a Datagrid

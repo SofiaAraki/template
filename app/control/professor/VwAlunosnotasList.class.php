@@ -35,13 +35,11 @@ class VwAlunosnotasList extends TPage
         $this->form->setData( TSession::getValue('VwAlunosnotas_filter_data') );
         
         // Actions do topo
-        $this->form->addQuickAction('Voltar',  new TAction(array('VwProfessordisciplinassemestreList','onReload')), 'fas:arrow-left');
-        $btn = $this->form->addQuickAction(('Buscar'), new TAction(array($this, 'onSearch')), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addQuickAction('Voltar',  new TAction(array('VwProfessordisciplinassemestreList','onReload')), 'fas:arrow-left orange');
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fas:search blue');
 
         // NOVO: Botão de fechamento/confirmação oficial para o Professor
-        $btn_papeleta = $this->form->addQuickAction('Finalizar Lançamento', new TAction(array($this, 'onFinalizarLançamento')), 'fas:check');
-        $btn_papeleta->class = 'btn btn-sm btn-success';
+        $this->form->addQuickAction('Finalizar Lançamento', new TAction(array($this, 'onFinalizarLançamento')), 'fas:check green');
 
         // Datagrid
         $this->datagrid = new TDataGrid;

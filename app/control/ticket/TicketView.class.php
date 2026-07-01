@@ -114,25 +114,23 @@ class TicketView extends TPage
         }
         $this->form->addQuickField('Anexar arquivo(s)', $anexo, '80%');
         $this->form->addQuickField('Data Reg', $data_reg, '100%');
-
-        // create the form actions
-        $this->form->addQuickAction(('Salvar Alterações'), new TAction(array($this, 'onSave')), 'fa:save green');
         
+        // create the form actions
         if($user->funcao_legado == '') //SECRETARIA E ADMINS
         {
-            $btn1 = $this->form->addQuickAction('Voltar', new TAction(array('TicketFormList', 'onShow')), 'fas:arrow-alt-circle-left blue');
-            $btn2 = $this->form->addQuickAction('Fechar Ticket', new TAction(array($this, 'onFechaTicket')), 'fas:times');
-            $btn2->class = 'btn btn-sm btn-danger';
-            $btn3 = $this->form->addQuickAction('Imprimir Atendimento', new TAction(array($this, 'onImprimeAtendimento')), 'fas:print');
+            $this->form->addQuickAction('Voltar', new TAction(array('TicketFormList', 'onShow')), 'fas:arrow-left blue');
+            $this->form->addQuickAction('Imprimir', new TAction(array($this, 'onImprimeAtendimento')), 'fas:print');
+            $this->form->addQuickAction('Fechar', new TAction(array($this, 'onFechaTicket')), 'fas:times red');
         }
         
         elseif($user->funcao_legado == 'Professor')
         {
-            $btn1 = $this->form->addQuickAction('Voltar', new TAction(array('TicketListProf', 'onReload')), 'fas:arrow-alt-circle-left blue');
-            $btn2 = $this->form->addQuickAction('Fechar Ticket', new TAction(array($this, 'onFechaTicket')), 'fas:times');
-            $btn2->class = 'btn btn-sm btn-danger';
-            $btn3 = $this->form->addQuickAction('Imprimir Atendimento', new TAction(array($this, 'onImprimeAtendimento')), 'fas:print');
+            $this->form->addQuickAction('Voltar', new TAction(array('TicketListProf', 'onReload')), 'fas:arrow-left blue');
+            $this->form->addQuickAction('Imprimir', new TAction(array($this, 'onImprimeAtendimento')), 'fas:print');
+            $this->form->addQuickAction('Fechar', new TAction(array($this, 'onFechaTicket')), 'fas:times red');
         }
+
+        $this->form->addQuickAction('Salvar', new TAction(array($this, 'onSave')), 'far:save green');
     }
 
     private function buildTicketInfo(

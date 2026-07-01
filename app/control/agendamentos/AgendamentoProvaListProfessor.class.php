@@ -28,8 +28,7 @@ class AgendamentoProvaListProfessor extends TPage
         
         $this->form->setData(TSession::getValue('AgendamentoProva_filter_data'));
         
-        $btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fas:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fas:search blue');
         $this->form->addQuickAction('Novo Agendamento', new TAction(array('AgendamentoProvaFormList', 'onEdit')), 'fas:plus green');
         
         // Datagrid

@@ -50,7 +50,7 @@ class WifiCadastroFormList extends TPage
 
 
         // create the form actions
-        $this->form->addQuickAction(('Salvar'), new TAction(array($this, 'onSave')), 'far:save green');
+        $this->form->addQuickAction('Salvar', new TAction(array($this, 'onSave')), 'far:save green');
         $this->form->addQuickAction('Ajuda',  new TAction(array($this, 'onHelp')), 'fa:info-circle');
 
         
@@ -87,7 +87,7 @@ class WifiCadastroFormList extends TPage
         $action1 = new TDataGridAction(array($this, 'onEdit'));
         //$action1->setUseButton(TRUE);
         //$action1->setButtonClass('btn btn-default');
-        $action1->setLabel(('Editar'));
+        $action1->setLabel('Editar');
         $action1->setImage('far:edit blue fa-lg');
         $action1->setField('id');
 
@@ -95,7 +95,7 @@ class WifiCadastroFormList extends TPage
         $action2 = new TDataGridAction(array($this, 'onDelete'));
         //$action2->setUseButton(TRUE);
         //$action2->setButtonClass('btn btn-default');
-        $action2->setLabel(('Excluir'));
+        $action2->setLabel('Excluir');
         $action2->setImage('far:trash-alt red fa-lg');
         $action2->setField('id');
 

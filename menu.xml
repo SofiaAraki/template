@@ -473,6 +473,12 @@
             <action>EquivalenciaList</action>
             <icon>far:circle fa-fw</icon>
         </menuitem>
+        <menuitem>
+            <action>EquivalenciaForm</action>
+        </menuitem>
+        <menuitem>
+            <action>EquivalenciaReport</action>
+        </menuitem>
         </menu>
     </menuitem>
 

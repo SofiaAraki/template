@@ -1,7 +1,7 @@
 <?php
 /**
  * HorarioAulasList Listing
- * @author   Pamella Scapim
+ * @author  Pamella Scapim
  */
 class HorarioAulasList extends TPage
 {
@@ -38,7 +38,31 @@ class HorarioAulasList extends TPage
 
         $column_Identificacao = new TDataGridColumn('Identificacao', 'Turma', 'left');
         $column_Periodo = new TDataGridColumn('Periodo', 'Turno', 'left');
-        $column_NomeCurso = new TDataGridColumn('NomeCurso',   'Curso', 'left');
+
+        $column_Periodo->setTransformer(function ($value) {
+            $badge = new TElement('span');
+
+            switch ($value) {
+                case 'N':
+                    $badge->class = 'badge bg-primary';
+                    $badge->add('Noturno');
+                    break;
+
+                case 'I':
+                    $badge->class = 'badge bg-success';
+                    $badge->add('Integral');
+                    break;
+
+                default:
+                    $badge->class = 'badge bg-secondary';
+                    $badge->add($value);
+                    break;
+            }
+            return $badge;
+        });
+
+        
+        $column_NomeCurso = new TDataGridColumn('NomeCurso', 'Curso', 'left');
         $column_Codprofessor = new TDataGridColumn('Codprofessor', 'Codprofessor', 'left');
 
         // add the columns to the DataGrid
@@ -47,34 +71,20 @@ class HorarioAulasList extends TPage
         $this->datagrid->addColumn($column_Periodo);
         $this->datagrid->addColumn($column_NomeCurso);
 
-        // AÇÕES DA DATAGRID
-        $action_faltas    = new TDataGridAction([$this, 'onSelectAula'], ['CodComposto'=>'{CodComposto}']);
-        $action_conteudo  = new TDataGridAction([$this, 'onSelectConteudo'], ['CodComposto'=>'{CodComposto}']);
-        $action_lista     = new TDataGridAction([$this, 'onSelectLista'], ['CodComposto'=>'{CodComposto}']);
-        $action_papeleta  = new TDataGridAction([$this, 'onSelectPapeleta'], ['CodComposto'=>'{CodComposto}']);
+        $action_conteudo_freq = new TDataGridAction([$this, 'onSelectConteudoFreq'], ['CodComposto'=>'{CodComposto}']);
+        $action_lista = new TDataGridAction([$this, 'onSelectLista'], ['CodComposto'=>'{CodComposto}']);
        
-        $action_faltas->setLabel('Registrar Frequências');
-        $action_faltas->setImage('fa:check green');
 
-        $action_conteudo->setLabel('Registrar Conteúdo Diário');
-        $action_conteudo->setImage('fas:edit orange');
+        $action_conteudo_freq->setLabel('Conteúdo e Frequência');
+        $action_conteudo_freq->setImage('fas:edit orange');
 
-        // Modificado os Labels para deixar claro que ambos são relatórios unificados no mesmo grupo
-        $action_lista->setLabel('Relatório: Lista de Alunos');
-        $action_lista->setImage('fas:file-alt blue');
+        $action_lista->setLabel('Relatórios');
+        $action_lista->setImage('fas:file');
 
-        $action_papeleta->setLabel('Relatório: Papeleta Geral');
-        $action_papeleta->setImage('fas:file-pdf red');
-
-        // Criando o grupo principal de ações
-        $action_group = new TDataGridActionGroup('Ações ', 'fa:th');
+        $action_group = new TDataGridActionGroup('Ações', 'fa:th');
         
-        $action_group->addAction($action_faltas);
-        $action_group->addAction($action_conteudo);
-        
-        // Separador visual opcional para organizar os relatórios juntos
+        $action_group->addAction($action_conteudo_freq);
         $action_group->addAction($action_lista);
-        $action_group->addAction($action_papeleta);
 
         $this->datagrid->addActionGroup($action_group);
         
@@ -91,7 +101,7 @@ class HorarioAulasList extends TPage
         $container->style = 'width: 100%';
         //$container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
-        $container->add(TPanelGroup::pack('Diário de Classe Online - Lista de Disciplinas', $this->datagrid, $this->pageNavigation));
+        $container->add(TPanelGroup::pack('Diário de Classe - Lista de Disciplinas', $this->datagrid, $this->pageNavigation));
         
         parent::add($container);
     }
@@ -132,7 +142,7 @@ class HorarioAulasList extends TPage
                                         );
                    
                 }
-                AdiantiCoreApplication::gotoPage('VwCalendarioacademicoForm');
+                AdiantiCoreApplication::gotoPage('DiarioClasseConteudoList');
             }
             TTransaction::close();
         }    
@@ -145,7 +155,7 @@ class HorarioAulasList extends TPage
     }
 
 
-    public function onSelectConteudo($param)
+    public function onSelectConteudoFreq($param)
     {
         TTransaction::open('Felabs_DB');
             $logged = SystemUser::newFromLogin(TSession::getValue('login'));
@@ -176,40 +186,44 @@ class HorarioAulasList extends TPage
                                                                 'NomeProfessor'     => $object->NomeProfessor,
                                                                 'NomeCurso'         => $object->NomeCurso,
                                                                 'CodGradeDisciplinaEtapaFrente'    => $object->CodGradeDisciplinaEtapaFrente
-                                                        )
-                                   );
+                                                            )
+                );
                 
                 TTransaction::close();
 
                  $sessao_diarioclasse = TSession::getValue('sessao_diarioclasse'); 
+                // var_dump($sessao_diarioclasse);
+                // die();
 
             }
-            AdiantiCoreApplication::gotoPage('ConteudoDiarioClasseForm','onReload');
+            AdiantiCoreApplication::gotoPage('DiarioClasseConteudoList','onReload');
         }
-
-   
     }
     
     public function onSelectLista($param)
     {
         try 
         {
+
             $cod_turma_disciplina = $param['CodComposto'];
 
             TTransaction::open('Felabs_DB');
-            $logged = SystemUser::newFromLogin(TSession::getValue('login'));
-            $CodProfLogado = $logged->systemuser_codlegado;
+                $logged = SystemUser::newFromLogin(TSession::getValue('login'));
+                $CodProfLogado = $logged->systemuser_codlegado;
             TTransaction::close();
 
             TTransaction::open('dados_fei_t');
 
             $key = $param['key']; //Busca o id da frente da disciplina
 
+
             // get the course description
             foreach ($this->datagrid->getItems() as $object)
             {
+
                 if ($key == $object->CodComposto)
                 {
+                    
                     TSession::setValue('sessao_diarioclasse', array('NomeDisciplina'    => $object->NomeDisciplina,
                                                                     'Codprofessor'      => $object->Codprofessor,
                                                                     'CodCurso'          => $object->CodCurso,
@@ -223,8 +237,9 @@ class HorarioAulasList extends TPage
                                                                     'NomeProfessor'     => $object->NomeProfessor,
                                                                     'NomeCurso'         => $object->NomeCurso,
                                                                     'CodGradeDisciplinaEtapaFrente'    => $object->CodGradeDisciplinaEtapaFrente
-                                                            )
-                                        );
+                                                                )
+                    );
+                    
                 }
 
                 TApplication::loadPage('ListaAlunosCompletoReport');
@@ -238,67 +253,34 @@ class HorarioAulasList extends TPage
     }
     
     /**
-     * Carrega os dados da disciplina selecionada e abre o relatório do 1º e 2º Bimestre
-     */
-    public function onSelectPapeleta($param)
-    {
-        try 
-        {
-            $key = $param['key']; 
-
-            foreach ($this->datagrid->getItems() as $object)
-            {
-                if ($key == $object->CodComposto)
-                {
-                    // Alimenta a sessão 'sessao_papeleta' exigida pela classe do relatório
-                    TSession::setValue('sessao_papeleta', array(
-                        'CodDisciplina'  => $object->CodDisciplina,
-                        'CodTurmaetapa'  => $object->CodTurmaetapa,
-                        'NomeProfessor'  => $object->NomeProfessor,
-                        'Identificacao'  => $object->Identificacao,
-                        'NomeEntidade'   => TSession::getValue('userunitname') ?? 'Instituição de Ensino',
-                        'Periodo'        => $object->Periodo,
-                        'NomeDisciplina' => $object->NomeDisciplina,
-                        'NomeCurso'      => $object->NomeCurso,
-                        'key'            => $object->CodGradeDisciplinaEtapaFrente
-                    ));
-                    
-                    // Direciona imediatamente para a classe do relatório sem abrir telas intermediárias
-                    TApplication::loadPage('VwPapeletaReportAll');
-                    break;
-                }
-            }
-        } 
-        catch (Exception $e) 
-        {
-            new TMessage('error', $e->getMessage());
-        }
-    }
-    
-    /**
      * Inline record editing
+     * @param $param Array containing:
+     *              key: object ID value
+     *              field name: object attribute to be updated
+     *              value: new attribute content 
      */
     public function onInlineEdit($param)
     {
         try
         {
+            // get the parameter $key
             $field = $param['field'];
             $key   = $param['key'];
             $value = $param['value'];
             
-            TTransaction::open('dados_fei'); 
-            $object = new ProfessoresDisciplinasTurmas($key); 
+            TTransaction::open('dados_fei'); // open a transaction with database
+            $object = new ProfessoresDisciplinasTurmas($key); // instantiates the Active Record
             $object->{$field} = $value;
-            $object->store(); 
-            TTransaction::close(); 
+            $object->store(); // update the object in the database
+            TTransaction::close(); // close the transaction
             
-            $this->onReload($param); 
+            $this->onReload($param); // reload the listing
             new TMessage('info', "Record Updated");
         }
-        catch (Exception $e) 
+        catch (Exception $e) // in case of exception
         {
-            new TMessage('error', $e->getMessage()); 
-            TTransaction::rollback(); 
+            new TMessage('error', $e->getMessage()); // shows the exception error message
+            TTransaction::rollback(); // undo all pending operations
         }
     }
     
@@ -315,24 +297,30 @@ class HorarioAulasList extends TPage
             $Unidade = $loggedUnit = TSession::getValue('userunitid');                   
             TTransaction::close();
 
+            // open a transaction with database 'dados_fei'
             TTransaction::open('dados_fei');
            
+            // creates a repository for ProfessoresDisciplinasTurmas
             $repository = new TRepository('ProfessoresDisciplinasTurmas');
             $limit = 20;
+            // creates a criteria
             $criteria = new TCriteria;
             $criteria->add(new TFilter('Codprofessor', '=', $logged->systemuser_codlegado), TExpression::AND_OPERATOR); 
             $criteria->add(new TFilter('Ano', '=', 2026), TExpression::AND_OPERATOR);
             $criteria->add(new TFilter('Semestre', '=', 1), TExpression::AND_OPERATOR);
             $criteria->add(new TFilter('CodEntidade', '=', $Unidade), TExpression::AND_OPERATOR);
             
+            // default order
             if (empty($param['order']))
             {
                 $param['order'] = 'NomeDisciplina';
                 $param['direction'] = 'asc';
             }
-            $criteria->setProperties($param); 
+            $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
             
+          
+            // load the objects according to criteria
             $objects = $repository->load($criteria, FALSE);
             
             if (is_callable($this->transformCallback))
@@ -343,19 +331,23 @@ class HorarioAulasList extends TPage
             $this->datagrid->clear();
             if ($objects)
             {
+                // iterate the collection of active records
                 foreach ($objects as $object)
                 {
+                    // add the object inside the datagrid
                     $this->datagrid->addItem($object);
                 }
             }
             
+            // reset the criteria for record count
             $criteria->resetProperties();
             $count= $repository->count($criteria);
             
-            $this->pageNavigation->setCount($count); 
-            $this->pageNavigation->setProperties($param); 
-            $this->pageNavigation->setLimit($limit); 
+            $this->pageNavigation->setCount($count); // count of records
+            $this->pageNavigation->setProperties($param); // order, page
+            $this->pageNavigation->setLimit($limit); // limit
             
+            // close the transaction
             TTransaction::close();
             $this->loaded = true;
         }
@@ -367,10 +359,12 @@ class HorarioAulasList extends TPage
     }
     
     /**
+     * method show()
      * Shows the page
      */
     public function show()
     {
+        // check if the datagrid is already loaded
         if (!$this->loaded AND (!isset($_GET['method']) OR !(in_array($_GET['method'],  array('onReload', 'onSearch')))) )
         {
             if (func_num_args() > 0)

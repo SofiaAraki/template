@@ -4,7 +4,7 @@ return [
     'port'  =>  "",
     'name'  =>  "Felabs_DB",
     'user'  =>  "sa",
-    'pass'  =>  "SuaSenhaForteAqui123",
+    'pass'  =>  "Msql123456",
     'type'  =>  "mssql",
     'prep'  =>  "1"
 ];

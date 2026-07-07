@@ -260,33 +260,31 @@ class ControleFrequencia extends TStandardList
             TTransaction::close();
             
             TTransaction::open('dados_fei');
-            TTransaction::get()->exec("SET NOCOUNT ON");
 
             $sessao_diarioclasse = TSession::getValue('sessao_diarioclasse');
             $data = TSession::getValue('data_escolhida');
                 
             $CodTurmaEtapa = $sessao_diarioclasse["CodTurmaetapa"];
-            $data = DateTime::createFromFormat('d/m/Y', $data)->format('Y-m-d');
+            $dataAula = DateTime::createFromFormat('d/m/Y', $data)->format('Y-m-d');
 
             $horaAtual = date('H:i:s');
-
+            $dataAtual = date('Y/m/d');
             
             $dataForm = $this->form->getData();
             $this->form->setData($dataForm);
-                    
+
             $frqdiaria = FiFrqdiaria::where('CodTurmaetapa', '=', $CodTurmaEtapa)
-                            -> where('Data', '=', $data)
+                            -> where('Data', '=', $dataAula)
                             -> first();
-                
+
             if (is_null($frqdiaria))
             {
                 $Frqdiaria = new FiFrqdiaria;
                 $Frqdiaria->CodTurmaetapa   = $CodTurmaEtapa;
-                $Frqdiaria->Data            = $data;
+                $Frqdiaria->Data            = $dataAula;
                 $Frqdiaria->CodOperador     = '';
-                $Frqdiaria->DataLancamento  = '';
-                $Frqdiaria->HoraLancamento  = '';
-
+                $Frqdiaria->DataLancamento  = $dataAtual;
+                $Frqdiaria->HoraLancamento  = $horaAtual;
                 $Frqdiaria->store();
 
                 $CodFrqDiaria = $Frqdiaria->CodFrqDiaria;
@@ -309,8 +307,8 @@ class ControleFrequencia extends TStandardList
                     $check_NumeroOrdemAula                = $parts[6];
 
                     $Freq = empty($dataForm->$name) ? 'F' : 'P';
-
-                    TTransaction::dump();
+                    
+                    // verifica se a frequência já foi lançada
                     $FrqdiariaDisciplinaExistente = FiFrqdiariaDisciplinas::where(
                         'CodGradeDisciplinaEtapa_Frente', '=', $check_CodGradeDisciplinaEtapa_Frente)
                         ->where('CodMatriculaEtapa', '=', $check_CodMatriculaEtapa)
@@ -324,9 +322,9 @@ class ControleFrequencia extends TStandardList
                                 if ($FrqdiariaDisciplinaExistente->Freq != $Freq)
                                     {
                                     $FrqdiariaDisciplinaExistente->Freq            = $Freq;
-                                    $FrqdiariaDisciplinaExistente->DataLancamento  = $data;
-                                    //$FrqdiariaDisciplinaExistente->CodProfessor    = $logged->systemuser_codlegado;
-                                    $FrqdiariaDisciplinaExistente->store();
+                                    $FrqdiariaDisciplinaExistente->DataLancamento  = $dataAula;
+                                    $FrqdiariaDisciplinaExistente->CodProfessor    = $logged->systemuser_codlegado;
+                                    $FrqdiariaDisciplinaExistente->store(); // Update
                                 }
                         }
                     else
@@ -338,11 +336,11 @@ class ControleFrequencia extends TStandardList
                             $FrqdiariaDisciplina->CodDisciplina                  = $check_CodDisciplina;
                             $FrqdiariaDisciplina->Aula                           = $check_NumeroOrdemAula;
                             $FrqdiariaDisciplina->Freq                           = $Freq;
-                            $FrqdiariaDisciplina->DataLancamento                 = $data;
+                            $FrqdiariaDisciplina->DataLancamento                 = $dataAula;
                             $FrqdiariaDisciplina->HoraLancamento                 = $horaAtual;
-                            $FrqdiariaDisciplina->CodProfessor                   = $logged->systemuser_codlegado;
-                            // TTransaction::dump();                  
-                            $FrqdiariaDisciplina->store();
+                            $FrqdiariaDisciplina->CodProfessor                   = $logged->systemuser_codlegado;    
+                            TTransaction::get()->exec("SET NOCOUNT ON");
+                            $FrqdiariaDisciplina->store(); // Insert
                         }
                 }
             }

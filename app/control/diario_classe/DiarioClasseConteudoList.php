@@ -233,7 +233,7 @@ class DiarioClasseConteudoList extends TPage
                 $registro = new ConteudoDiarioClasse($id);
                 $registro->conteudo = $conteudo;
                 
-                $mensagem = 'Conteúdo atualizado com sucesso.';                
+                $mensagem = 'Conteúdo atualizado com sucesso.';             
             }
             else {
                 $registro = new ConteudoDiarioClasse;

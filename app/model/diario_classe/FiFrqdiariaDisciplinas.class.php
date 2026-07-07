@@ -9,7 +9,6 @@ class FiFrqdiariaDisciplinas extends TRecord
     const PRIMARYKEY= 'CodFrqDiaria_Disciplinas';
     const IDPOLICY =  'serial'; // {max, serial}
     
-    
     private $fi_frqdiaria;
 
     /**
@@ -57,7 +56,4 @@ class FiFrqdiariaDisciplinas extends TRecord
         // returns the associated object
         return $this->fi_frqdiaria;
     }
-    
-
-
 }

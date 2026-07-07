@@ -9,7 +9,6 @@ class FiFrqdiaria extends TRecord
     const PRIMARYKEY= 'CodFrqDiaria';
     const IDPOLICY =  'serial'; // {max, serial}
     
-    
     /**
      * Constructor method
      */
@@ -22,6 +21,4 @@ class FiFrqdiaria extends TRecord
         parent::addAttribute('DataLancamento');
         parent::addAttribute('HoraLancamento');
     }
-
-
 }

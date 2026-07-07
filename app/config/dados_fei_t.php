@@ -4,7 +4,7 @@ return [
     'port'  =>  "",
     'name'  =>  "Dados_Fei",
     'user'  =>  "sa",
-    'pass'  =>  "SuaSenhaForteAqui123",
+    'pass'  =>  "Msql123456",
     'type'  =>  "mssql",
     'prep'  =>  "1"
 ];

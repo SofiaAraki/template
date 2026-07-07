@@ -253,10 +253,9 @@ class DiarioClasseConteudoList extends TPage
             $registro->store();
             TTransaction::close();
             
-            AdiantiCoreApplication::loadPage(__CLASS__, 'onReload');
+            AdiantiCoreApplication::loadPage(__CLASS__, 'onReload', $param);
+            
             new TMessage('info', $mensagem);
-
-            $this->onReload($param);
         }
         catch (Exception $e)
         {

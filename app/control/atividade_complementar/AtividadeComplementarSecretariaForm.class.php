@@ -243,9 +243,8 @@ class AtividadeComplementarSecretariaForm extends TPage
         
          
         // create the form actions
-        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         $this->form->addAction('Voltar', new TAction(array('AtividadeComplementarSecretariaList','onReload')), 'fas:arrow-left blue');
-        
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');        
         
         // vertical box container
         $container = new TVBox;

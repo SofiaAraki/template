@@ -48,7 +48,7 @@ class DadoshistoricoalunoList extends TPage
         
         // add the search form actions
         $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
-        //$this->form->addActionLink(_t('New'), new TAction(['VwDadoshistoricoalunoForm', 'onEdit']), 'fa:plus green');
+        //$this->form->addActionLink('Novo', new TAction(['VwDadoshistoricoalunoForm', 'onEdit']), 'fa:plus green');
         
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);

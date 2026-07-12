@@ -50,8 +50,8 @@ class QuestionarioQuestaoFormList extends TPage
          **/
          
         // create the form actions
-        $btn = $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'onSave')), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
+        $btn = $this->form->addQuickAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
+        
         $this->form->addQuickAction(_t('New'),  new TAction(array($this, 'onClear')), 'bs:plus-sign green');
         
         // creates a Datagrid

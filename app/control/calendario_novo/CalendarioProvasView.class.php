@@ -1,13 +1,6 @@
 <?php
 /**
  * FullCalendarDatabaseView
- *
- * @version    1.0
- * @package    samples
- * @subpackage tutor
- * @author     Pablo Dall'Oglio
- * @copyright  Copyright (c) 2006 Adianti Solutions Ltd. (http://www.adianti.com.br)
- * @license    http://www.adianti.com.br/framework-license
  */
 class CalendarioProvasView extends TPage
 {
@@ -26,8 +19,6 @@ class CalendarioProvasView extends TPage
         $loggedUnit = TSession::getValue('userunitid');
         $unidade = new SystemUnit($loggedUnit);
         TTransaction::close();
-
-        
 
         $cabecalho = new TElement("section");
         $cabecalho->class = "content-header";
@@ -66,19 +57,14 @@ class CalendarioProvasView extends TPage
             TTransaction::open('Felabs_DB');
             $loggedUnit = TSession::getValue('userunitid');
 
-
-
-            
             $events = CalendarEvent::where('start_time', '>=', $param['start'])
                                    ->where('end_time',   '<=', $param['end'])->load();
 
-            
                                 
             if ($events)
             {
                 foreach ($events as $event)
                 {
-                    
                     $event_array = $event->toArray();
 
                     if($loggedUnit == 2 || $loggedUnit == 5 || $loggedUnit == 6) //ALUNOS LOGADOS COM UNIDADE NEAD OU PÓS-FFCL VERÃO EVENTOS DA FFCL

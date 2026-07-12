@@ -5,10 +5,7 @@ class EstagioAnalisadoProfessorList extends TPage
     private $form; 
     private $datagrid;
     private $pageNavigation;
-    private $formgrid;
     private $loaded;
-    private $deleteButton;
-    
 
     public function __construct()
     {
@@ -242,7 +239,7 @@ class EstagioAnalisadoProfessorList extends TPage
             TTransaction::open('Felabs_DB');
             
             $repository = new TRepository('Estagio');
-            $limit = 20;
+            $limit = 10;
 
             $criteria = new TCriteria;
             $criteria->add(new TFilter('cod_prof_responsavel', '=', $professor->Codprofessor));

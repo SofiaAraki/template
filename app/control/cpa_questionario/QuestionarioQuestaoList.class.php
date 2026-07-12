@@ -51,7 +51,7 @@ class QuestionarioQuestaoList extends TPage
         
         // add the search form actions
         $btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        
         $this->form->addQuickAction('Adicionar Questão',  new TAction(array('QuestionarioQuestaoForm', 'onEdit')), 'bs:plus-sign green');
         
         // creates a Datagrid

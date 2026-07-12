@@ -10,7 +10,7 @@ use ApplicationTranslator;
 /**
  * Html Renderer
  *
- * @version    8.5
+ * @version    8.6
  * @package    widget
  * @subpackage template
  * @author     Pablo Dall'Oglio
@@ -322,7 +322,7 @@ class THtmlRenderer
                 
                 if (!$delimiter)
                 {
-                    if (!isset($sectionName))
+                    if (empty($sectionName))
                     {
                         $sectionName = 'main';
                         if (empty($this->buffer[$sectionName]))

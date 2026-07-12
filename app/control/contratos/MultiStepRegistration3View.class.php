@@ -1,8 +1,6 @@
 <?php
 /**
-
  * @author     Pamella Scapim
-
  */
 class MultiStepRegistration3View extends TPage 
 {

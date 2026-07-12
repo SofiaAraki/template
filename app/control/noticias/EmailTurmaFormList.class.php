@@ -37,10 +37,8 @@ class EmailTurmaFormList extends TPage
 
         $conteudo->setSize('100%',140);
 
-        TTransaction::open('Felabs_DB');
-        $logged  = SystemUser::newFromLogin(TSession::getValue('login'));
-        $loggedUnit = TSession::getValue('userunitid'); //UNIDADE ESCOLHIDA NO MOMENTO DO LOGIN
-        TTransaction::close();
+        $logged  = TSession::getValue('login');
+        $loggedUnit = TSession::getValue('userunitid');
 
         TTransaction::open('dados_fei');
 
@@ -68,7 +66,6 @@ class EmailTurmaFormList extends TPage
         $items = [];
         foreach($nomeTurmas as $nomeTurma)
         {
-            // CORREÇÃO: Definindo a variável ANTES de utilizá-la no critério abaixo
             $codigoTurmaEtapa = $nomeTurma->CodTurmaetapa;
 
             $criteria_alunos = new TCriteria;
@@ -153,10 +150,10 @@ class EmailTurmaFormList extends TPage
         
         // shows a dialog to the user
         new TQuestion("Atenção: O disparo de emails pode levar alguns minutos. Não feche esta janela até que o processo esteja concluído.
-Somente alunos que tiverem email cadastrado no GENESI receberão a mensagem. Alunos cadastrados receberão também uma mensagem na área do aluno.
-
-<br><br>Clique em 'Sim' para iniciar o disparo.
-            ", $action);
+            Somente alunos que tiverem email cadastrado no GENESI receberão a mensagem. Alunos cadastrados receberão também uma mensagem na área do aluno.
+            <br><br>Clique em 'Sim' para iniciar o disparo.",
+            $action
+        );
     }
 
     /**
@@ -202,7 +199,6 @@ Somente alunos que tiverem email cadastrado no GENESI receberão a mensagem. Alu
                 // iterate the collection of active records
                 foreach ($objects as $object)
                 {
-                    // CORREÇÃO: Alterado de '=' para '==' para realizar comparação estrutural correta
                     if ($object->unidade == $loggedUnit)
                     {
                         // add the object inside the datagrid
@@ -294,7 +290,7 @@ Somente alunos que tiverem email cadastrado no GENESI receberão a mensagem. Alu
         try
         {
             TTransaction::open('Felabs_DB'); // open a transaction
-            $logged = SystemUser::newFromLogin(TSession::getValue('login'));
+            $logged = TSession::getValue('login');
             $loggedUnit = TSession::getValue('userunitid');
             $prefs = SystemPreference::getAllPreferences();
             
@@ -337,7 +333,6 @@ Somente alunos que tiverem email cadastrado no GENESI receberão a mensagem. Alu
             foreach($codigoAlunos as $codAluno)
             {
                 $criteria_usermsg = new TCriteria;
-                // CORREÇÃO: Adicionadas aspas na string literal 'systemuser_codlegado'
                 $criteria_usermsg->add( new TFilter('systemuser_codlegado', '=', $codAluno));
                 $usersAcademico = SystemUser::getObjects($criteria_usermsg); //VERIFICA SE EXISTE USUARIO NO ACADÊMICO
 

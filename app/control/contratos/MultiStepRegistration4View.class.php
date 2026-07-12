@@ -1,13 +1,6 @@
 <?php
 /**
  * Multi Step 3
- *
- * @version    1.0
- * @package    samples
- * @subpackage tutor
- * @author     Pablo Dall'Oglio
- * @copyright  Copyright (c) 2006 Adianti Solutions Ltd. (http://www.adianti.com.br)
- * @license    http://www.adianti.com.br/framework-license
  */
 class MultiStepRegistration4View extends TPage 
 {
@@ -24,15 +17,11 @@ class MultiStepRegistration4View extends TPage
         $this->form = new BootstrapFormBuilder('form_EnvioDocumentos');
         $this->form->setFormTitle(('Envio de Documento de Identificação'));
         $this->form->setClientValidation(true);
-              
-               
+        
         // add the form fields
-
         $this->form->addFields( [new TLabel('Atenção! É necessário anexar uma foto do documento de identificação com foto (Ex.: RG, Carteira de Habilitação)','red', 12, 'bi')]);
         $this->form->addFields( [new TLabel('É permitido anexar mais de 1 imagem.','red', 10, 'bi')]);
         
-       
-
         $pagestep = new TPageStep;
         $pagestep->addItem('Selecionar');
         $pagestep->addItem('Assinatura Digital');
@@ -59,6 +48,3 @@ class MultiStepRegistration4View extends TPage
     
    
 }
-
-
-            

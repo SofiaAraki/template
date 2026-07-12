@@ -13,11 +13,10 @@ class MeuCursoInformativo extends TPage
         $user = new SystemUser($userid);
         $meuCursoInfo = new MeuCurso($param['key']);
         
-        // Inicializa o formulário padrão do Adianti
         $this->form = new BootstrapFormBuilder('form_search_AtividadeAluno');
         $this->form->setFormTitle($meuCursoInfo->nome);
         
-        // 1. EXIBIÇÃO DA DESCRIÇÃO (Totalmente blindada contra exposição de código e compatível com Dark Mode)
+        // 1. EXIBIÇÃO DA DESCRIÇÃO
         if(!empty($meuCursoInfo->descricao)) 
         {                    
             $descricaoLimpa = $meuCursoInfo->descricao;
@@ -35,7 +34,6 @@ class MeuCursoInformativo extends TPage
             // Passo 3: Limpeza fina de aspas ou atributos soltos vindos do WYSIWYG
             $descricaoLimpa = str_ireplace(['color="#333333"', 'color="black"', 'color="#000000"', '"#323232"'], '', $descricaoLimpa);
 
-            // Criamos o container nativo usando classes utilitárias do Bootstrap (text-body garante a cor automática do tema)
             $descRender = new TElement('div');
             $descRender->class = 'text-body p-2'; 
             $descRender->style = 'font-size: 16px; line-height: 1.8; margin: 10px 0; width: 100%; word-break: break-word;';

@@ -89,7 +89,7 @@ class EtiquetaFormList extends TPage
 
         // create the form actions
         $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
-        $btn->class = 'btn btn-sm btn-primary';
+        
         $this->form->addAction('Limpar campos', new TAction(array($this, 'onClear')), 'fa:eraser red');
         
         

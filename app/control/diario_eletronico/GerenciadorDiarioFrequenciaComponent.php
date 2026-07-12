@@ -60,8 +60,6 @@ class GerenciadorDiarioFrequenciaComponent extends TElement
             // GARANTIA 2: Força o formulário a re-adquirir permissão de escrita após o setData()
             $this->formConteudo->getField('conteudo')->setEditable(TRUE);
             
-            // CORREÇÃO DA DUPLICAÇÃO: Antes de injetar um componente aninhado em cenários de recarregamento post,
-            // certifique-se de que a requisição atual receberá uma árvore limpa do elemento.
             $gridFrequencia = new GerenciadorFrequenciaGridComponent($param);
             $this->add($gridFrequencia);
         } else {

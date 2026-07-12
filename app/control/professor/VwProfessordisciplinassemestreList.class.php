@@ -10,7 +10,6 @@ class VwProfessordisciplinassemestreList extends TPage
     {
         parent::__construct();         
 
-        // Restaurado para TQuickForm compatível com a versão 8.5
         $this->form = new TQuickForm('form_search_VwProfessordisciplinassemestre');
         $this->form->class = 'tform'; 
         $this->form = new BootstrapFormWrapper($this->form);
@@ -59,15 +58,6 @@ class VwProfessordisciplinassemestreList extends TPage
         $action_select->setImage('fas:check-circle green');
         $action_select->setField('CodComposto');
         $this->datagrid->addAction($action_select);
-
-        $action_papeleta = new TDataGridAction(array($this, 'onPapeleta'));
-        $action_papeleta->setUseButton(FALSE);
-        $action_papeleta->setButtonClass('btn btn-default');
-        $action_papeleta->setLabel('Papeleta');
-        $action_papeleta->setImage('fas:file-pdf red');
-        $action_papeleta->setField('CodComposto');
-
-        //$this->datagrid->addAction($action_papeleta);
 
         $this->datagrid->createModel();
 
@@ -183,8 +173,6 @@ class VwProfessordisciplinassemestreList extends TPage
             $repository = new TRepository('VwProfessordisciplinassemestre');
             $limit = 50;
             
-            // AJUSTE: Removida a chamada à classe Util que causava a primeira Exceção
-
             $criteria = new TCriteria;
             $criteria->add(new TFilter('CodProfessor', '=', $user->systemuser_codlegado));
             $criteria->add(new TFilter('Ano', '=', $Ano), TExpression::AND_OPERATOR);

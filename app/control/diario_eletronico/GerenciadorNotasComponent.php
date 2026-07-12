@@ -42,13 +42,6 @@ class GerenciadorNotasComponent extends TElement
         $tDataGrid->addColumn($col_nota_nome);
         $tDataGrid->addColumn($col_nota_input);
 
-        // Regra idêntica à tela antiga: Se a unidade for diferente de 12, exibe Resultado e Tipo de Disciplina
-        if ($unidade <> 12) {
-            $tDataGrid->addColumn($col_nota_res);
-            $tDataGrid->addColumn($col_nota_tipo_di);
-        }
-
-        // OBRIGATÓRIO SEGUNDO O ADIANTI: O modelo DEVE ser criado antes de adicionar itens com Transformers dinâmicos
         $tDataGrid->createModel();
 
         // Array compartilhado para registrar as instâncias dos campos no formulário posteriormente
@@ -108,7 +101,7 @@ class GerenciadorNotasComponent extends TElement
             return $inputNota;
         });
 
-        // 3. Transformer para legendar e colorir o Resultado (Igual à tela antiga)
+        // 3. Transformer para legendar e colorir o Resultado
         $col_nota_res->setTransformer(function($value, $object, $row) {
             $value = trim(strtoupper($value ?? ''));
             switch ($value) {
@@ -121,7 +114,7 @@ class GerenciadorNotasComponent extends TElement
             }
         });
 
-        // 4. Transformer para legendar e colorir o Tipo de Disciplina (Igual à tela antiga)
+        // 4. Transformer para legendar e colorir o Tipo de Disciplina
         $col_nota_tipo_di->setTransformer(function($value, $object, $row) {
             $value = trim(strtoupper($value ?? ''));
             switch ($value) {

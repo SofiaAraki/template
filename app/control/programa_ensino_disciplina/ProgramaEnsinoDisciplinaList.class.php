@@ -56,13 +56,13 @@ class ProgramaEnsinoDisciplinaList extends TPage
         $action_pdf = new TDataGridAction(array('ProgramaEnsinoDisciplinaList', 'onPrint'));
         $action_pdf->setButtonClass('btn btn-default btn-sm');
         $action_pdf->setLabel('Imprimir PDF');
-        $action_pdf->setImage('far:file-pdf red'); // Ícone mais intuitivo para PDF
+        $action_pdf->setImage('far:file-pdf red');
         $action_pdf->setField('id');
         $this->datagrid->addAction($action_pdf);
 
         // Ação: Editar Registro
         $action_edit = new TDataGridAction(array('ProgramaEnsinoDisciplinaForm', 'onEdit'));
-        $action_edit->setLabel(_t('Edit'));
+        $action_edit->setLabel('Editar');
         $action_edit->setImage('far:edit blue fa-lg');
         $action_edit->setField('id');
         $this->datagrid->addAction($action_edit);
@@ -109,28 +109,107 @@ class ProgramaEnsinoDisciplinaList extends TPage
                 }
                 TTransaction::close();
 
-                // --- CORREÇÃO: Fallback seguro para evitar caminhos nulos se a unidade for nula ---
-                $unidadeId = isset($object->unidade) ? (int)$object->unidade : 0;
+                // Define as larguras das colunas da tabela
+                $widths = array(270, 270);
+                $designer = new TTableWriterPDF($widths);
+                
+                // Definição de Estilos (Fontes, Tamanhos, Alinhamentos e Cores)
+                $designer->addStyle('header_title', 'Helvetica', 12, 'B', '#FFFFFF', '#3b5998');
+                $designer->addStyle('header_sub',   'Helvetica', 9,  '',  '#000000', '#FFFFFF');
+                $designer->addStyle('table_head',   'Helvetica', 10, 'B', '#000000', '#C0C0C0');
+                $designer->addStyle('label',        'Helvetica', 10, 'B', '#000000', '#FFFFFF');
+                $designer->addStyle('value',        'Helvetica', 10, '',  '#000000', '#FFFFFF');
+                $designer->addStyle('text_block_b', 'Helvetica', 11, 'B', '#000000', '#FFFFFF');
+                $designer->addStyle('text_block_p', 'Helvetica', 10, '',  '#333333', '#FFFFFF', 'LR');
 
-                $template = ($unidadeId !== 2 && $unidadeId !== 10) 
-                    ? 'app/documents/ProgramaEnsinoDisciplina.html' 
-                    : 'app/documents/ProgramaEnsinoDisciplinaFFCL.html';
+                // --- Helper interno para codificação compatível com PHP 8.2+ ---
+                $toIso = function($text) {
+                    return mb_convert_encoding($text ?? '', 'ISO-8859-1', 'UTF-8');
+                };
 
-                // Validação extra para garantir que o arquivo fisicamente existe antes de passar para o Adianti Parser
-                if (!file_exists($template)) {
-                    throw new Exception("O arquivo de template obrigatório não foi localizado em: {$template}");
+                // --- 1. CABEÇALHO INSTITUCIONAL ---
+                $designer->addRow();
+                $designer->addCell($toIso('FACULDADE DR. FRANCISCO MAEDA - FAFRAM'), 'center', 'header_title', 2);
+                
+                // --- 2. PRIMEIRA TABELA: DADOS DO CURSO E DISCIPLINA ---
+                $designer->addRow();
+                $designer->addCell($toIso('PROGRAMA DE ENSINO DA DISCIPLINA'), 'center', 'table_head', 2);
+                
+                $designer->addRow();
+                $designer->addCell($toIso('Curso: ' . $object->curso), 'left', 'value', 2);
+                $designer->addRow();
+                $designer->addCell($toIso('Disciplina: ' . $object->disciplina), 'left', 'value', 2);
+                $designer->addRow();
+                $designer->addCell($toIso('Professor Responsável: ' . $object->system_user_id), 'left', 'value', 2);
+                
+                $designer->addRow();
+                $designer->addCell($toIso('Código: ' . ($object->codigo ?? '')), 'left', 'value', 1);
+                $designer->addCell($toIso('Obrigatória/Optativa: ' . ($object->obg_optativa ?? '')), 'left', 'value', 1);
+                
+                $designer->addRow();
+                $designer->addCell($toIso('Pré-Requisitos: ' . ($object->pre_requisito ?? '')), 'left', 'value', 1);
+                $designer->addCell($toIso('Correquisitos: ' . ($object->co_requisito ?? '')), 'left', 'value', 1);
+                
+                $designer->addRow();
+                $designer->addCell($toIso('Período: ' . ($object->periodo ?? '')), 'left', 'value', 1);
+                $designer->addCell($toIso('Semestral/Anual: ' . ($object->semestral_anual ?? '')), 'left', 'value', 1);
+
+                // --- 3. SEGUNDA TABELA: CARGA HORÁRIA ---
+                $designer->addRow();
+                $designer->addCell($toIso('Carga Horária'), 'center', 'table_head', 2);
+                $designer->addRow();
+                $designer->addCell($toIso('Crédito: ' . ($object->credito ?? '') . '   |   Total: ' . ($object->total ?? '') . '   |   Semanal: ' . ($object->semanal ?? '')), 'center', 'value', 2);
+                
+                $designer->addRow();
+                $designer->addCell($toIso('Distribuição Carga Horária Semanal'), 'center', 'table_head', 2);
+                $designer->addRow();
+                $designer->addCell($toIso('Teórica: ' . ($object->teorica ?? '') . '   |   Prática: ' . ($object->pratica ?? '') . '   |   Teórica/Prática: ' . ($object->pratica ?? '')), 'center', 'value', 2);
+
+                // --- 4. BLOCOS TEXTUAIS DINÂMICOS (ESTILO CAIXA INTEGRADA SEM LINHAS INTERNAS) ---
+                $blocosTextuais = [
+                    'Ementa: (Tópicos que caracterizam. Unidades dos programas de ensino)' => $object->ementa ?? '',
+                    'Objetivos: (Ao término da disciplina o aluno deverá ser capaz de: )'   => $object->objetivos ?? '',
+                    'Conteúdo Programático: (Título e discriminação das unidades)'          => $object->conteudo_programatico ?? '',
+                    'Metodologia de Ensino:'                                               => $object->metodologia ?? '',
+                    'Critérios de Avaliação de Aprendizagem:'                              => $object->criterio_avaliacao ?? '',
+                    'Bibliografia Básica:'                                                 => $object->bibliografia_basica ?? '',
+                    'Bibliografia Complementar:'                                           => $object->bibliografia_complementar ?? ''
+                ];
+
+                foreach ($blocosTextuais as $titulo => $conteudo) {
+                    // 1. Título da Seção (Gera a linha normal com fundo e bordas)
+                    $designer->addRow();
+                    $designer->addCell($toIso($titulo), 'left', 'text_block_b', 2);
+                    
+                    // Limpa tags HTML do banco
+                    $textoLimpo = strip_tags(html_entity_decode($conteudo));
+                    
+                    $textoQuebrado = wordwrap($textoLimpo, 100, "\n", true);
+                    $linhasDeTexto = explode("\n", $textoQuebrado);
+
+                    // 2. Renderiza cada linha de conteúdo aplicando apenas as bordas laterais
+                    foreach ($linhasDeTexto as $linha) {
+                        if (trim($linha) != '') {
+                            $designer->addRow();
+                            // Usando a variação nativa do addCell: passamos os parâmetros para simular apenas as laterais.
+                            // Caso o Adianti force a grade padrão pelo estilo, a forma mais segura é reduzir
+                            // o preenchimento ou usar células limpas.
+                            $designer->addCell($toIso($linha), 'left', 'text_block_p', 2);
+                        }
+                    }
                 }
 
-                $html = new AdiantiHTMLDocumentParser($template, 'A4', 'portrait');
-                $html->setMaster($object);
-                $html->process();
-                $output = $html->getContents();
-            
-                $document = 'tmp/'.uniqid().'.pdf'; 
-                $html = AdiantiHTMLDocumentParser::newFromString($output);
-                $html->saveAsPDF($document);
+                // --- 5. TABELA DE ASSINATURA ---
+                $designer->addRow();
+                $designer->addCell($toIso('Data / Assinatura'), 'center', 'table_head', 2);
+                
+                $designer->addRow();
+                $designer->addCell("\n\n_________________________________________", 'center', 'value', 2);
 
-                // Abre o PDF em popup diretamente na tela do usuário
+                // Gravação e saída do documento
+                $document = 'tmp/'.uniqid().'.pdf'; 
+                $designer->save($document);
+
                 $window = TWindow::create('Programa de Ensino', 0.8, 0.8);
                 $element = new TElement('object');
                 $element->data  = 'download.php?file='.$document;

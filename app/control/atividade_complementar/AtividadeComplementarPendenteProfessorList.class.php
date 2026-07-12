@@ -5,43 +5,34 @@ class AtividadeComplementarPendenteProfessorList extends TPage
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
-    private $loaded;
-    private $deleteButton;
-    
+    private $loaded;    
 
     public function __construct()
     {
         parent::__construct();
         
-        
         // creates the form
         $this->form = new BootstrapFormBuilder('form_search_AtividadeComplementar');
         $this->form->setFormTitle('<h4>Atividades Complementares para Análise</h4>');
         
-
         // create the form fields
         $nome_aluno = new TEntry('nome_aluno');
         $nome_curso = new TEntry('nome_curso');
         $status_atividade = new TEntry('status_atividade');
-
 
         // add the fields
         $this->form->addFields( [ new TLabel('Aluno') ], [ $nome_aluno ] );
         $this->form->addFields( [ new TLabel('Curso') ], [ $nome_curso ] );
         $this->form->addFields( [ new TLabel('Status') ], [ $status_atividade ] );
 
-
         // set sizes
         $nome_aluno->setSize('80%');
         $nome_curso->setSize('80%');
         $status_atividade->setSize('80%');
-
         
         // keep the form filled during navigation with session data
         $this->form->setData( TSession::getValue(__CLASS__ . '_filter_data') );
-        
-        
+                
         // add the search form actions
         $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');        
         
@@ -51,7 +42,6 @@ class AtividadeComplementarPendenteProfessorList extends TPage
         //$this->datagrid->datatable = 'true';
         $this->datagrid->disableDefaultClick();
         $this->datagrid->setGroupColumn('nome_aluno', '<b>{nome_aluno} - HORAS PENDENTES: {CalcularHorasPendentes} horas</b>');
-        
 
         // creates the datagrid columns
         $column_nome_aluno = new TDataGridColumn('nome_aluno', 'Aluno', 'left');
@@ -60,16 +50,13 @@ class AtividadeComplementarPendenteProfessorList extends TPage
         $column_status_atividade = new TDataGridColumn('status_atividade', 'Status', 'center');
         $column_data_reg = new TDataGridColumn('data_reg', 'Registrado em', 'center');
 
-
         $column_status_atividade->setTransformer( array($this, 'setStatusColor') );
-        
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_nome_aluno);
         $this->datagrid->addColumn($column_nome_curso);
         $this->datagrid->addColumn($column_carga_horaria);
         $this->datagrid->addColumn($column_data_reg);
-
 
         $action_download = new TDataGridAction([$this, 'onDownload']);
         $action_download->setUseButton(TRUE);
@@ -78,7 +65,6 @@ class AtividadeComplementarPendenteProfessorList extends TPage
         $action_download->setImage('fas:cloud-download-alt blue');
         $action_download->setField('id');
         
-        
         $action_analisar = new TDataGridAction(['AtividadeComplementarAnaliseProfessorForm', 'onEdit']);
         $action_analisar->setUseButton(TRUE);
         $action_analisar->setButtonClass('btn btn-default');
@@ -86,20 +72,16 @@ class AtividadeComplementarPendenteProfessorList extends TPage
         $action_analisar->setImage('fas:pencil-alt orange');
         $action_analisar->setField('id');
         
-        
         $this->datagrid->addAction($action_download);
         $this->datagrid->addAction($action_analisar);
         
-        
         // create the datagrid model
         $this->datagrid->createModel();
-        
         
         // creates the page navigation
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction([$this, 'onReload']));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
-        
         
         // vertical box container
         $container = new TVBox;
@@ -109,7 +91,6 @@ class AtividadeComplementarPendenteProfessorList extends TPage
         
         parent::add($container);
     }
-    
     
     public function setStatusColor($column_status_atividade, $object, $row)
     {
@@ -132,7 +113,6 @@ class AtividadeComplementarPendenteProfessorList extends TPage
             return $column_status_atividade;
         }    
     }
-    
     
     public static function onDownload($param)
     {
@@ -164,7 +144,6 @@ class AtividadeComplementarPendenteProfessorList extends TPage
         }
     }
     
-
     public function onSearch()
     {
         $data = $this->form->getData();
@@ -178,19 +157,16 @@ class AtividadeComplementarPendenteProfessorList extends TPage
             TSession::setValue(__CLASS__.'_filter_nome_aluno',   $filter); 
         }
 
-
         if (isset($data->nome_curso) AND ($data->nome_curso)) {
             $filter = new TFilter('nome_curso', 'like', "%{$data->nome_curso}%"); 
             TSession::setValue(__CLASS__.'_filter_nome_curso',   $filter); 
         }
-
 
         if (isset($data->status_atividade) AND ($data->status_atividade)) {
             $filter = new TFilter('status_atividade', 'like', "%{$data->status_atividade}%");
             TSession::setValue(__CLASS__.'_filter_status_atividade',   $filter); 
         }
 
-        
         $this->form->setData($data);
         
         TSession::setValue(__CLASS__ . '_filter_data', $data);
@@ -201,7 +177,6 @@ class AtividadeComplementarPendenteProfessorList extends TPage
         $this->onReload($param);
     }
     
-
     public function onReload($param = NULL)
     {
         try
@@ -239,7 +214,7 @@ class AtividadeComplementarPendenteProfessorList extends TPage
             TTransaction::open('Felabs_DB');
             
             $repository = new TRepository('AtividadeComplementar');
-            $limit = 20;
+            $limit = 10;
 
             $criteria = new TCriteria;
             $criteria->add(new TFilter('cod_prof_responsavel', '=', $professor->Codprofessor));

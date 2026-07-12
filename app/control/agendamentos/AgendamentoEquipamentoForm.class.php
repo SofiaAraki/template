@@ -21,13 +21,9 @@ class AgendamentoEquipamentoForm extends TPage
         $equipamento_id = new TCombo('equipamento_id');
         $observacoes = new TEntry('observacoes');
         $local = new TEntry('local');
-        $unidade = new TEntry('unidade');
+        $unidade = new TDBCombo('unidade', 'Felabs_DB', 'SystemUnit', 'id', 'name');
+        $unidade->setChangeAction(new TAction(array($this, 'onChangeType')));
         $data_reg = new THidden('data_reg');
-
-        TTransaction::open('Felabs_DB');
-        $loggedProfUnit = TSession::getValue('userunitid'); // PEGA A ID DA UNIDADE DO USUARIO LOGADO
-        $unitName = new SystemUnit($loggedProfUnit);
-        TTransaction::close();
 
         $hours = [];
         $hours['00:00'] = '00:00';
@@ -55,12 +51,11 @@ class AgendamentoEquipamentoForm extends TPage
         $data_evento->addValidation('Data', new TRequiredValidator);
         $inicio->addValidation('Início', new TRequiredValidator);
         $termino->addValidation('Término', new TRequiredValidator);
+        $unidade->addValidation('Unidade', new TRequiredValidator);
         $equipamento_id->addValidation('Equipamento', new TRequiredValidator);
         $local->addValidation('Local', new TRequiredValidator);
 
         $local->placeholder = 'Ex. Sala 1, Salão Nobre, Laboratório 1, etc.';
-        $unidade->setValue($unitName->name);
-        $unidade->setEditable(FALSE);
         
         $data_evento->setMask('dd/mm/yyyy'); 
         $data_evento->setSize('60%');
@@ -77,13 +72,13 @@ class AgendamentoEquipamentoForm extends TPage
 
         $this->form->addFields([$id]);      
         $this->form->addFields([$usuario]);
+        $this->form->addFields([new TLabel('Unidade')], [$unidade]);
         $this->form->addFields([new TLabel('Data')], [$data_evento]);
         $this->form->addFields([new TLabel('Início')], [$inicio]);        
         $this->form->addFields([new TLabel('Término')], [$termino]); 
         $this->form->addFields([new TLabel('Equipamentos disponíveis')], [$equipamento_id]);
         $this->form->addFields([new TLabel('Local')], [$local]);
-        $this->form->addFields([new TLabel('Observações')], [$observacoes]);
-        $this->form->addFields([new TLabel('Unidade')], [$unidade]);        
+        $this->form->addFields([new TLabel('Observações')], [$observacoes]);     
         $this->form->addFields([$data_reg]);
 
         if (!empty($id))
@@ -134,7 +129,7 @@ class AgendamentoEquipamentoForm extends TPage
 
     public static function onChangeType($param)
     {
-        if (empty($param['data_evento']) || empty($param['inicio']) || empty($param['termino'])) 
+        if (empty($param['data_evento']) || empty($param['inicio']) || empty($param['termino']) || empty($param['unidade'])) 
         {
             return;
         }
@@ -162,12 +157,10 @@ class AgendamentoEquipamentoForm extends TPage
                 return;
             }
 
-            // Nova lógica anti-conflito (Intersecção de intervalos de tempo)
             $criteria2 = new TCriteria;
             $criteria2->add(new TFilter('inicio', '<', $termino1));
             $criteria2->add(new TFilter('termino', '>', $inicio1));
             
-            // Se for uma edição, não deve conflitar com o próprio registro atual
             if (!empty($param['id'])) {
                 $criteria2->add(new TFilter('id', '<>', $param['id']));
             }
@@ -180,13 +173,15 @@ class AgendamentoEquipamentoForm extends TPage
                 $criteria3->add(new TFilter('id', '<>', $linha->equipamento_id), TExpression::AND_OPERATOR); 
             }
 
-            $loggedUnit = TSession::getValue('userunitid');
-            if($loggedUnit == 12) 
+            // PEGA A UNIDADE SELECIONADA PELO USUÁRIO NA TELA
+            $unidadeSelecionada = $param['unidade'];
+
+            if($unidadeSelecionada == 12) 
             {
-                $loggedUnit = 2; // CNSC usa os mesmos equipamentos da FFCL
+                $unidadeSelecionada = 2;
             }
 
-            $criteria3->add(new TFilter('unidade', '=', $loggedUnit), TExpression::AND_OPERATOR);
+            $criteria3->add(new TFilter('unidade', '=', $unidadeSelecionada), TExpression::AND_OPERATOR);
             $criteria3->add(new TFilter('status', '=', 'S'), TExpression::AND_OPERATOR);
 
             $agendamentosTodosExceto = AgendamentoEquipamentoItem::getObjects($criteria3);
@@ -254,7 +249,7 @@ class AgendamentoEquipamentoForm extends TPage
             $object->data_evento = $data_us;
             $object->usuario = $user->id;
             $object->data_reg = date('Y-m-d H:i:s');
-            $object->unidade = $loggedUnitId;
+            $object->unidade = $data->unidade;
             $object->inicio = $inicio_full;
             $object->termino = $termino_full;
 

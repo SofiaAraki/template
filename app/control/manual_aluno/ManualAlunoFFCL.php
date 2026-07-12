@@ -72,8 +72,8 @@ class ManualAlunoFFCL extends TPage
          **/
          
         // create the form actions
-        $btn = $this->form->addAction(('CONFIRMAR RECEBIMENTO'), new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addAction('CONFIRMAR RECEBIMENTO', new TAction([$this, 'onSave']), 'fa:save green');
+        
         //$this->form->addActionLink(_t('New'),  new TAction([$this, 'onEdit']), 'fa:eraser red');
         
         // vertical box container

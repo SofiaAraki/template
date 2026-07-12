@@ -98,6 +98,11 @@ class FiTurmaEtapa extends TRecord
         return $this->fi_matriculaetapa;
     }
     
+    public function get_professor() {
+        return new FiProfessor($this->CodProfessor);
+    }
 
-
+    public function get_operador() {
+        return new FiOperador($this->CodOperador);
+    }
 }

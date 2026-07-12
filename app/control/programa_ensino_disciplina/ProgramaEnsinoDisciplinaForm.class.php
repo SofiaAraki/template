@@ -140,10 +140,8 @@ class ProgramaEnsinoDisciplinaForm extends TPage
         $this->form->addFields([new TLabel('Objetivos')], [$objetivos]);
         $this->form->addFields([new TLabel('Conteúdo Programático')], [$conteudo_programatico]);
         
-        if ($loggedUnitProf != 2 && $loggedUnitProf != 10) {            
-            $this->form->addFields([new TLabel('Metodologia de Ensino')], [$metodologia]);
-            $this->form->addFields([new TLabel('Critérios de Avaliação')], [$criterio_avaliacao]);
-        }
+        $this->form->addFields([new TLabel('Metodologia de Ensino')], [$metodologia]);
+        $this->form->addFields([new TLabel('Critérios de Avaliação')], [$criterio_avaliacao]);
         
         $this->form->addFields([new TLabel('Bibliografia Básica:')], [$bibliografia_basica]);
         $this->form->addFields([new TLabel('Bibliografia Complementar:')], [$bibliografia_complementar]);

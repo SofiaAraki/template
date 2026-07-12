@@ -86,7 +86,7 @@ class ReqBolsaAlunoDialogQuestionView extends TPage
 
         else
         {
-            new TMessage('info', 'Período encerrado para preenchimento do Requerimento de Bolsa.');
+            new TMessage('warning', 'Período encerrado para preenchimento do Requerimento de Bolsa.');
         } 
         
     }

@@ -2,7 +2,7 @@
 /**
  * SystemUserUnit
  *
- * @version    8.5
+ * @version    8.6
  * @package    model
  * @subpackage admin
  * @author     Pablo Dall'Oglio

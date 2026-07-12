@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'b9242b2926dde6901b1c25b1addea0c0d0200993',
+    'reference' => '4ed32c728b96353673456479287fa2b87f45838b',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'b9242b2926dde6901b1c25b1addea0c0d0200993',
+      'reference' => '4ed32c728b96353673456479287fa2b87f45838b',
     ),
     'adianti/barcode-document' => 
     array (
@@ -140,12 +140,12 @@
     ),
     'jfcherng/php-diff' => 
     array (
-      'pretty_version' => '6.16.2',
-      'version' => '6.16.2.0',
+      'pretty_version' => '6.16.3',
+      'version' => '6.16.3.0',
       'aliases' => 
       array (
       ),
-      'reference' => '7f46bcfc582e81769237d0b3f6b8a548efe8799d',
+      'reference' => '6d7332b6080cdd50011a364b58f24c8d0cdeb5da',
     ),
     'jfcherng/php-mb-string' => 
     array (
@@ -176,12 +176,12 @@
     ),
     'masterminds/html5' => 
     array (
-      'pretty_version' => '2.10.0',
-      'version' => '2.10.0.0',
+      'pretty_version' => '2.10.1',
+      'version' => '2.10.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'fcf91eb64359852f00d921887b219479b4f21251',
+      'reference' => 'fd5018f6815fff903946d0564977b44ce8010e29',
     ),
     'pablodalloglio/fpdf' => 
     array (
@@ -261,30 +261,30 @@
     ),
     'sabberworm/php-css-parser' => 
     array (
-      'pretty_version' => 'v9.3.0',
-      'version' => '9.3.0.0',
+      'pretty_version' => 'v9.4.0',
+      'version' => '9.4.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '88dbd0f7f91abbfe4402d0a3071e9ff4d81ed949',
+      'reference' => 'fd3bf9fb173e0df649bc4e3e0d088a1b2417c08f',
     ),
     'spomky-labs/otphp' => 
     array (
-      'pretty_version' => '11.4.2',
-      'version' => '11.4.2.0',
+      'pretty_version' => '11.5.0',
+      'version' => '11.5.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '2a1b503fd1c1a5c751ab3c5cd37f2d2d26ab74ad',
+      'reference' => '877683d6352b80cdc7020fd43a725629c2524435',
     ),
     'symfony/deprecation-contracts' => 
     array (
-      'pretty_version' => 'v3.6.0',
-      'version' => '3.6.0.0',
+      'pretty_version' => 'v3.7.0',
+      'version' => '3.7.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '63afe740e99a13ba87ec199bb07bbdee937a5b62',
+      'reference' => '50f59d1f3ca46d41ac911f97a78626b6756af35b',
     ),
     'tburry/pquery' => 
     array (

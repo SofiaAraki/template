@@ -7,19 +7,15 @@ class AnaliseRequerimentoBolsa extends TPage
     
     use Adianti\Base\AdiantiFileSaveTrait;
 
-
     public function __construct( $param )
     {
         parent::__construct();
-        
         
         // creates the form
         $this->form = new BootstrapFormBuilder('form_AnaliseBolsa');
         $this->form->setFormTitle('Requerimento de Bolsa - Análise Assistente Social');
         $this->form->setClientValidation(true);
         //$this->html = new THtmlRenderer('app/documents/Parecer_Bolsa_FE.html');
-        
-        
         //$this->form->setFieldSizes('100%');
         
         // master fields
@@ -81,12 +77,9 @@ class AnaliseRequerimentoBolsa extends TPage
         $salario_minimo_atual = new TNumeric('salario_minimo_atual','2', ',', '.');
         
         $filename = new TButton('filename');
-        $filename->class = 'btn btn-info btn-lg';
         $filename->setImage('fa:cloud-download-alt fa-lg green');
         $filename->setAction(new TAction(array($this, 'onDownloadArquivo')),'Baixar Documentos'  );
        
-
-        
         $analise_check    = new TEntry('analise_check');
         $percentual_bolsa    = new TEntry('percentual_bolsa');
         
@@ -116,10 +109,8 @@ class AnaliseRequerimentoBolsa extends TPage
         $obs_final_assistente = new TText('obs_final_assistente');
         $data_parecer_assist_social = new TEntry('data_parecer_assist_social');
 
-        $anexo      = new TMultiFile('anexo');
-
+        $anexo = new TMultiFile('anexo');
         $anexo->setAllowedExtensions( ['gif', 'png', 'jpg', 'jpeg', 'pdf'] );
-
         $anexo->enableFileHandling();
         //$anexo->enableImageGallery();
 
@@ -129,14 +120,14 @@ class AnaliseRequerimentoBolsa extends TPage
         $object = new ReqBolsaAluno($param['key']);
         $etapa_curso = $object->ciclo;
 
-            if ($etapa_curso == "1º ciclo") 
-            {
-                $tipo_req->setValue('Aluno Ingressante');
-            }
-            else 
-            {
-                $tipo_req->setValue('Renovação de Bolsa');
-            }
+        if ($etapa_curso == "1º ciclo") 
+        {
+            $tipo_req->setValue('Aluno Ingressante');
+        }
+        else 
+        {
+            $tipo_req->setValue('Renovação de Bolsa');
+        }
         
         // detail fields
         $detail_uniqid = new THidden('detail_uniqid');
@@ -151,7 +142,6 @@ class AnaliseRequerimentoBolsa extends TPage
         $detail_rg = new TEntry('detail_rg');
         $detail_cpf = new TEntry('detail_cpf');
        
-
         if (!empty($id))
         {
             $id->setEditable(FALSE);
@@ -217,10 +207,7 @@ class AnaliseRequerimentoBolsa extends TPage
         $percentual_bolsa->setEditable(FALSE);
         $analise_check->setEditable(FALSE);
         
-
-
         $n_pessoas_apurado->setExitAction(new TAction(array($this, 'onUpdateRenda')));
-        
         
         // master fields
         $this->form->addContent( ['<h4>DADOS PESSOAIS </h4><hr>'] );
@@ -254,49 +241,54 @@ class AnaliseRequerimentoBolsa extends TPage
         
         $this->form->addFields( [new TLabel('Email:')], [$email]);
         
-                   // detail fields
-                   $this->form->addContent( ['<br><h4> - Núcleo Familiar</h4><hr>'] );
-                   $this->form->addFields( [$detail_uniqid] );
-                   $this->form->addFields( [$detail_id] );
-           
-                   $this->detail_list = new BootstrapDatagridWrapper(new TDataGrid);
-                   $this->detail_list->setId('ReqBolsaAlunoItem_list');
-                   $this->detail_list->generateHiddenFields();
-                   $this->detail_list->style = "min-width: 700px; width:100%;margin-bottom: 10px";
-                   
-                   // items
-                   $this->detail_list->addColumn( new TDataGridColumn('uniqid', 'Uniqid', 'center') )->setVisibility(false);
-                   $this->detail_list->addColumn( new TDataGridColumn('id', 'Id', 'center') )->setVisibility(false);
-                   $this->detail_list->addColumn( new TDataGridColumn('item_membro', 'Membro', 'left', 100) );
-                   $this->detail_list->addColumn( new TDataGridColumn('nome', 'Nome', 'left', 100) );
-                   $this->detail_list->addColumn( new TDataGridColumn('rg', 'RG', 'left', 100) );
-                   $this->detail_list->addColumn( new TDataGridColumn('cpf', 'CPF', 'left', 100) );
-                   $this->detail_list->addColumn( new TDataGridColumn('idade', 'Idade', 'left', 100) );
-                   $this->detail_list->addColumn( new TDataGridColumn('profissao', 'Profissão', 'left', 100) );
-                   $salario = $this->detail_list->addColumn( new TDataGridColumn('salario', 'Salário', 'left', 100) );
-                   $this->detail_list->addColumn( new TDataGridColumn('local_trabalho', 'Local Trabalho', 'left', 100) );
-                   //$this->detail_list->addColumn( new TDataGridColumn('data_reg', 'Data Reg', 'left', 100) );
-   
-                   $salario->setTotalFunction( function($values) 
-                   { 
-                       return array_sum((array) $values);
-                   }); 
-           
-                   $salario->setTransformer(function($value, $object, $row) 
-                   {
-                       if (!$value)
-                       {
-                           $value = 0;
-                       }
-                       return "R$ " . number_format($value, 2, ",", ".");
-                   });
+        // detail fields
+        $this->form->addContent( ['<br><h4> - Núcleo Familiar</h4><hr>'] );
+        $this->form->addFields( [$detail_uniqid] );
+        $this->form->addFields( [$detail_id] );
+
+        $this->detail_list = new BootstrapDatagridWrapper(new TDataGrid);
+        $this->detail_list->setId('ReqBolsaAlunoItem_list');
+        $this->detail_list->generateHiddenFields();
+        $this->detail_list->style = "min-width: 700px; width:100%;margin-bottom: 10px";
+        
+        // items
+        $this->detail_list->addColumn( new TDataGridColumn('uniqid', 'Uniqid', 'center') )->setVisibility(false);
+        $this->detail_list->addColumn( new TDataGridColumn('id', 'Id', 'center') )->setVisibility(false);
+        $this->detail_list->addColumn( new TDataGridColumn('item_membro', 'Membro', 'left', 100) );
+        $this->detail_list->addColumn( new TDataGridColumn('nome', 'Nome', 'left', 100) );
+        $this->detail_list->addColumn( new TDataGridColumn('rg', 'RG', 'left', 100) );
+        $this->detail_list->addColumn( new TDataGridColumn('cpf', 'CPF', 'left', 100) );
+        $this->detail_list->addColumn( new TDataGridColumn('idade', 'Idade', 'left', 100) );
+        $this->detail_list->addColumn( new TDataGridColumn('profissao', 'Profissão', 'left', 100) );
+        $salario = $this->detail_list->addColumn( new TDataGridColumn('salario', 'Salário', 'left', 100) );
+        $this->detail_list->addColumn( new TDataGridColumn('local_trabalho', 'Local Trabalho', 'left', 100) );
+        //$this->detail_list->addColumn( new TDataGridColumn('data_reg', 'Data Reg', 'left', 100) );
+
+        $salario->setTotalFunction( function($values) 
+        { 
+            // Converte todos os elementos do array para float limpo antes de somar
+            $numericValues = array_map(function($val) {
+                return (float) $val;
+            }, (array) $values);
+
+            return array_sum($numericValues);
+        });
+
+        $salario->setTransformer(function($value, $object, $row) 
+        {
+            if (!$value)
+            {
+                $value = 0;
+            }
+            return "R$ " . number_format($value, 2, ",", ".");
+        });
                      
-           $this->detail_list->createModel();
-   
-           $panel = new TPanelGroup;
-           $panel->add($this->detail_list);
-           $panel->getBody()->style = 'overflow-x:auto';
-           $this->form->addContent( [$panel] );
+        $this->detail_list->createModel();
+
+        $panel = new TPanelGroup;
+        $panel->add($this->detail_list);
+        $panel->getBody()->style = 'overflow-x:auto';
+        $this->form->addContent( [$panel] );
 
         $this->form->addContent( ['<br><h4>INFORMAÇÕES</h4><hr>'] );
 
@@ -327,8 +319,6 @@ class AnaliseRequerimentoBolsa extends TPage
         $this->form->addFields( [new TLabel('O aluno possui outra graduação em Ensino Superior:')], [$outra_graduacao],
                                 [new TLabel('Se sim, qual:')], [$graduacao_anterior]  );
 
-
-        
         $this->form->addContent( ['<br><br><h4>PARECER TÉCNICO - ASSISTENTE SOCIAL </h4><hr>'] );     
 
         $this->form->addFields( [new TLabel('Documentos Enviados pelo Aluno:')], [$filename] );
@@ -349,8 +339,6 @@ class AnaliseRequerimentoBolsa extends TPage
         $this->form->addFields( [new TLabel('Renda Total informada em quantidade de salários mínimos:')], [$rf_salario_minimo],
                                 [new TLabel('Renda Per Capita em quantidade de salários mínimos:')], [$rp_salario_minimo],
                                 ['']  );
-        
-
         
         $this->form->addContent( ['<br><br><h4>MEMÓRIA DE CÁLCULO CONFORME LEGISLAÇÃO EM VIGOR </h4><hr>'] ); 
 
@@ -387,11 +375,8 @@ class AnaliseRequerimentoBolsa extends TPage
 
         $this->form->addFields( [new TLabel('<p style="font-size: 16px;"><b>Anexar Parecer Assinado FE:')],  [$anexo] );
                   
-        $btn = $this->form->addAction( 'Finalizar Parecer',  new TAction([$this, 'onSave']), 'fa:check fa-lg');
-        $btn->class = 'btn btn-success btn-lg';      
-        $btn2 = $this->form->addAction( 'Imprimir Parecer',  new TAction([$this, 'onPrint']), 'fa:file-pdf fa-lg');
-        $btn2->class = 'btn btn-info btn-lg';  
-
+        $this->form->addAction( 'Finalizar Parecer',  new TAction([$this, 'onSave']), 'fa:check green');
+        $this->form->addAction( 'Imprimir Parecer',  new TAction([$this, 'onPrint']), 'fa:file-pdf red');
 
         // create the page container
         $container = new TVBox;
@@ -402,11 +387,9 @@ class AnaliseRequerimentoBolsa extends TPage
         parent::add($container);
     }
 
-        
     public static function onChangeRadio($param)
     {
         $format  = $param['documentos_check'];
-
         $obj2 = new StdClass;
 
         switch ($format)
@@ -430,10 +413,9 @@ class AnaliseRequerimentoBolsa extends TPage
                 $obj2->situacaofinal_bolsa = '';
             break;
         }
-        
+
         TForm::sendData('form_AnaliseBolsa', $obj2);
     }
-
 
     public static function onUpdateRenda ($param)
     {        
@@ -448,10 +430,8 @@ class AnaliseRequerimentoBolsa extends TPage
         $obj->renda_percapita_apurada = number_format( ($renda_familiar_apurada/$n_pessoas_apurado), 2, ',', '.'); //CALCULA A RENDA PERCAPITA DA FAMILIA
         $obj->rp_salario_minimo_apurada = number_format( ( ($renda_familiar_apurada/$n_pessoas_apurado)/$salario_minimo_atual), 2, ',', '.'); // CALCULA A RENDA PERCAPITA EM QNTD DE SALARIO MINIMO
 
-
         //Substitui a vírgula pelo ponto para fazer comparação
         $obj->rp_salario_minimo_apurada = str_replace(',', '.', $obj->rp_salario_minimo_apurada);
-
 
         if ($obj->rp_salario_minimo_apurada <= 1.50) {
             $obj->analise_check = "CUMPRE";
@@ -466,20 +446,18 @@ class AnaliseRequerimentoBolsa extends TPage
             $obj->percentual_bolsa = "NÃO PREENCHE OS REQUISITOS";
         }     
 
-
         //Volta a vírgula para exibição no formulário
         $obj->rp_salario_minimo_apurada = str_replace('.', ',', $obj->rp_salario_minimo_apurada);
 
         TForm::sendData('form_AnaliseBolsa', $obj);
     }
-
        
     public function onDownloadArquivo($param)
     {
         try
         {                      
             $id = $param['id'];
-                
+            
             TTransaction::open('Felabs_DB');
                 
             $object = new ReqBolsaAluno($id);
@@ -517,7 +495,6 @@ class AnaliseRequerimentoBolsa extends TPage
         }
     }
 
-
     public function onEdit($param)
     {
         try
@@ -529,16 +506,12 @@ class AnaliseRequerimentoBolsa extends TPage
                 $key = $param['key'];
                 
                 $object = new ReqBolsaAluno($key);
-
                 $object->anexo = ReqBolsaAlunoParecer::where('id_req', '=', $param['key'])->getIndexedArray('id', 'anexo');
-
                 $object->data_final = TDate::date2br($object->data_final);
                 $object->data_reg = TDate::date2br($object->data_reg);
                 $object->data_parecer_assist_social = TDate::date2br($object->data_parecer_assist_social);
                 
-
                 $items  = ReqBolsaAlunoItem::where('req_bolsa_aluno_id', '=', $key)->load();
-                
                 foreach( $items as $item )
                 {
                     $item->uniqid = uniqid();
@@ -562,7 +535,6 @@ class AnaliseRequerimentoBolsa extends TPage
         }
     }
     
-
     public function onSave($param)
     {
         try
@@ -571,8 +543,6 @@ class AnaliseRequerimentoBolsa extends TPage
             TTransaction::open('Felabs_DB');
             $prefs  = SystemPreference::getAllPreferences();
             $hoje = date('Y-m-d H:i:s');
-
-    
 
             //TTransaction::setLogger(new TLoggerSTD);            
             $data = $this->form->getData();
@@ -583,7 +553,6 @@ class AnaliseRequerimentoBolsa extends TPage
 
             $email = $param['email'];
 
-             
             $master->renda_familiar_apurada = str_replace(['.', ','], ['', '.'], $param['renda_familiar_apurada']);
             $master->rp_salario_minimo_apurada = str_replace(['.', ','], ['', '.'], $param['rp_salario_minimo_apurada']);
             $master->renda_percapita_apurada = str_replace(['.', ','], ['', '.'], $param['renda_percapita_apurada']);
@@ -598,13 +567,9 @@ class AnaliseRequerimentoBolsa extends TPage
             $master->data_parecer_assist_social = $hoje;
             $master->data_final = date('Y-m-d H:i:s');
 
-            
-
             $master->store();
 
             $this->saveFiles($master, $data, 'anexo', 'files/parecer', 'ReqBolsaAlunoParecer', 'anexo', 'id_req');
-
-
             
             // ReqBolsaAlunoItem::where('req_bolsa_aluno_id', '=', $master->id)->delete();
             
@@ -630,7 +595,6 @@ class AnaliseRequerimentoBolsa extends TPage
             
             TForm::sendData('form_ReqBolsaAluno', (object) ['id' => $master->id]);
 
-            
             new TMessage('info', AdiantiCoreTranslator::translate('Record saved'));
 
             //email aluno
@@ -657,7 +621,6 @@ class AnaliseRequerimentoBolsa extends TPage
                                         'far fa-list-alt green'
                                         );
 
-        
             //TApplication::loadPage('ReqBolsaAlunoListGestor', 'onReload');
 
             $this->form->setData( $this->form->getData() );
@@ -671,7 +634,6 @@ class AnaliseRequerimentoBolsa extends TPage
         }
     }
 
-    
     public function onPrint($param)
     {       
         try
@@ -719,7 +681,6 @@ class AnaliseRequerimentoBolsa extends TPage
             $contents = "<img src='http://localhost/xsd/cabecalho-fe.jpg'>";
             $contents = $this->html->getContents();
             
-            
             // converts the HTML template into PDF
             $dompdf = new \Dompdf\Dompdf(['enable_remote' => true]);
             $dompdf->loadHtml($contents);
@@ -759,9 +720,9 @@ class AnaliseRequerimentoBolsa extends TPage
         }
     }
 
-
     public function show()
     {
+        $param = $_REQUEST;
         $this->onEdit($param);
         parent::show();
     }    

@@ -5,10 +5,7 @@ class AtividadeComplementarAnalisadaProfessorList extends TPage
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
-    private $loaded;
-    private $deleteButton;
-    
+    private $loaded;    
 
     public function __construct()
     {
@@ -241,7 +238,7 @@ class AtividadeComplementarAnalisadaProfessorList extends TPage
             TTransaction::open('Felabs_DB');
             
             $repository = new TRepository('AtividadeComplementar');
-            $limit = 20;
+            $limit = 10;
 
             $criteria = new TCriteria;
             $criteria->add(new TFilter('cod_prof_responsavel', '=', $professor->Codprofessor));

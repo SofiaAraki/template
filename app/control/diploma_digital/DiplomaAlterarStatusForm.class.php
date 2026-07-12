@@ -212,7 +212,7 @@ class DiplomaAlterarStatusForm extends TPage
 
         // create the form actions
         $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
-        $btn->class = 'btn btn-sm btn-primary';
+        
         $this->form->addAction('Voltar', new TAction(array('DiplomaRegistradoList','onReload')), 'fas:arrow-alt-circle-left blue');
 
         

@@ -47,7 +47,7 @@ class DespesaProfessorList extends TPage
         
         // add the search form actions
         //$btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
-        //$btn->class = 'btn btn-sm btn-primary';
+        //
         $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
         //$this->form->addQuickAction(('Nova Despesa'), new TAction(array('DespesaProfessorForm', 'onClear')), 'fa:plus #69aa46');
         $this->form->addQuickAction(('Nova Despesa'), new TAction(array($this, 'VerificaRegistro')), 'fa:plus #69aa46');

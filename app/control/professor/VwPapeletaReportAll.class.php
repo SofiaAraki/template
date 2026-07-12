@@ -84,6 +84,7 @@ class VwPapeletaReportAll extends TPage
             $Identificacao  = $sessao_papeleta["Identificacao"];
             $NomeEntidade   = $sessao_papeleta["NomeEntidade"];
             $Periodo        = $sessao_papeleta["Periodo"] ?? ($sessao_papeleta["Periodoturma"] ?? '');
+            $Etapa          = $sessao['Etapa'] ?? '';
             $NomeDisciplina = $sessao_papeleta["NomeDisciplina"];
 
             // Carrega os alunos matriculados na disciplina/turma através de VwAlunosnotas
@@ -97,8 +98,7 @@ class VwPapeletaReportAll extends TPage
             
             if ($objects)
             {
-                // Ajustado para 10 colunas
-                $widths = array(70, 230, 60, 60, 60, 60, 60, 70, 70, 60);
+                $widths = array(70, 220, 60, 60, 60, 60, 60, 70, 70, 70);
                 
                 switch ($format)
                 {
@@ -112,31 +112,34 @@ class VwPapeletaReportAll extends TPage
                 
                 if (!empty($tr))
                 {
-                    // Relatório Estilos
-                    $tr->addStyle('title', 'Arial', '12', 'B',   '#ffffff', '#3b5998');
-                    $tr->addStyle('header', 'Arial', '10', 'B',  '#555555', '#e3e3e3');
-                    $tr->addStyle('datai', 'Arial', '10', '',    '#000000', '#ffffff');
-                    $tr->addStyle('datae', 'Arial', '10', '',    '#000000', '#eeeeee');
-                    $tr->addStyle('footer', 'Arial', '10', 'I',  '#000000', '#e3e3e3');
-                    $tr->addStyle('footer2', 'Arial', '10', 'B', '#000000', '#ffffff');
+                    // Ajuste de Estilos oficiais com a identidade unificada FAFRAM
+                    $tr->addStyle('title', 'Arial', '12', 'B', '#ffffff', '#024287');     // Azul Fafram Principal
+                    $tr->addStyle('meta_header', 'Arial', '10', '', '#222222', '#f4f6f9'); // Fundo cinza claro corporativo para metadados
+                    $tr->addStyle('header', 'Arial', '10', 'B', '#ffffff', '#024287');    // Cabeçalho em Azul Fafram para colunas
+                    $tr->addStyle('datap', 'Arial', '10', '', '#333333', '#ffffff');       // Linha de dados comum branca
+                    $tr->addStyle('datai', 'Arial', '10', '', '#333333', '#f4f6f9');       // Linha intercalada cinza claro corporativo
+                    $tr->addStyle('footer', 'Arial', '10', 'I', '#666666', '#ffffff');
+                    $tr->addStyle('footer2', 'Arial', '10', 'B', '#333333', '#ffffff');
 
                     // Cabeçalho da Papeleta
                     $tr->addRow();
-                    $tr->addCell($NomeEntidade, 'center', 'title', 10);
+                    $tr->addCell('FACULDADE DR. FRANCISCO MAEDA - FAFRAM', 'center', 'title', 10);
                     $tr->addRow();
-                    $tr->addCell('PAPELETA DE LANÇAMENTO DE NOTAS E FALTAS', 'center', 'header', 10);
+                    $tr->addCell('RELATÓRIO DE LANÇAMENTO DE NOTAS E FALTAS', 'center', 'header', 10);
                     
                     $tr->addRow();
-                    $tr->addCell('CURSO:', 'left', 'datae', 1);
-                    $tr->addCell($sessao_papeleta["NomeCurso"] ?? '', 'left', 'datai', 5);
-                    $tr->addCell('TURMA:', 'left', 'datae', 1);
-                    $tr->addCell($Identificacao, 'left', 'datai', 3);
+                    $tr->addCell('CURSO:', 'left', 'meta_header', 1);
+                    $tr->addCell($sessao_papeleta["NomeCurso"] ?? '', 'left', 'meta_header', 5);
+                    $tr->addCell('TURMA:', 'left', 'meta_header', 1);
+                    $tr->addCell($Identificacao, 'left', 'meta_header', 3);
                     
                     $tr->addRow();
-                    $tr->addCell('DISCIPLINA:', 'left', 'datae', 1);
-                    $tr->addCell($NomeDisciplina, 'left', 'datai', 5);
-                    $tr->addCell('PERÍODO:', 'left', 'datae', 1);
-                    $tr->addCell($Periodo, 'left', 'datai', 3);
+                    $tr->addCell('DISCIPLINA:', 'left', 'meta_header', 1);
+                    $tr->addCell($NomeDisciplina, 'left', 'meta_header', 5);
+                    $tr->addCell('PERÍODO:', 'left', 'meta_header', 1);
+                    $tr->addCell($Periodo, 'center', 'meta_header', 1);
+                    $tr->addCell('ETAPA: ', 'center', 'meta_header', 1);
+                    $tr->addCell($Etapa, 'center', 'meta_header', 1);
                     
                     // Títulos das Colunas
                     $tr->addRow();
@@ -149,13 +152,13 @@ class VwPapeletaReportAll extends TPage
                     $tr->addCell('Freq. %', 'center', 'header');
                     $tr->addCell('Média Final', 'center', 'header');
                     $tr->addCell('Situação', 'center', 'header');
-                    $tr->addCell('Disc.', 'center', 'header');
+                    $tr->addCell('Mat.', 'center', 'header');
                     
                     $colour = FALSE;
                     
                     foreach ($objects as $object)
                     {
-                        $style = $colour ? 'datae' : 'datai';
+                        $style = $colour ? 'datai' : 'datap';
                         
                         $nota1 = '-'; $faltas1 = '0';
                         $nota2 = '-'; $faltas2 = '0';
@@ -192,17 +195,57 @@ class VwPapeletaReportAll extends TPage
                             $mediaFinal = !is_null($resSpecs[0]->MediaSem) ? $resSpecs[0]->MediaSem : '-';
                         }
                         
-                        // Transformer da Situação
+                        // Transformers com definição de cores dinâmicas
                         $situacaoFormatada = '';
+                        $sufixoCor = ''; // Vai ajudar a mapear o estilo de cor
+
                         switch (trim(strtoupper($object->Resultado))) {
-                            case 'A': case 'AP': case 'APROVADO': $situacaoFormatada = 'Aprovado'; break;
-                            case 'R': case 'RP': case 'REPROVADO': $situacaoFormatada = 'Reprovado'; break;
-                            case 'E': case 'EXAME': $situacaoFormatada = 'Exame'; break;
-                            case 'DP': case 'DEPENDENCIA': $situacaoFormatada = 'Dependência'; break;
-                            case 'RF': case 'REPROVADO POR FALTA': $situacaoFormatada = 'Rep. Falta'; break;
-                            case 'TR': case 'TRANCADO': $situacaoFormatada = 'Trancado'; break;
-                            case 'MA': case 'MATRICULADO': $situacaoFormatada = 'Matriculado'; break;
-                            default: $situacaoFormatada = !empty($object->Resultado) ? $object->Resultado : 'Pendente'; break;
+                            case 'A': case 'AP': case 'APROVADO': 
+                                $situacaoFormatada = 'Aprovado'; 
+                                $sufixoCor = '_aprovado'; // Verde
+                                break;
+                            case 'R': case 'RP': case 'REPROVADO': 
+                                $situacaoFormatada = 'Reprovado'; 
+                                $sufixoCor = '_reprovado'; // Vermelho
+                                break;
+                            case 'E': case 'EXAME': 
+                                $situacaoFormatada = 'Exame'; 
+                                $sufixoCor = '_exame'; // Amarelo/Laranja
+                                break;
+                            case 'DP': case 'DEPENDENCIA': 
+                                $situacaoFormatada = 'Dependência'; 
+                                $sufixoCor = '_exame';
+                                break;
+                            case 'RF': case 'REPROVADO POR FALTA': 
+                                $situacaoFormatada = 'Rep. Falta'; 
+                                $sufixoCor = '_reprovado';
+                                break;
+                            case 'TR': case 'TRANCADO': 
+                                $situacaoFormatada = 'Trancado'; 
+                                break;
+                            case 'MA': case 'MATRICULADO': 
+                                $situacaoFormatada = 'Matriculado'; 
+                                break;
+                            default: 
+                                $situacaoFormatada = !empty($object->Resultado) ? $object->Resultado : 'Pendente'; 
+                                break;
+                        }
+
+                        // Cria os estilos de cores dinamicamente para a célula da situação
+                        // Mantém o fundo original da linha ($style) para o relatório não perder o zebrado
+                        $bg_atual = ($style == 'datai') ? '#f4f6f9' : '#ffffff';
+                        $estiloSituacao = $style; // Padrão se não tiver cor específica
+
+                        if (!empty($sufixoCor)) {
+                            $estiloSituacao = $style . $sufixoCor;
+                            
+                            if ($sufixoCor == '_aprovado') {
+                                $tr->addStyle($estiloSituacao, 'Arial', '10', '', '#008000', $bg_atual);
+                            } elseif ($sufixoCor == '_reprovado') {
+                                $tr->addStyle($estiloSituacao, 'Arial', '10', '', '#ff0000', $bg_atual);
+                            } elseif ($sufixoCor == '_exame') {
+                                $tr->addStyle($estiloSituacao, 'Arial', '10', '', '#ffde21', $bg_atual);
+                            }
                         }
 
                         $tipoDisciplinaFormatada = '';
@@ -224,20 +267,22 @@ class VwPapeletaReportAll extends TPage
                         $tr->addCell($faltas2, 'center', $style);
                         $tr->addCell($frequencia, 'center', $style); 
                         $tr->addCell($mediaFinal, 'center', $style); 
-                        $tr->addCell($situacaoFormatada, 'center', $style);
+
+                        // Passamos o estilo customizado e colorido para a situação
+                        $tr->addCell($situacaoFormatada, 'center', $estiloSituacao);
+
                         $tr->addCell($tipoDisciplinaFormatada, 'center', $style); 
-                        
+
                         $colour = !$colour;
                     }
                     
-                    // Rodapé (Colspan 10)
+                    // Rodapé
                     $tr->addRow();
-                    $tr->addCell(date('d-m-Y H:i:s'), 'center', 'footer', 10);
+                    $tr->addCell('Documento gerado em: ' . date('d/m/Y H:i:s'), 'center', 'footer', 10);
                     $tr->addRow(); $tr->addRow(); $tr->addRow();
+                    $tr->addCell('____________________________________________________', 'center', 'footer2', 10);
                     $tr->addRow();
-                    $tr->addCell('______________', 'center', 'footer2', 10);
-                    $tr->addRow();
-                    $tr->addCell($NomeProfessor, 'center', 'footer', 10);
+                    $tr->addCell('Docente: ' . $NomeProfessor, 'center', 'footer', 10);
                     
                     if (!file_exists("app/output/VwPapeletaAll.{$format}") OR is_writable("app/output/VwPapeletaAll.{$format}"))
                     {
@@ -254,7 +299,7 @@ class VwPapeletaReportAll extends TPage
             }
             else
             {
-                new TMessage('warning', 'Não exite lançamento registrado!');
+                new TMessage('warning', 'Não existe lançamento registrado!');
             }
             
             $this->form->setData($formdata);

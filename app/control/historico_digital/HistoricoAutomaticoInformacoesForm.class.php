@@ -375,9 +375,8 @@ class HistoricoAutomaticoInformacoesForm extends TPage
 
         // create the form actions
         $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addAction('Voltar', new TAction(array('HistoricoAutomaticoList','onReload')), 'fas:arrow-alt-circle-left blue');
-        
+        $this->form->addAction('Voltar', new TAction(['HistoricoAutomaticoList','onReload']), 'fas:arrow-left blue');
+
         
         // vertical box container
         $container = new TVBox;

@@ -186,8 +186,8 @@ class ComposerStaticInit4074d5b77a855dbfd71e43da22fa21e2
         ),
         'Jfcherng\\Diff\\' => 
         array (
-            0 => __DIR__ . '/..' . '/jfcherng/php-diff/src',
-            1 => __DIR__ . '/..' . '/jfcherng/php-sequence-matcher/src',
+            0 => __DIR__ . '/..' . '/jfcherng/php-sequence-matcher/src',
+            1 => __DIR__ . '/..' . '/jfcherng/php-diff/src',
         ),
         'FontLib\\' => 
         array (

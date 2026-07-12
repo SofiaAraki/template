@@ -6,7 +6,6 @@ class ComunicadoBolsaFormList extends TPage
     protected $datagrid;
     protected $pageNavigation;
     protected $loaded;
-    
 
     public function __construct( $param )
     {
@@ -204,19 +203,26 @@ class ComunicadoBolsaFormList extends TPage
 
             if ($alunos)
             {
-                $csv .= utf8_decode(mb_strtoupper($comunicado->titulo))."\n";
-                $csv .= utf8_decode('ALUNO;STATUS;DATA DO REGISTRO')."\n";
+                $filename = 'relatorio_comunicado_bolsa.csv';
+                $filepath = 'app/output/' . $filename;
+
+                $csv = "sep=;\n"; 
+                
+                // Substituindo os utf8_decode por mb_convert_encoding
+                $csv .= mb_convert_encoding(mb_strtoupper($comunicado->titulo), 'ISO-8859-1', 'UTF-8') . "\n";
+                $csv .= mb_convert_encoding('ALUNO;STATUS;DATA DO REGISTRO', 'ISO-8859-1', 'UTF-8') . "\n";
                 
                 foreach ($alunos as $aluno)
                 {   
                     $hr = substr($aluno->data_reg, 11, 19);
                     $dt = TDate::date2br($aluno->data_reg);
 
-                    $aluno->data_reg = "$dt" . " " . substr($hr,0,-4);
-                  
-                    $csv .= utf8_decode($aluno->system_user->name).';'.
-                            utf8_decode($aluno->status_aceite).';'.
-                            utf8_decode($aluno->data_reg)."\n";   
+                    $aluno->data_reg = "$dt " . substr($hr, 0, -4); 
+                
+                    // Substituindo nas colunas dos alunos
+                    $csv .= mb_convert_encoding($aluno->system_user->name, 'ISO-8859-1', 'UTF-8') . ';'.
+                            mb_convert_encoding($aluno->status_aceite, 'ISO-8859-1', 'UTF-8') . ';'.
+                            mb_convert_encoding($aluno->data_reg, 'ISO-8859-1', 'UTF-8') . "\n";   
                 }
             }
             else
@@ -238,7 +244,6 @@ class ComunicadoBolsaFormList extends TPage
         }
     }
         
-
     public function onReload($param = NULL)
     {
         try
@@ -256,7 +261,7 @@ class ComunicadoBolsaFormList extends TPage
             if (empty($param['order']))
             {
                 $param['order'] = 'id';
-                $param['direction'] = 'asc';
+                $param['direction'] = 'desc';
             }
             
             $criteria->setProperties($param);
@@ -297,7 +302,6 @@ class ComunicadoBolsaFormList extends TPage
         }
     }
     
-
     public static function onDelete($param)
     {
         $action = new TAction([__CLASS__, 'Delete']);
@@ -306,7 +310,6 @@ class ComunicadoBolsaFormList extends TPage
         new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
     }
     
-
     public static function Delete($param)
     {
         try
@@ -330,7 +333,6 @@ class ComunicadoBolsaFormList extends TPage
         }
     }
     
-
     public function onSave( $param )
     {
         try
@@ -405,13 +407,11 @@ class ComunicadoBolsaFormList extends TPage
             TTransaction::rollback();
         }
     }
-    
 
     public function onClear( $param )
     {
         $this->form->clear(TRUE);
     }
-    
 
     public function onEdit( $param )
     {
@@ -458,7 +458,6 @@ class ComunicadoBolsaFormList extends TPage
         }
     }
     
-
     public function show()
     {
         if (!$this->loaded AND (!isset($_GET['method']) OR $_GET['method'] !== 'onReload') )

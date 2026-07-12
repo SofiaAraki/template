@@ -1,14 +1,5 @@
 <?php
-
 use template\Widget\TStory;
-
-/**
- * WelcomeView
- * @version    8.5
- * @package    control
- * @author     Pablo Dall'Oglio
- * @copyright  Copyright (c) 2006 Adianti Solutions Ltd. (http://www.adianti.com.br)
- */
 class WelcomeView extends TPage
 {
     private $fc;
@@ -307,18 +298,13 @@ class WelcomeView extends TPage
         return $panel;
     }
 
-    /**
-     * Ciclo final de exibição da página no Adianti
-     */
     public function show()
     {
         parent::show();
         
         if (!TSession::getValue('aviso_exibido'))
         {
-            // CORREÇÃO AQUI: Remove o 'onShow' para o construtor assumir o controle perfeito do Ajax
             TApplication::loadPage('AvisoModalView');
-            
             TSession::setValue('aviso_exibido', true);
         }
     }

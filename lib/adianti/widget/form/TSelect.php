@@ -14,7 +14,7 @@ use Exception;
 /**
  * Select Widget
  *
- * @version    8.5
+ * @version    8.6
  * @package    widget
  * @subpackage form
  * @author     Pablo Dall'Oglio
@@ -320,7 +320,7 @@ class TSelect extends TField implements AdiantiWidgetInterface
                         $option->{'title'} = $item;  // define the title
                     }
                     $option->{'titside'} = 'left';  // define the title side
-                    $option->add(htmlspecialchars( (string) $item));      // add the item label
+                    $option->add(htmlspecialchars($item));      // add the item label
                     
                     // verify if this option is selected
                     if ( (is_array($this->value)  AND @in_array($chave, $this->value)) OR

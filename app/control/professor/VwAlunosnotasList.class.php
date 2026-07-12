@@ -38,7 +38,7 @@ class VwAlunosnotasList extends TPage
         $this->form->addQuickAction('Voltar',  new TAction(array('VwProfessordisciplinassemestreList','onReload')), 'fas:arrow-left orange');
         $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fas:search blue');
 
-        // NOVO: Botão de fechamento/confirmação oficial para o Professor
+        // NOVO: Botão de fechamento/confirmação para o Professor
         $this->form->addQuickAction('Finalizar Lançamento', new TAction(array($this, 'onFinalizarLançamento')), 'fas:check green');
 
         // Datagrid
@@ -147,7 +147,6 @@ class VwAlunosnotasList extends TPage
         $container->add(new TXMLBreadCrumb('menu.xml', 'ApontamentoBimestral'));
         $container->add(TPanelGroup::pack('Buscar Aluno Por:', $this->form));
         
-        // ATUALIZADO PARA USAR A SESSÃO UNIFICADA
         $sessao = TSession::getValue('sessao_papeleta_unificada');
         $nomediscipina = $sessao["NomeDisciplina"] ?? '';
         $identificacao = $sessao["Identificacao"] ?? '';

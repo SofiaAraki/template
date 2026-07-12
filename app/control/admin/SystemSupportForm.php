@@ -2,7 +2,7 @@
 /**
  * SystemSupportForm
  *
- * @version    8.5
+ * @version    8.6
  * @package    control
  * @subpackage admin
  * @author     Pablo Dall'Oglio

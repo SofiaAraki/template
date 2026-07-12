@@ -72,9 +72,8 @@ class SolicitacaoAlunoList extends TPage
         $this->form->setData( TSession::getValue('SolicitacaoAluno_filter_data') );
         
         // add the search form actions
-        $btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addQuickAction(_t('New'),  new TAction(array('SolicitacaoAlunoForm', 'onEdit')), 'bs:plus-sign green');
+        $this->form->addQuickAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
+        $this->form->addQuickAction('Novo',  new TAction(['SolicitacaoAlunoForm', 'onEdit']), 'fas:plus-sign green');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;

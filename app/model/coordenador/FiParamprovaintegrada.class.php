@@ -71,6 +71,9 @@ class FiParamprovaintegrada extends TRecord
         return $this->fi_matriculaetapa;
     }
     
-
+    public function get_turmaEtapa()
+    {
+        return new FiTurmaEtapa($this->CodTurmaetapa);
+    }
 
 }

@@ -163,7 +163,6 @@ class ConteudoProgramaticoListAll extends TPage
         $this->onReload($param);
     }
     
-
     public function onReload($param = NULL)
     {
         try

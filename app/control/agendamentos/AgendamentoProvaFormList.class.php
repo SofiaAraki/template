@@ -28,7 +28,7 @@ class AgendamentoProvaFormList extends TPage
         $data_prova = new TDateTime('data_prova');
         $observacao = new TText('observacao');
         $status = new THidden('status');
-        $unidade = new THidden('unidade');
+        $unidade = new TDBCombo('unidade', 'Felabs_DB', 'SystemUnit', 'id', 'name');
         $system_user_id = new THidden('system_user_id');
         $data_reg = new THidden('data_reg');
 
@@ -76,9 +76,9 @@ class AgendamentoProvaFormList extends TPage
         $this->form->addQuickField('Data do registro', $data_reg, '50%');
         $this->form->addQuickField('Anexar arquivo', $filename, '50%');        
         
-        $this->form->addQuickAction('Voltar', new TAction(array('AgendamentoProvaListProfessor', 'onReload')), 'fa:arrow-left blue');
-        $this->form->addQuickAction('Limpar', new TAction(array($this, 'onClear')), 'fa:eraser red');
-        $this->form->addQuickAction('Salvar', new TAction(array($this, 'onSave')), 'far:save green');
+        $this->form->addQuickAction('Voltar', new TAction(['AgendamentoProvaListProfessor', 'onReload']), 'fa:arrow-left blue');
+        $this->form->addQuickAction('Limpar', new TAction([$this, 'onClear']), 'fa:eraser red');
+        $this->form->addQuickAction('Salvar', new TAction([$this, 'onSave']), 'far:save green');
         
         $container = new TVBox;
         $container->style = 'width: 100%';
@@ -118,7 +118,6 @@ class AgendamentoProvaFormList extends TPage
         {
             TTransaction::open('Felabs_DB');
             $user = new SystemUser(TSession::getValue('userid'));
-            $loggedUnit = TSession::getValue('userunitid');
                                 
             $this->form->validate(); 
             
@@ -128,7 +127,6 @@ class AgendamentoProvaFormList extends TPage
             $data->system_user_id = $user->id;
             $data->data_reg = date('Y-m-d H:i:s');
             $data->status = 'Pendente';
-            $data->unidade = $loggedUnit;
 
             $object->fromArray((array) $data); 
 

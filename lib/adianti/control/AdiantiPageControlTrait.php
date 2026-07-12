@@ -7,7 +7,7 @@ use ReflectionClass;
 /**
  * AdiantiPageControlTrait
  *
- * @version    8.5
+ * @version    8.6
  * @package    control
  * @author     Pablo Dall'Oglio
  * @copyright  Copyright (c) 2006 Adianti Solutions Ltd. (http://www.adianti.com.br)

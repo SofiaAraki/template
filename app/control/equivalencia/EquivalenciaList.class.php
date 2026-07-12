@@ -99,9 +99,11 @@ class EquivalenciaList extends TPage
             $limit = 10;
             $offset = isset($param['offset']) ? $param['offset'] : 0;
 
-            // Aponta para o Repositório da VIEW
             $repository = new TRepository('ViewEquivalencia');
             $criteria = new TCriteria;
+
+            $loggedUserId = TSession::getValue('userid');
+            $criteria->add(new TFilter('ultimo_system_user_id', '=', $loggedUserId));
             
             // Filtros mantidos
             $data = TSession::getValue(__CLASS__.'_filter_data');

@@ -8,14 +8,8 @@ class MeuCursoForm extends TPage
     {
         parent::__construct();     
         
-        // Instancia o formulário utilizando Bootstrap direto para melhor performance visual
-        //$this->form = new BootstrapFormBuilder('form_MeuCurso');
-
-        // Remove o TQuickForm, o class = tform e o BootstrapFormWrapper. Use apenas:
         $this->form = new BootstrapFormBuilder('form_MeuCurso');
         $this->form->style = 'width:100%';
-
-        // O próprio construtor gerencia o título principal do painel externo
         $this->form->setFormTitle('Adicionar Arquivo'); 
 
         if (isset($param['method']) && $param['method'] == 'mostrarInfo') {
@@ -82,14 +76,7 @@ class MeuCursoForm extends TPage
         // Container de exibição da página
         $container = new TVBox;
         $container->style = 'width: 100%';
-
         $container->add($this->form);
-
-        // if ($method == 'mostrarInfo') {
-        //     $container->add(TPanelGroup::pack('Adicionar Informativo', $this->form));
-        // } else {
-        //     $container->add(TPanelGroup::pack('Adicionar Arquivo', $this->form));
-        // }
         
         parent::add($container);
     }

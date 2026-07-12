@@ -2,7 +2,7 @@
 /**
  * SystemProfileForm
  *
- * @version    8.5
+ * @version    8.6
  * @package    control
  * @subpackage admin
  * @author     Pablo Dall'Oglio
@@ -80,7 +80,7 @@ class SystemProfileForm extends TPage
         $this->form->addFields( [new TLabel(_t('Password'))], [$password1]);
         $this->form->addFields( [new TLabel(_t('Password confirmation'))], [$password2]);
         
-        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
+        $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:check');
         $btn->class = 'btn btn-sm btn-primary';
         
         $this->form->addHeaderActionLink(_t('Close'), new TAction([$this, 'onClose']), 'fa:times red');

@@ -151,7 +151,7 @@ class DiplomaUploadDiplomaRegistradoForm extends TWindow
          
         // create the form actions
         $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onBeforeSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
+        
         
         
         // vertical box container

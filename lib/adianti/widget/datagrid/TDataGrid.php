@@ -19,7 +19,7 @@ use Exception;
 /**
  * DataGrid Widget: Allows to create datagrids with rows, columns and actions
  *
- * @version    8.5
+ * @version    8.6
  * @package    widget
  * @subpackage datagrid
  * @author     Pablo Dall'Oglio
@@ -92,6 +92,37 @@ class TDataGrid extends TTable
         $this->metadata = [];
         $this->{'class'} = 'tdatagrid_table';
         $this->{'id'}    = 'tdatagrid_' . mt_rand(1000000000, 1999999999);
+    }
+    
+    /**
+     * Deep clone for datagrid
+     */
+    public function __clone()
+    {
+        parent::__clone();
+
+        $this->thead = null;
+        $this->tbody = null;
+        $this->tfoot = null;
+
+        foreach ($this->children as $child)
+        {
+            if ($child instanceof TElement)
+            {
+                switch ($child->getName())
+                {
+                    case 'thead':
+                        $this->thead = $child;
+                        break;
+                    case 'tbody':
+                        $this->tbody = $child;
+                        break;
+                    case 'tfoot':
+                        $this->tfoot = $child;
+                        break;
+                }
+            }
+        }
     }
     
     /**

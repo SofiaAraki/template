@@ -5,10 +5,7 @@ class AgendamentoEquipamentoList extends TPage
     private $form;
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
-    private $loaded;
-    private $deleteButton;
-    
+    private $loaded;    
 
     public function __construct()
     {
@@ -271,19 +268,13 @@ class AgendamentoEquipamentoList extends TPage
         {
             TTransaction::open('Felabs_DB');
             
-            $loggedUnit = TSession::getValue('userunitid');
-            //$logged = SystemUser::newFromLogin(TSession::getValue('login'));
-            $userid = TSession::getValue('userid');
-            $user = new SystemUser($userid);
-            
+            $userid = TSession::getValue('userid');            
             
             $repository = new TRepository('AgendamentoEquipamento');
             $limit = 10;
 
             $criteria = new TCriteria;
-            $criteria->add(new TFilter('unidade', '=', $loggedUnit));
-            $criteria->add(new TFilter('usuario', '=', $user->id));
-            
+            $criteria->add(new TFilter('usuario', '=', $userid));
 
             if (empty($param['order']))
             {

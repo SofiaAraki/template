@@ -171,12 +171,12 @@ table.tdatagrid_body tr td input
 
 table .tdatagrid_group td
 {
-    background: #c9ccd3;
+    background: var(--bs-secondary-border-subtle);
 }
 
 table tr.tdatagrid_group:nth-of-type(odd) > td
 {
-    background: #c7cbd4 !important;
+    background: var(--bs-secondary-border-subtle);
 }
 
 /** hiddable **/

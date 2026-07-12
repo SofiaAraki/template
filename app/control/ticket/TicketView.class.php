@@ -119,14 +119,14 @@ class TicketView extends TPage
         if($user->funcao_legado == '') //SECRETARIA E ADMINS
         {
             $this->form->addQuickAction('Voltar', new TAction(array('TicketFormList', 'onShow')), 'fas:arrow-left blue');
-            $this->form->addQuickAction('Imprimir', new TAction(array($this, 'onImprimeAtendimento')), 'fas:print');
+            $this->form->addQuickAction('Imprimir', new TAction(array($this, 'onImprimeAtendimento')), 'fas:print purple');
             $this->form->addQuickAction('Fechar', new TAction(array($this, 'onFechaTicket')), 'fas:times red');
         }
         
         elseif($user->funcao_legado == 'Professor')
         {
             $this->form->addQuickAction('Voltar', new TAction(array('TicketListProf', 'onReload')), 'fas:arrow-left blue');
-            $this->form->addQuickAction('Imprimir', new TAction(array($this, 'onImprimeAtendimento')), 'fas:print');
+            $this->form->addQuickAction('Imprimir', new TAction(array($this, 'onImprimeAtendimento')), 'fas:print purple');
             $this->form->addQuickAction('Fechar', new TAction(array($this, 'onFechaTicket')), 'fas:times red');
         }
 
@@ -185,78 +185,109 @@ class TicketView extends TPage
 
             $ticketId = TSession::getValue('ticketid');
 
-            // creates a criteria
+            // Busca os itens vinculados ao ticket
             $criteria = new TCriteria;
             $criteria->add(new TFilter('ticket_id', '=', $ticketId));
             $criteria->setProperty('order', 'id');
-            $criteria->setProperty('direction','ASC');
+            $criteria->setProperty('direction', 'ASC');
             
             $ticketItems = TicketItem::getObjects($criteria);
 
-
-            if(!empty($ticketItems))
+            if (!empty($ticketItems))
             {
-                $html = new AdiantiHTMLDocumentParser('app/documents/ticket_impressao.html', 'A4', 'portrait');
-
+                // Instancia o Ticket Master e seus relacionamentos
                 $object = new Ticket($ticketId);
-
                 $solicitanteInfo = new SystemUser($object->system_user_id);
-                $quemAbriu = new SystemUser($object->quem_abriu);
-                $categoriaInfo = new TicketCategoria($object->categoria);
-                $unidade = new SystemUnit($object->departamento);
+                $quemAbriu        = new SystemUser($object->quem_abriu);
+                $categoriaInfo   = new TicketCategoria($object->categoria);
+                $unidade         = new SystemUnit($object->departamento);
 
-                $horario = substr($object-> data_reg,11,8);
-                $dataUs = TDate::date2br($object->data_reg);
+                $horario = substr($object->data_reg, 11, 8);
+                $dataUs  = TDate::date2br($object->data_reg);
+                $dataMasterFormatada = "$dataUs " . substr($horario, 0, -3);
+
+                // Definição de larguras base para equilibrar as 3 colunas (totalizando 540)
+                $widths = array(200, 500, 100);
+                $designer = new TTableWriterPDF($widths, 'L', 'A4');
+
+                // Definição de Estilos baseados no seu modelo padrão institucional
+                $designer->addStyle('header_title', 'Helvetica', 12, 'B', '#FFFFFF', '#3b5998');
+                $designer->addStyle('table_head',   'Helvetica', 10, 'B', '#000000', '#C0C0C0');
+                $designer->addStyle('label',        'Helvetica', 10, 'B', '#000000', '#FFFFFF');
+                $designer->addStyle('value',        'Helvetica', 10, '',  '#000000', '#FFFFFF');
+                $designer->addStyle('th_detalhe',   'Helvetica', 10, 'B', '#000000', '#EAEAEA');
+                $designer->addStyle('td_detalhe',   'Helvetica', 10,  '',  '#333333', '#FFFFFF');
+
+                // Helper interno para codificação compatível com acentos no PDF
+                $toIso = function($text) {
+                    return mb_convert_encoding($text ?? '', 'ISO-8859-1', 'UTF-8');
+                };
+
+                // --- 1. CABEÇALHO INSTITUCIONAL ---
+                $designer->addRow();
+                $designer->addCell($toIso('TICKET DE ATENDIMENTO - ID: ' . $object->id), 'center', 'header_title', 3);
+
+                // --- 2. DADOS DO TICKET MASTER ---
+                $designer->addRow();
+                $designer->addCell($toIso('Solicitante: ' . $solicitanteInfo->name), 'left', 'value', 3);
                 
-                $object->data_reg = "$dataUs"." ".substr($horario,0,-7);
-                $object->system_user_id = $solicitanteInfo->name;
-                $object->quem_abriu = $quemAbriu->name;
-                $object->departamento = $unidade->name;
-                $object->categoria = $categoriaInfo->nome;
+                $designer->addRow();
+                $designer->addCell($toIso('Matrícula atual: ' . $object->matricula_aluno), 'left', 'value', 1);
+                $designer->addCell($toIso('Categoria: ' . $categoriaInfo->nome), 'left', 'value', 1);
+                $designer->addCell($toIso('Unidade: ' . $unidade->name), 'center', 'value', 1);
 
+                // --- 3. HISTÓRICO DE ATENDIMENTO (DETALHES COM FIX PARA ESTOURO DE TEXTO) ---
+                $designer->addRow();
+                $designer->addCell($toIso('Histórico de Atendimento'), 'left', 'table_head', 3);
 
-                $html->setMaster($object);
+                // Títulos das colunas do detalhe
+                $designer->addRow();
+                $designer->addCell($toIso('Usuário'), 'left', 'th_detalhe', 1);
+                $designer->addCell($toIso('Descrição'), 'left', 'th_detalhe', 1);
+                $designer->addCell($toIso('Data'), 'center', 'th_detalhe', 1);
 
-                $obj = [];
-
-                foreach($ticketItems as $ticketItem)
+                // Renderização das linhas do histórico
+                foreach ($ticketItems as $ticketItem)
                 {
-                    $solicitanteInfo = new SystemUser($ticketItem->system_user_id);
-    
-                    $horario = substr($ticketItem-> data_reg,11,8);
-                    $dataUs = TDate::date2br($ticketItem->data_reg);
-                    
-                    $ticketItem->data_reg = "$dataUs"." ".substr($horario,0,-7);
-                    $ticketItem->system_user_id = $solicitanteInfo->name;
-    
-                    $obj[] = $ticketItem;
+                    $itemUser = new SystemUser($ticketItem->system_user_id);
+                    $itemHorario = substr($ticketItem->data_reg, 11, 8);
+                    $itemDataUs  = TDate::date2br($ticketItem->data_reg);
+                    $dataItemFormatada = "$itemDataUs " . substr($itemHorario, 0, -3);
+
+                    // Protegendo contra valores null: injetamos o ?? '' antes de decodificar e limpar as tags
+                    $textoBruto = $ticketItem->descricao ?? '';
+                    $textoLimpo = strip_tags(html_entity_decode($textoBruto));
+                    $textoQuebrado = wordwrap($textoLimpo, 80, "\n", true);
+                    $linhasDescricao = explode("\n", $textoQuebrado);
+
+                    // Primeira linha preenchendo as colunas laterais normalmente
+                    $designer->addRow();
+                    $designer->addCell($toIso($itemUser->name), 'left', 'td_detalhe', 1);
+                    $designer->addCell($toIso(array_shift($linhasDescricao)), 'left', 'td_detalhe', 1);
+                    $designer->addCell($toIso($dataItemFormatada), 'center', 'td_detalhe', 1);
+
+                    // Caso a descrição ocupe mais de uma linha, gera as subsequentes alinhadas
+                    foreach ($linhasDescricao as $linha)
+                    {
+                        if (trim($linha) != '') {
+                            $designer->addRow();
+                            $designer->addCell('', 'left', 'td_detalhe', 1);
+                            $designer->addCell($toIso($linha), 'left', 'td_detalhe', 1);
+                            $designer->addCell('', 'center', 'td_detalhe', 1);
+                        }
+                    }
                 }
 
+                // Grava o documento temporário no servidor
+                $document = 'tmp/ticket_report_'.uniqid().'.pdf'; 
+                $designer->save($document);
 
-                $html->setDetail('TicketItem', $ticketItems);
-                
+                $this->onReload();
 
-                $html->process();
-                $output = $html->getContents();
-                
-                
-                $document = 'tmp/'.uniqid().'.pdf'; 
-                $html = AdiantiHTMLDocumentParser::newFromString($output);
-                
-                $html->saveAsPDF($document);
-                
                 parent::openFile($document);
             }
-           
 
             TTransaction::close();
-
-            $param = [];
-            $param['key'] = $ticketId;
-            $param['id'] = $ticketId;
-
-            new TMessage('info', "Documento para impressão gerado com sucesso", TApplication::loadPage('TicketView','onReload',$param));  
-
         }
         catch (Exception $e)
         {

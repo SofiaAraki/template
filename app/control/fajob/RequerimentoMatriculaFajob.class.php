@@ -204,7 +204,7 @@ class RequerimentoMatriculaFajob extends TPage
          
         // create the form actions
         //$btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'far:save');
-        //$btn->class = 'btn btn-sm btn-primary';
+        //
         $this->form->addAction('Voltar', new TAction(['ReqMatriculaAlunoListFajob', 'onReload']), 'far:arrow-alt-circle-left blue');
 
 

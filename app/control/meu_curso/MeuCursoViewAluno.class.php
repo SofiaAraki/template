@@ -112,7 +112,7 @@ class MeuCursoViewAluno extends TPage
         $cabecalho->style = "margin-bottom: 25px; padding-left: 5px;";
         $cabecalho->add("<h2 style='font-weight: 300; margin-bottom: 5px;'> <i class='fa fa-graduation-cap'></i> {$cursoInfo->Nome}</h2>");
 
-        // --- DATAGRID 1: INFORMATIVOS DO CURSO (LARGURA TOTAL) ---
+        // --- DATAGRID 1: INFORMATIVOS DO CURSO ---
         $this->datagrid2 = new TQuickGrid;
         $this->datagrid2->style = 'width: 100%; border-collapse: collapse;';
         $this->datagrid2->addQuickColumn('Título', 'nome', 'left', '80%');
@@ -129,7 +129,7 @@ class MeuCursoViewAluno extends TPage
         $panel_informativos->add(new BootstrapDatagridWrapper($this->datagrid2));
         $panel_informativos->style = 'margin-bottom: 25px; width: 100%;';
 
-        // --- DATAGRID 2: ARQUIVOS PARA DOWNLOAD (LARGURA TOTAL) ---
+        // --- DATAGRID 2: ARQUIVOS PARA DOWNLOAD ---
         $this->datagrid = new TQuickGrid;
         $this->datagrid->style = 'width: 100%; border-collapse: collapse;';
         $this->datagrid->addQuickColumn('', 'nome', 'left', '100%');
@@ -151,7 +151,6 @@ class MeuCursoViewAluno extends TPage
         $mainContainer = new TElement('div');
         $mainContainer->style = 'width: 100%;';
         
-        // Empilhamento direto em blocos full width
         $mainContainer->add($panel_informativos);
         $mainContainer->add($panel_arquivos);
 

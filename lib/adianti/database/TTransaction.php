@@ -16,7 +16,7 @@ use Exception;
 /**
  * Manage Database transactions
  *
- * @version    8.5
+ * @version    8.6
  * @package    database
  * @author     Pablo Dall'Oglio
  * @copyright  Copyright (c) 2006 Adianti Solutions Ltd. (http://www.adianti.com.br)
@@ -30,6 +30,7 @@ class TTransaction
     private static $dbinfo;   // database info
     private static $counter;
     private static $uniqid;
+    private static $muted;
     
     /**
      * Class Constructor
@@ -111,6 +112,20 @@ class TTransaction
     }
     
     /**
+     * Mute transactions for database
+     * @param $database Name of the database
+     */
+    public static function mute($database)
+    {
+        if (empty(self::$muted))
+        {
+            self::$muted = [];
+        }
+        
+        self::$muted[$database] = true;
+    }
+    
+    /**
      * Returns the current active connection
      * @return PDO
      */
@@ -150,8 +165,9 @@ class TTransaction
             $driver = self::$conn[self::$counter]->getAttribute(PDO::ATTR_DRIVER_NAME);
             $info = self::getDatabaseInfo();
             $fake = isset($info['fake']) ? $info['fake'] : FALSE;
+            $muted = !empty(self::$muted[$info['file']]);
             
-            if (!$fake)
+            if (!$fake && !$muted)
             {
                 // apply the pending operations
                 self::$conn[self::$counter]->commit();

@@ -1,8 +1,6 @@
 <?php
 /**
-
  * @author     Pamella Scapim
-
  */
 class LinksCPAFAJOB extends TPage
 {
@@ -15,12 +13,9 @@ class LinksCPAFAJOB extends TPage
                        
        try 
        {
-
             TTransaction::open('Felabs_DB');
             $logged  = SystemUser::newFromLogin(TSession::getValue('login'));
             $loggedUnit = TSession::getValue('userunitid');
-            
-            
 
             TTransaction::open('dados_fei');
             $criteria_cpa_fajob = new TCriteria;                        
@@ -69,7 +64,6 @@ class LinksCPAFAJOB extends TPage
                             $iframe->scrolling = "yes";
                             $iframe->width = "100%";
                             $iframe->height = "700px";
-                            
                             break;
                         case 7:
                             $iframe = new TElement('iframe');
@@ -80,7 +74,6 @@ class LinksCPAFAJOB extends TPage
                             $iframe->width = "100%";
                             $iframe->height = "700px";
                             break;
-                        
                     }
                 }
 
@@ -105,14 +98,9 @@ class LinksCPAFAJOB extends TPage
                             $iframe->scrolling = "yes";
                             $iframe->width = "100%";
                             $iframe->height = "700px";
-                            
                             break;
-                        
                     }
                 }
-
-        
-
             }
         
             TTransaction::close();

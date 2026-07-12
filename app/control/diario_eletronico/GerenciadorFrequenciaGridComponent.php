@@ -21,8 +21,7 @@ class GerenciadorFrequenciaGridComponent extends TElement
         $painelFrequencia->add($this->formGridFrequencia);
         $this->add($painelFrequencia);
 
-        $btnSalvarFrequencia = $this->formGridFrequencia->addAction('Salvar Frequência da Turma', new TAction([__CLASS__, 'onSaveFrequencia']), 'fa:check-double');
-        $btnSalvarFrequencia->class = 'btn btn-sm btn-success';
+        $this->formGridFrequencia->addAction('Salvar Frequência da Turma', new TAction([__CLASS__, 'onSaveFrequencia']), 'fa:check-double green');
 
         $this->renderGrid($param);
     }
@@ -54,7 +53,7 @@ class GerenciadorFrequenciaGridComponent extends TElement
             $this->datagridFrequencia->addColumn(new TDataGridColumn('Codaluno', 'Cód. Aluno', 'center'));
             $this->datagridFrequencia->addColumn(new TDataGridColumn('Nome', 'Nome do Aluno', 'left'));
 
-            TTransaction::open('dados_fei'); // Leitura centralizada
+            TTransaction::open('dados_fei');
 
             $criteriaDia = new TCriteria;
             $criteriaDia->add(new TFilter('Codprofessor', '=', $codProfessor));
@@ -139,12 +138,9 @@ class GerenciadorFrequenciaGridComponent extends TElement
                 throw new Exception("Nenhum dado estrutural foi postado para gravação.");
             }
 
-            TTransaction::open('Felabs_DB');
-            $logged = SystemUser::newFromLogin(TSession::getValue('login'));
-            TTransaction::close();
+            $logged = TSession::getValue('login');
 
-            // Abre gravação unificada (certifique-se que aponta corretamente na sua configuração de databases)
-            TTransaction::open('dados_fei_t');
+            TTransaction::open('dados_fei');
             $conn = TTransaction::get();
 
             $frqdiaria = FiFrqdiaria::where('CodTurmaetapa', '=', $codTurmaEtapa)
@@ -182,7 +178,7 @@ class GerenciadorFrequenciaGridComponent extends TElement
                 $codMatriculaEtapa = $parts[1];
                 $numeroAula        = $parts[2];
                 
-                // SOLUÇÃO DO BUG DO POST: Se a chave existe e está marcada como 'P', é Presença. 
+                // Se a chave existe e está marcada como 'P', é Presença. 
                 // Se sumiu do POST ($param[$name] não definido), é Falta ('F').
                 $statusFreq = (isset($param[$name]) && $param[$name] === 'P') ? 'P' : 'F';
 

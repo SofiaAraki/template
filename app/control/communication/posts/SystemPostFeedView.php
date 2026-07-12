@@ -2,7 +2,7 @@
 /**
  * SystemPostViewList
  *
- * @version    8.5
+ * @version    8.6
  * @package    control
  * @subpackage communication
  * @author     Pablo Dall'Oglio
@@ -42,7 +42,7 @@ class SystemPostFeedView extends TPage
         
         $this->filter_criteria = new TCriteria;
         $this->filter_criteria->add(new TFilter('id', 'in', "(SELECT system_post_id FROM system_post_share_group WHERE system_group_id in ({$filterVar}))"));
-        //$this->filter_criteria->add(new TFilter('active', '=', 'Y'));
+        $this->filter_criteria->add(new TFilter('active', '=', 'Y'));
 
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->enableCounters();

@@ -72,7 +72,7 @@ class AtividadeForm extends TPage
 
          
         // create the form actions
-        $this->form->addQuickAction(_t('Back'),  new TAction(array('AtividadeList', 'onReload'),$param), 'fa:arrow-circle-left blue');
+        $this->form->addQuickAction(_t('Back'),  new TAction(array('AtividadeList', 'onReload'),$param), 'fa:arrow-left blue');
         $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'onSave')), 'fa:save green');
         
         // vertical box container

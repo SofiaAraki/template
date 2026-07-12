@@ -40,8 +40,8 @@ class DiplomaPoloList extends TPage
         
         
         // add the search form actions
-        $btn = $this->form->addAction(_t('Find'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
+        
         $this->form->addAction('Voltar', new TAction(array('DiplomaCursoList','onReload')), 'fas:arrow-alt-circle-left blue');
         
                 

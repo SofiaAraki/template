@@ -89,9 +89,7 @@ class AtualizaDadosForm extends TWindow
         $Telefone->style = 'font-weight:bold; background-color:#e7f3ff; border:1px solid #b3d7ff;';
         $Email->style = 'font-weight:bold; background-color:#e7f3ff; border:1px solid #b3d7ff;';
         // ação salvar
-        $btn = $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $btn->style = 'font-size:16px; padding:10px 20px;';
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
 
         // container
         $container = new TVBox;

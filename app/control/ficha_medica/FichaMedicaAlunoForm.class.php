@@ -492,9 +492,8 @@ class FichaMedicaAlunoForm extends TPage
          
         // create the form actions
         $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
-        $btn->class = 'btn btn-sm btn-primary';
         //$this->form->addActionLink(_t('New'),  new TAction([$this, 'onEdit']), 'fa:eraser red');
-        $this->form->addActionLink(('Voltar para Lista'),  new TAction(['FichaMedicaList', 'onReload']), 'fa:arrow-left');
+        $this->form->addActionLink('Voltar',  new TAction(['FichaMedicaList', 'onReload']), 'fa:arrow-left blue');
         
 
         

@@ -97,6 +97,9 @@ class AtividadeComplementarAnalisadaProfessorFormView extends TWindow
             else if(trim($object->status_atividade) == 'Reprovado') {
                 $text_status_atividade->style = 'color: #ff0000; font-weight: bold;';
             }
+            else if(trim($object->status_atividade) == 'Aguardando aprovação') {
+                $text_status_atividade->style = 'color: #ffaa00; font-weight: bold;';
+            }
             
             $text_observacao = new TTextDisplay($object->observacao, '', '', '');
 

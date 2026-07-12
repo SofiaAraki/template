@@ -4,16 +4,13 @@ class RequerimentoMatriculaConnext extends TPage
 {
     protected $form;
     
-
     public function __construct( $param )
     {
         parent::__construct();
-
              
         // creates the form
         $this->form = new BootstrapFormBuilder('form_RequerimentoMatriculaConnext');
         $this->form->setFormTitle('Requerimento de Matrícula - Connext');
-
 
         // create the form fields
         $Codaluno = new TEntry('Codaluno');
@@ -52,7 +49,6 @@ class RequerimentoMatriculaConnext extends TPage
 
        //  $output_type = new TRadioGroup('output_type');
         
-
         // add the fields
         $this->form->addFields( [new TFormSeparator('Dados do Aluno(a)')] );
         $this->form->addFields( [ new TLabel('Cod. Aluno') ], [ $Codaluno ]);
@@ -80,8 +76,6 @@ class RequerimentoMatriculaConnext extends TPage
        //$this->form->addFields( [ new TLabel('Output') ], [ $output_type ] );
 
        // $output_type->addValidation('Output', new TRequiredValidator);
-       
-
 
         $Curso->addItems( [ 'Educação Infantil' => 'Educação Infantil',
                             'Ensino Fundamental I' => 'Ensino Fundamental I',
@@ -219,7 +213,7 @@ class RequerimentoMatriculaConnext extends TPage
         $Telefone2->setEditable(FALSE);
         $CodResponsavel->setEditable(FALSE);
         $NomeResponsavel->setEditable(FALSE);
-        $Ano->setEditable(FALSE);
+        //$Ano->setEditable(FALSE);
         $RgResponsavel->setEditable(FALSE);
         $CPFResponsavel->setEditable(FALSE);
         $RuaResponsavel->setEditable(FALSE);
@@ -232,23 +226,14 @@ class RequerimentoMatriculaConnext extends TPage
 
         TTransaction::close();
 
-
-
         if (!empty($Codaluno))
         {
             $Codaluno->setEditable(FALSE);
         }
         
-
         // create the form actions
-        //$btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'far:save');
-        //$btn->class = 'btn btn-sm btn-primary';
         $this->form->addAction('Voltar', new TAction(['ReqMatriculaAlunoList', 'onReload']), 'fas:arrow-left blue');
-
-       
-        // add the action button
         $this->form->addAction('Gerar Requerimento',  new TAction(array('RequerimentoAlunoConnextFormView','onPrint'), $param), 'fa:check-circle green');
-
         
         // vertical box container
         $container = new TVBox;

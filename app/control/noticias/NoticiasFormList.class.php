@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NoticiasFormList Form List
  * @author  <your name here>
@@ -105,7 +104,7 @@ class NoticiasFormList extends TPage
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction([$this, 'onReload']));
         
-        // --- PANEL DA GRID (Igual ao Tutor) ---
+        // --- PANEL DA GRID ---
         $panel_grid = new TPanelGroup('Informativos Postados');
         $panel_grid->add($this->datagrid)->style = 'overflow-x:auto';
         $panel_grid->addFooter($this->pageNavigation);

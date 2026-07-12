@@ -2,7 +2,7 @@
 /**
  * LoginForm
  *
- * @version    8.5
+ * @version    8.6
  * @package    control
  * @subpackage admin
  * @author     Pablo Dall'Oglio
@@ -25,7 +25,7 @@ class LoginForm extends TPage
         
         // creates the form
         $this->form = new TModalForm('form_login');
-        $this->form->setFormTitle('Acesso - Acadêmico FE');
+        $this->form->setFormTitle('Login');
         
         if (!empty($ini['login']['logo']))
         {
@@ -120,7 +120,6 @@ class LoginForm extends TPage
         try
         {
             TTransaction::open('permission');
-            TTransaction::setLogger(new TLoggerSTD);
             
             $user = SystemUser::newFromLogin( $param['login'] );
             if ($user instanceof SystemUser)

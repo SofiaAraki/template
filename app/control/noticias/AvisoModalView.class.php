@@ -1,8 +1,7 @@
 <?php
-
 /**
  * AvisoModalView
- * Renderiza o carrossel de avisos usando componentes PHP nativos (Padrão Bootstrap 4+)
+ * Renderiza o carrossel de avisos
  */
 class AvisoModalView extends TWindow
 {
@@ -20,9 +19,9 @@ class AvisoModalView extends TWindow
         {
             TTransaction::open('Felabs_DB');
 
-            $logged      = SystemUser::newFromLogin(TSession::getValue('login'));
-            $loggedUnit  = TSession::getValue('userunitid');
-            $hoje        = date('Y-m-d');
+            $loggedUserId   = TSession::getValue('userid');
+            $loggedUnit     = TSession::getValue('userunitid');
+            $hoje           = date('Y-m-d');
 
             $criteriaNoticias = new TCriteria;
             $criteriaNoticias->add(new TFilter('data_expira', '>=', $hoje));
@@ -31,9 +30,11 @@ class AvisoModalView extends TWindow
                 $criteriaNoticias->add(new TFilter('unidade', '=', $loggedUnit));
             }
 
-            if ($logged->funcao_legado == 'Aluno') {
+            $usuarioLogado = SystemUser::find($loggedUserId);
+
+            if ($usuarioLogado->funcao_legado == 'Aluno') {
                 $criteriaNoticias->add(new TFilter('publico', '<>', '2'));
-            } elseif ($logged->funcao_legado == 'Professor') {
+            } elseif ($usuarioLogado->funcao_legado == 'Professor') {
                 $criteriaNoticias->add(new TFilter('publico', '<>', '1'));
             }
             
@@ -122,7 +123,6 @@ class AvisoModalView extends TWindow
                 $carousel->add($carouselInner);
 
                 /**
-                 * SOLUÇÃO DO TRAVAMENTO:
                  * Scripts puros de navegação que gerenciam as classes '.active' diretamente no DOM.
                  * Evita o congelamento de estado interno das animações nativas do Bootstrap.
                  */

@@ -14,7 +14,7 @@ class ApontamentoBimestral extends TPage
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';        
 
-        // creates the datagrid columns - AJUSTADO: Alinhamento centralizado para todas as colunas
+        // creates the datagrid columns
         $column_Ano = new TDataGridColumn('Ano', 'Ano', 'center', '10%');
         $column_Semestre = new TDataGridColumn('Semestre', 'Semestre', 'center', '10%');
         $column_Bimestre_Colegio = new TDataGridColumn('avaliacao_bimestre_colegio', 'Avaliação', 'center', '20%');
@@ -44,8 +44,6 @@ class ApontamentoBimestral extends TPage
         $container = new TVBox;
         $container->style = 'width: 100%';
         $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
-        
-        // AJUSTADO: Removido o empacotamento do $this->form inexistente e simplificado o painel da grid
         $container->add(TPanelGroup::pack('Períodos de Apontamentos Bimestral Abertos', $this->datagrid));
         
         parent::add($container);

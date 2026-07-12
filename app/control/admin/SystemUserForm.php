@@ -2,7 +2,7 @@
 /**
  * SystemUserForm
  *
- * @version    8.5
+ * @version    8.6
  * @package    control
  * @subpackage admin
  * @author     Pablo Dall'Oglio
@@ -51,12 +51,12 @@ class SystemUserForm extends TPage
             $about         = new TEntry('about');
         }
         
-        $systemuser_codlegado   = new TEntry('systemuser_codlegado');
+        $custom_code   = new TEntry('systemuser_codlegado');
         
         $password->disableAutoComplete();
         $repassword->disableAutoComplete();
         
-        $btn = $this->form->addAction( _t('Save'), new TAction(array($this, 'onSave')), 'far:save');
+        $btn = $this->form->addAction( _t('Save'), new TAction(array($this, 'onSave')), 'fa:check');
         $btn->class = 'btn btn-sm btn-primary';
         $this->form->addActionLink( _t('Clear'), new TAction(array($this, 'onEdit')), 'fa:eraser red');
         //$this->form->addActionLink( _t('Back'), new TAction(array('SystemUserList','onReload')), 'far:arrow-alt-circle-left blue');
@@ -90,7 +90,7 @@ class SystemUserForm extends TPage
         
         $this->form->addFields( [new TLabel(_t('Main unit'))], [$unit_id],  [new TLabel(_t('Front page'))], [$frontpage_id] );
         $this->form->addFields( [new TLabel(_t('Password'))], [$password],  [new TLabel(_t('Password confirmation'))], [$repassword] );
-        $this->form->addFields( [new TLabel(_t('Custom code'))], [$systemuser_codlegado] );
+        $this->form->addFields( [new TLabel(_t('Custom code'))], [$custom_code] );
         
         $subform = new BootstrapFormBuilder('form_System_user_subform');
         $subform->setFieldSizes('100%');
@@ -286,10 +286,8 @@ class SystemUserForm extends TPage
             // close the transaction
             TTransaction::close();
             
-            $pos_action = new TAction(['SystemUserList', 'onReload']);
-            
-            // shows the success message
-            new TMessage('info', TAdiantiCoreTranslator::translate('Record saved'), $pos_action);
+            TToast::show('info', _t('Record saved'));
+            AdiantiCoreApplication::loadPage('SystemUserList', 'onReload');
         }
         catch (Exception $e) // in case of exception
         {

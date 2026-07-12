@@ -5,7 +5,6 @@ class MeuCursoView extends TPage
     protected $form2;
     private $datagrid;
     private $datagrid2;
-    private $loaded;
 
     function __construct($param)
     {
@@ -137,7 +136,7 @@ class MeuCursoView extends TPage
         $cursoInfo = new FiCurso($param['curso']);
         TTransaction::close();
 
-        // --- TÍTULO DA PÁGINA (Padrão do Aluno) ---
+        // --- TÍTULO DA PÁGINA ---
         $cabecalho = new TElement('div');
         $cabecalho->style = "margin-bottom: 25px; padding-left: 5px;";
         $cabecalho->add("<h2 style='font-weight: 300; margin-bottom: 5px;'> <i class='fa fa-graduation-cap'></i> {$cursoInfo->Nome}</h2>");
@@ -204,7 +203,7 @@ class MeuCursoView extends TPage
         $panel_arquivos->add($this->form);
         $panel_arquivos->style = 'width: 100%;';
 
-        // --- CONTAINER VERTICAL SEM DIVISÃO DE COLUNAS (Igual do Aluno) ---
+        // --- CONTAINER VERTICAL SEM DIVISÃO DE COLUNAS ---
         $mainContainer = new TElement('div');
         $mainContainer->style = 'width: 100%;';
         $mainContainer->add($panel_informativos);

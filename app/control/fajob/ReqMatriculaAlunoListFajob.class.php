@@ -48,7 +48,7 @@ class ReqMatriculaAlunoListFajob extends TPage
         
         // add the search form actions
         $btn = $this->form->addAction(('Buscar Aluno'), new TAction([$this, 'onSearch']), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        
         //$this->form->addAction(_t('New'), new TAction(['RequerimentoMatriculaNSC', 'onEdit']), 'fa:plus green');
         
         // creates a Datagrid

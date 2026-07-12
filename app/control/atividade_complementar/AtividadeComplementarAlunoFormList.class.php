@@ -272,8 +272,7 @@ class AtividadeComplementarAlunoFormList extends TPage
         
 
         // create the form actions
-        $btn = $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
-        $btn->class = 'btn btn-sm btn-primary';
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
                 
         
         // creates a Datagrid
@@ -665,7 +664,7 @@ class AtividadeComplementarAlunoFormList extends TPage
             TTransaction::open('Felabs_DB');            
 
             $repository = new TRepository('AtividadeComplementar');
-            $limit = 20;
+            $limit = 10;
             
             $criteria = new TCriteria;
             $criteria->add(new TFilter('cod_aluno', '=', $aluno->Codaluno));

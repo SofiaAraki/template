@@ -1,7 +1,7 @@
 <?php
 /**
  * ContratoDadosAlunoList Listing
- * @author  Pamella Scapim
+ * @author   Pamella Scapim
  */
 class BoletimNovoList extends TPage
 {
@@ -24,14 +24,10 @@ class BoletimNovoList extends TPage
         $this->form = new BootstrapFormBuilder('form_search_BoletimNovoList');
         $this->form->setFormTitle('Boletim Acadêmico');
 
-        
-        
         // creates a Datagrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
-        // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
-        
 
         // creates the datagrid columns
         $column_Codaluno = new TDataGridColumn('Codaluno', 'Cod. Aluno', 'left');
@@ -61,18 +57,15 @@ class BoletimNovoList extends TPage
         $this->pageNavigation->setAction(new TAction([$this, 'onReload']));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
 
-        
         $vbox = new TVBox;
         $vbox->style = 'width: 100%';
         $vbox->add(new TXMLBreadCrumb('menu.xml', 'BoletimNovoList'));
-        $vbox->add( TPanelGroup::pack('', $this->datagrid ) );
+        $vbox->add(TPanelGroup::pack('', $this->datagrid));
         
         // wrap the page content
         parent::add($vbox);
     }
 
-    
-   
     /**
      * Load the datagrid with data
      */
@@ -82,33 +75,29 @@ class BoletimNovoList extends TPage
         {
             TTransaction::open('Felabs_DB');
             
-            $loggedUnit = TSession::getValue('userunitid'); //UNIDADE ESCOLHIDA NO MOMENTO DO LOGIN
+            $loggedUnit = TSession::getValue('userunitid'); // UNIDADE ESCOLHIDA NO MOMENTO DO LOGIN
             $user_id = TSession::getValue('userid');        
             $user = new SystemUser($user_id);
             
             TTransaction::close();
             
-            
-            ///////////Verifica se preencheu campo contato whatsapp no cadastro - somente para graduação//////////////////////(Amanda)
+            // Verifica se preencheu campo contato whatsapp no cadastro - somente para graduação (Amanda)
             TTransaction::open('dados_fei');
             
             $ano_atual = date('Y');
-                        
-            $array_colegio = [];
             $array_colegio = ['118' => '118', '119' => '119', '120' => '120'];
 
             $matriculas = new TRepository('VwAlunoMatriculaEtapa');
             
             $criteria_cadastro = new TCriteria;
             $criteria_cadastro->add(new TFilter('Codaluno', '=', $user->systemuser_codlegado));
-            $criteria_cadastro->add(new TFilter('AnoMatricula', '=', 2026)); //Tira as matrículas antigas do NSC e ANGLO
+            $criteria_cadastro->add(new TFilter('AnoMatricula', '=', 2026)); // Tira as matrículas antigas do NSC e ANGLO
             $criteria_cadastro->add(new TFilter('CodCurso', 'NOT IN', $array_colegio));
                                     
             $aluno = $matriculas->load($criteria_cadastro);
     
             TTransaction::close();
             
-                
             TTransaction::open('Felabs_DB');
 
             if($aluno)
@@ -118,18 +107,16 @@ class BoletimNovoList extends TPage
                     
                 $contato_aluno = ContatoAluno::getObjects($criteria_whats);
                         
-                if(! $contato_aluno)
+                if(!$contato_aluno)
                 {
                     $action_cadastro = new TAction(['DadosCadastraisView', 'onLoad']);                
-                    new TMessage('info', 'Antes de prosseguir, solicitamos que atualize seus dados de contato. 
-                                 <br> Você será redirecionado para o formulário de cadastro', $action_cadastro);   
+                    new TMessage('info', 'Antes de prosseguir, solicitamos que atualize seus dados de contato. <br> Você será redirecionado para o formulário de cadastro', $action_cadastro);   
                     die;              
                 }  
             }             
-            ///////////Encerra Verifica se preencheu campo contato whatsapp no cadastro - somente para graduação//////////////////////(Amanda)
-                
+            // Encerra Verifica se preencheu campo contato whatsapp no cadastro
 
-            ///////////Verifica se existe contrato pendente de assinatura//////////////////////(Amanda)    
+            // Verifica se existe contrato pendente de assinatura (Amanda)    
             $criteria2 = new TCriteria;
             $criteria2->add(new TFilter('Codaluno', '=', $user->systemuser_codlegado));
             
@@ -144,17 +131,13 @@ class BoletimNovoList extends TPage
                     
             $contratos_pendentes = ContratoDadosAluno::getObjects($criteria4);
 
-            //  var_dump($contratos_pendentes);
-            //  die();
-
             if(!empty($contratos_pendentes))
             {
                 $action2 = new TAction(['ContratoDadosAlunoList', 'onReload']);                
                 new TMessage('info', 'Antes de prosseguir, é necessário assinar digitalmente o(s) contrato(s) de prestação de serviços pendente(s)', $action2);                 
                 die;
-
             }          
-                // ///////////Encerra Verifica se existe contrato pendente de assinatura//////////////////////(Amanda)
+            // Encerra Verifica se existe contrato pendente de assinatura
             else
             {
                 TTransaction::open('dados_fei');
@@ -164,22 +147,19 @@ class BoletimNovoList extends TPage
                 
                 // creates a criteria
                 $criteria5 = new TCriteria;
-                $criteria5->add( new TFilter('Codaluno', '=', $user->systemuser_codlegado));
-                $criteria5->add( new TFilter('AnoMatricula', '=', 2026));
-                $criteria5->add( new TFilter('CodEntidade', '=', $loggedUnit));
-                //echo $criteria->dump();
+                $criteria5->add(new TFilter('Codaluno', '=', $user->systemuser_codlegado));
+                $criteria5->add(new TFilter('CodEntidade', '=', $loggedUnit));
+                //$criteria5->add(new TFilter('AnoMatricula', '=', 2026));
 
                 $criteria6 = new TCriteria;
-                $criteria6->add( new TFilter('Codaluno', '=', $user->systemuser_codlegado));
-                $criteria6->add( new TFilter('CodEntidade', '=', 12));
-                $criteria6->add( new TFilter('CodCurso', '=', 139));
-                //echo $criteria6->dump();
-                                
+                $criteria6->add(new TFilter('Codaluno', '=', $user->systemuser_codlegado));
+                $criteria6->add(new TFilter('CodEntidade', '=', 12));
+                $criteria6->add(new TFilter('CodCurso', '=', 139));
+                                        
                 $criteria = new TCriteria;
                 $criteria->add($criteria5, TExpression::OR_OPERATOR);
                 $criteria->add($criteria6, TExpression::OR_OPERATOR);
                
-                
                 // default order
                 if (empty($param['order']))
                 {
@@ -188,17 +168,6 @@ class BoletimNovoList extends TPage
                 }
                 $criteria->setProperties($param); // order, offset
                 $criteria->setProperty('limit', $limit);
-                
-
-                // if (TSession::getValue(__CLASS__.'_filter_Codaluno')) {
-                //     $criteria->add(TSession::getValue(__CLASS__.'_filter_Codaluno')); // add the session filter
-                // }
-
-
-                // if (TSession::getValue(__CLASS__.'_filter_CPF')) {
-                //     $criteria->add(TSession::getValue(__CLASS__.'_filter_CPF')); // add the session filter
-                // }
-
                 
                 // load the objects according to criteria
                 $objects = $repository->load($criteria, FALSE);
@@ -212,17 +181,15 @@ class BoletimNovoList extends TPage
                 $this->datagrid->disableHtmlConversion();
                 if ($objects)
                 {
-                    // iterate the collection of active records
                     foreach ($objects as $object)
                     {
-                        // add the object inside the datagrid
                         $this->datagrid->addItem($object);
                     }
                 }
                 
                 // reset the criteria for record count
                 $criteria->resetProperties();
-                $count= $repository->count($criteria);
+                $count = $repository->count($criteria);
                 
                 $this->pageNavigation->setCount($count); // count of records
                 $this->pageNavigation->setProperties($param); // order, page
@@ -230,11 +197,9 @@ class BoletimNovoList extends TPage
                 
                 // close the transaction
                 TTransaction::close();
-                TTransaction::close();
                 $this->loaded = true;
-            
-    }
-}
+            }
+        }
         catch (Exception $e)
         {
             new TMessage('error', $e->getMessage());
@@ -245,51 +210,43 @@ class BoletimNovoList extends TPage
     /**
      * Ask before deletion
      */
-    
     public function onSelect($param)
     {
-        //var_dump($param);
-       // die();
-        // get the parameter and shows the message
         $key = $param['CodMatriculaEtapa'];
 
-
-        
         foreach ($this->datagrid->getItems() as $object)
         {
             if ($key == $object->CodMatriculaEtapa)
             {
-                TSession::setValue('sessao_boletim', array( 'Codaluno'              => $object->Codaluno,
-                                                            'AnoMatricula'          => $object->AnoMatricula,
-                                                            'CodTurmaetapa'         => $object->CodTurmaetapa,
-                                                            'CodMatriculaEtapa'     => $object->CodMatriculaEtapa,
-                                                            'IdentificacaoMatricula'=> $object->IdentificacaoMatricula,
-                                                            'MediaPI'               => $object->MediaPI,
-                                                            'NotaNI'                => $object->NotaNI,
-                                                            'SituacaoMatricula'     => $object->SituacaoMatricula,
-                                                            'ConfirmacaoMatricula'  => $object->ConfirmacaoMatricula,
-                                                            'CodEntidade'           => $object->CodEntidade )
-                );
+                TSession::setValue('sessao_boletim', array(
+                    'Codaluno'               => $object->Codaluno,
+                    'AnoMatricula'           => $object->AnoMatricula,
+                    'CodTurmaetapa'          => $object->CodTurmaetapa,
+                    'CodMatriculaEtapa'      => $object->CodMatriculaEtapa,
+                    'IdentificacaoMatricula' => $object->IdentificacaoMatricula,
+                    'MediaPI'                => $object->MediaPI,
+                    'NotaNI'                 => $object->NotaNI,
+                    'SituacaoMatricula'      => $object->SituacaoMatricula,
+                    'ConfirmacaoMatricula'   => $object->ConfirmacaoMatricula,
+                    'CodEntidade'            => $object->CodEntidade
+                ));
             }
         }
 
         TApplication::loadPage('BoletimNovoView');
-        
     }
 
-    
     /**
      * method show()
      * Shows the page
      */
     public function show()
     {
-        // check if the datagrid is already loaded
-        if (!$this->loaded AND (!isset($_GET['method']) OR !(in_array($_GET['method'],  array('onReload', 'onSearch')))) )
+        if (!$this->loaded AND (!isset($_GET['method']) OR !(in_array($_GET['method'], array('onReload', 'onSearch')))) )
         {
             if (func_num_args() > 0)
             {
-                $this->onReload( func_get_arg(0) );
+                $this->onReload(func_get_arg(0));
             }
             else
             {

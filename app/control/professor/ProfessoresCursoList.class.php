@@ -1,20 +1,14 @@
 <?php
-
-
 class ProfessoresCursoList extends TPage
 {
     private $form; 
     private $datagrid; 
     private $pageNavigation;
-    private $formgrid;
-    private $loaded;
-    private $deleteButton;
-    
+    private $loaded;    
 
     public function __construct()
     {
         parent::__construct();
-        
         
         // creates the form
         $this->form = new TQuickForm('form_search_VwProfessordisciplinassemestre');
@@ -22,7 +16,6 @@ class ProfessoresCursoList extends TPage
         $this->form = new BootstrapFormWrapper($this->form);
         $this->form->style = 'display: table;width:100%'; 
         $this->form->setFormTitle('VwProfessordisciplinassemestre');
-        
 
         // create the form fields
         //$NomeProfessor = new TEntry('NomeProfessor');
@@ -30,41 +23,35 @@ class ProfessoresCursoList extends TPage
 
         $NomeCurso = new TCombo('NomeCurso');
             
-            TTransaction::open('Felabs_DB');
-                $loggedUnit = TSession::getValue('userunitid');
-            TTransaction::close();
+        $loggedUnit = TSession::getValue('userunitid');
 
-            TTransaction::open('dados_fei');
-            
-            $criteria1 = new TCriteria;
-            $criteria1->add(new TFilter('CodEntidade', '=', $loggedUnit), TExpression::AND_OPERATOR);
-            $criteria1->setProperty('order', 'NomeCurso asc');
+        TTransaction::open('dados_fei');
+        
+        $criteria1 = new TCriteria;
+        $criteria1->add(new TFilter('CodEntidade', '=', $loggedUnit), TExpression::AND_OPERATOR);
+        $criteria1->setProperty('order', 'NomeCurso asc');
 
-
-            $cursos = VwProfessordisciplinassemestre::getObjects($criteria1);
-            $options = [];
-            
-            if ($cursos)
+        $cursos = VwProfessordisciplinassemestre::getObjects($criteria1);
+        $options = [];
+        
+        if ($cursos)
+        {
+            foreach ($cursos as $curso)
             {
-                foreach ($cursos as $curso)
-                {
-                    $options[ $curso-> NomeCurso ] = $curso-> NomeCurso;                               
-                }            
-            }
-            
-            $NomeCurso->addItems($options);
-            
-            TTransaction::close();
-
+                $options[ $curso-> NomeCurso ] = $curso-> NomeCurso;                               
+            }            
+        }
+        
+        $NomeCurso->addItems($options);
+        
+        TTransaction::close();
 
         // add the fields
         //$this->form->addQuickField('Nomeprofessor', $NomeProfessor, '100%');
         $this->form->addQuickField('Selecione o Curso:', $NomeCurso, '40%');
-
         
         // keep the form filled during navigation with session data
         $this->form->setData( TSession::getValue('VwProfessordisciplinassemestre_filter_data') );
-        
         
         // add the search form actions
         $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fas:search blue');
@@ -75,7 +62,6 @@ class ProfessoresCursoList extends TPage
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
         
-
         // creates the datagrid columns
         $column_Codprofessor = new TDataGridColumn('Codprofessor', 'Codprofessor', 'left');
         $column_NomeProfessor = new TDataGridColumn('NomeProfessor', 'Docente', 'left');
@@ -87,7 +73,6 @@ class ProfessoresCursoList extends TPage
         $column_NomeDisciplina = new TDataGridColumn('NomeDisciplina', 'Disciplina', 'left');
         $column_EmailProf = new TDataGridColumn('fi_professor->Email', 'Email', 'left');
         $column_NomeEntidade = new TDataGridColumn('NomeEntidade', 'Entidade', 'left');
-
 
         // add the columns to the DataGrid
         //$this->datagrid->addColumn($column_Codprofessor);
@@ -101,7 +86,6 @@ class ProfessoresCursoList extends TPage
         $this->datagrid->addColumn($column_EmailProf);
         $this->datagrid->addColumn($column_NomeEntidade);
 
-        
         // create EDIT action
         //$action_edit = new TDataGridAction(array('', 'onEdit'));
         //$action_edit->setUseButton(TRUE);
@@ -111,17 +95,14 @@ class ProfessoresCursoList extends TPage
         //$action_edit->setField('Codprofessor');
         //$this->datagrid->addAction($action_edit);
         
-        
         // create the datagrid model
         $this->datagrid->createModel();
-        
         
         // creates the page navigation
         //$this->pageNavigation = new TPageNavigation;
         //$this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         //$this->pageNavigation->setWidth($this->datagrid->getWidth());
         
-
         // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';
@@ -132,7 +113,6 @@ class ProfessoresCursoList extends TPage
         parent::add($container);
     }
     
-
     /*public function onInlineEdit($param)
     {
         try
@@ -157,13 +137,11 @@ class ProfessoresCursoList extends TPage
             TTransaction::rollback(); // undo all pending operations
         }
     }*/
-    
 
     public function onSearch()
     {
         $data = $this->form->getData();
         
-
         TSession::setValue('ProfessoresCursoList_filter_NomeProfessor', NULL);
         TSession::setValue('ProfessoresCursoList_filter_NomeCurso', NULL);
 
@@ -171,7 +149,6 @@ class ProfessoresCursoList extends TPage
             $filter = new TFilter('NomeCurso', 'like', "%{$data->NomeCurso}%");
             TSession::setValue('ProfessoresCursoList_filter_NomeCurso', $filter);
         }
-
 
         $this->form->setData($data);
         
@@ -183,14 +160,11 @@ class ProfessoresCursoList extends TPage
         $this->onReload($param);
     }
     
-
     public function onReload($param = NULL)
     {
         try
         {
-            TTransaction::open('Felabs_DB');
-                $loggedUnit = TSession::getValue('userunitid');
-            TTransaction::close();
+            $loggedUnit = TSession::getValue('userunitid');
 
             TTransaction::open('dados_fei');
 
@@ -208,7 +182,6 @@ class ProfessoresCursoList extends TPage
 
             //echo $Semestre;
 
-
             $repository = new TRepository('VwProfessordisciplinassemestre');
             $limit = 1000;
 
@@ -220,7 +193,6 @@ class ProfessoresCursoList extends TPage
 
             //$criteria->add(new TFilter('CodEntidade', '=', '2'));
             //$criteria->add(new TFilter('NomeCurso', 'like', $NomeCurso ));            
-            
 
             //if (empty($param['order']))
             //{
@@ -231,16 +203,13 @@ class ProfessoresCursoList extends TPage
             $criteria->setProperty('order', 'Nomeprofessor asc');
             $criteria->setProperty('limit', $limit);
             
-
             if (TSession::getValue('ProfessoresCursoList_filter_NomeProfessor')) {
                 $criteria->add(TSession::getValue('ProfessoresCursoList_filter_NomeProfessor')); 
             }
 
-
             if (TSession::getValue('ProfessoresCursoList_filter_NomeCurso')) {
                 $criteria->add(TSession::getValue('ProfessoresCursoList_filter_NomeCurso')); 
             }
-
 
             $objects = $repository->load($criteria, FALSE);
             
@@ -259,7 +228,6 @@ class ProfessoresCursoList extends TPage
                 }
             }
             
-
             $criteria->resetProperties();
             $count = $repository->count($criteria);
             
@@ -267,7 +235,6 @@ class ProfessoresCursoList extends TPage
             //$this->pageNavigation->setProperties($param); 
             //$this->pageNavigation->setLimit($limit); 
             
-
             TTransaction::close();
             $this->loaded = true;
         }
@@ -278,15 +245,13 @@ class ProfessoresCursoList extends TPage
         }
     }
 
-
     public function onDelete($param)
     {
         $action = new TAction(array($this, 'Delete'));
         $action->setParameters($param); 
         
         new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
-    }
-    
+    }    
 
     public function Delete($param)
     {

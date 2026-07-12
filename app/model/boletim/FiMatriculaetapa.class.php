@@ -79,7 +79,13 @@ class FiMatriculaetapa extends TRecord
         // returns the associated object
         return $this->fi_aluno;
     }
-    
 
+    public function get_turma() {
+        return new FiTurmaEtapa($this->CodTurmaetapa);
+    }
+
+    public function get_operador() {
+        return new FiOperador($this->CodOperador);
+    }
 
 }

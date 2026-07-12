@@ -134,7 +134,7 @@ class VwPapeletaReport extends TPage
                     $alunos_filtrados[$obj->codaluno] = $obj;
                 }
 
-                $widths = array(120,500,80,80,80,120,80,80); 
+                $widths = array(70, 320, 60, 60, 60, 70, 70, 70); 
                 
                 switch ($format)
                 {
@@ -142,7 +142,7 @@ class VwPapeletaReport extends TPage
                         $tr = new TTableWriterHTML($widths);
                         break;
                     case 'pdf':
-                        $tr = new TTableWriterPDF($widths);
+                        $tr = new TTableWriterPDF($widths, 'L', 'A4');
                         break;
                     case 'rtf':
                         if (!class_exists('PHPRtfLite_Autoloader'))
@@ -153,116 +153,162 @@ class VwPapeletaReport extends TPage
                         break;
                 }
 
-                // LÊ A SESSÃO ÚNICA CENTRALIZADA
-                $sessao = TSession::getValue('sessao_papeleta_unificada');
-
-                $NomeDisciplina = $formdata->NomeDisciplina ?? ($sessao['NomeDisciplina'] ?? '');
-                $Periodo        = $formdata->Periodoturma ?? ($sessao['Periodoturma'] ?? '');
-                $NomeCurso      = $formdata->NomeCurso ?? ($sessao['NomeCurso'] ?? '');
-                $Bimestre       = $formdata->Avaliacao ?? '';
-
-                $Etapa          = $sessao['Etapa'] ?? '';
-                $Identificacao  = $sessao['Identificacao'] ?? '';
-                $NomeEntidade   = $sessao['NomeEntidade'] ?? '';
-                $NomeProfessor  = $sessao['NomeProfessor'] ?? '';
-
-                if (empty($NomeProfessor) && !empty($objects)) {
-                    $NomeProfessor = $objects[0]->NomeProfessor ?? '';
-                }
-                if (empty($NomeEntidade) && !empty($objects)) {
-                    $NomeEntidade = $objects[0]->NomeEntidade ?? '';
-                }
-
-                // create the document styles
-                $tr->addStyle('title', 'Arial', '10', 'B',   '#000000', '#E8E8E8');
-                $tr->addStyle('datap', 'Arial', '9', '',    '#000000', '#EEEEEE');
-                $tr->addStyle('datai', 'Arial', '9', '',    '#000000', '#ffffff');
-                $tr->addStyle('header', 'Arial', '16', '',   '#ffffff', '#A9A9A9');
-                $tr->addStyle('header2', 'Arial', '10', 'B',   '#000000', '#E8E8E8');
-                $tr->addStyle('footer', 'Arial', '9', 'I',  '#000000', '#A9A9A9');
-                $tr->addStyle('footer2', 'Arial', '24', 'I',  '#ffffff', '#ffffff');
-                
-                // Cabeçalho
-                $tr->addRow();
-                $tr->addCell('FUNDAÇÃO EDUCACIONAL DE ITUVERAVA', 'center', 'header', 8);
-                
-                $tr->addRow();
-                $tr->addCell(!empty($NomeEntidade) ? $NomeEntidade : 'F.E.I.', 'center', 'header2', 8);
-                
-                $tr->addRow();
-                $tr->addCell('Papeleta Bimestral', 'center', 'header', 8);
-                
-                $tr->addRow();
-                $tr->addCell('Bimestre:', 'right', 'header2', 2);
-                $tr->addCell($Bimestre . 'º Bimestre', 'left', 'header2', 6);
-                
-                $tr->addRow();
-                $tr->addCell($NomeCurso, 'center', 'header2', 8);
-                
-                $tr->addRow();
-                $tr->addCell('Disciplina:', 'left', 'header2', 1);
-                $tr->addCell($NomeDisciplina, 'left', 'header2', 2);
-                $tr->addCell('Turno:', 'left', 'header2', 1);
-                $tr->addCell($Periodo, 'center', 'header2', 1);
-                $tr->addCell('Ciclo:', 'left', 'header2', 1);
-                $tr->addCell($Etapa . ' ' . $Identificacao, 'center', 'header2', 2);
-                
-                // Colunas
-                $tr->addRow();
-                $tr->addCell('Cod.', 'right', 'title');
-                $tr->addCell('Nome', 'left', 'title');
-                $tr->addCell('Nota', 'center', 'title');
-                $tr->addCell('Faltas', 'center', 'title');
-                $tr->addCell('Freq.', 'center', 'title');
-                $tr->addCell('Media Final', 'center', 'title');
-                $tr->addCell('Result.', 'left', 'title');
-                $tr->addCell('Disc.', 'left', 'title');
-                
-                $colour = FALSE;
-                
-                // Listagem limpa dos alunos
-                foreach ($alunos_filtrados as $object)
+                if (!empty($tr))
                 {
-                    $style = $colour ? 'datap' : 'datai';
-                    $tr->addRow();
-                    $tr->addCell($object->codaluno, 'right', $style);
-                    $tr->addCell($object->Nome, 'left', $style);
-                    $tr->addCell($object->Nota1, 'center', $style);
-                    $tr->addCell($object->Faltas, 'center', $style);
-                    $tr->addCell($object->frequencia, 'center', $style);
-                    $tr->addCell($object->mediasem, 'center', $style);
-                    $tr->addCell($object->resultado, 'left', $style);
-                    $tr->addCell($object->tipodisciplina, 'center', $style);
+                    $sessao = TSession::getValue('sessao_papeleta_unificada');
+
+                    $NomeDisciplina = $formdata->NomeDisciplina ?? ($sessao['NomeDisciplina'] ?? '');
+                    $Periodo        = $formdata->Periodoturma ?? ($sessao['Periodoturma'] ?? '');
+                    $NomeCurso      = $formdata->NomeCurso ?? ($sessao['NomeCurso'] ?? '');
+                    $Bimestre       = $formdata->Avaliacao ?? '';
+
+                    $Etapa          = $sessao['Etapa'] ?? '';
+                    $Identificacao  = $sessao['Identificacao'] ?? '';
+                    $NomeEntidade   = $sessao['NomeEntidade'] ?? '';
+                    $NomeProfessor  = $sessao['NomeProfessor'] ?? '';
+
+                    if (empty($NomeProfessor) && !empty($objects)) {
+                        $NomeProfessor = $objects[0]->NomeProfessor ?? '';
+                    }
+                    if (empty($NomeEntidade) && !empty($objects)) {
+                        $NomeEntidade = $objects[0]->NomeEntidade ?? '';
+                    }
+
+                    // Ajuste de Estilos oficiais com a identidade unificada FAFRAM
+                    $tr->addStyle('title', 'Arial', '12', 'B', '#ffffff', '#024287');     // Azul Fafram Principal
+                    $tr->addStyle('meta_header', 'Arial', '10', '', '#222222', '#f4f6f9'); // Fundo cinza claro corporativo para metadados
+                    $tr->addStyle('header', 'Arial', '10', 'B', '#ffffff', '#024287');    // Cabeçalho em Azul Fafram para colunas
+                    $tr->addStyle('datap', 'Arial', '10', '', '#333333', '#ffffff');       // Linha de dados comum branca
+                    $tr->addStyle('datai', 'Arial', '10', '', '#333333', '#f4f6f9');       // Linha intercalada cinza claro corporativo
+                    $tr->addStyle('footer', 'Arial', '10', 'I', '#666666', '#ffffff');
+                    $tr->addStyle('footer2', 'Arial', '10', 'B', '#333333', '#ffffff');
                     
-                    $colour = !$colour;
-                }
-                
-                // Rodapé
-                $tr->addRow();
-                $tr->addCell(date('d-m-Y h:i:s'), 'center', 'footer', 8);
-                $tr->addRow();
-                $tr->addRow();
-                $tr->addRow();
-                $tr->addCell('______________', 'center', 'footer2', 8);
-                $tr->addRow();
-                $tr->addCell($NomeProfessor, 'center', 'footer', 8);
+                    $tr->addRow();
+                    $tr->addCell('FACULDADE DR. FRANCISCO MAEDA - FAFRAM', 'center', 'title', 8);
+                    
+                    $tr->addRow();
+                    $tr->addCell('PAPELETA BIMESTRAL DE LANÇAMENTO DE NOTAS E FALTAS', 'center', 'header', 8);
+                    
+                    $tr->addRow();
+                    $tr->addCell('CURSO:', 'left', 'meta_header', 1);
+                    $tr->addCell($NomeCurso, 'left', 'meta_header', 3);
+                    $tr->addCell('TURMA: ','center', 'meta_header', 1);
+                    $tr->addCell($Identificacao ,'center', 'meta_header', 3);                  
+                    
+                    $tr->addRow();
+                    $tr->addCell('DISCIPLINA:', 'left', 'meta_header', 1);
+                    $tr->addCell($NomeDisciplina, 'left', 'meta_header', 3);
+                    $tr->addCell('PERIODO: ' . $Periodo, 'center', 'meta_header', 1);
+                    $tr->addCell('ETAPA: ' . $Etapa, 'center', 'meta_header', 1);
+                    $tr->addCell($Bimestre . 'º Bimestre', 'center', 'meta_header', 2);                    
+                    
+                    // Colunas
+                    $tr->addRow();
+                    $tr->addCell('Código', 'center', 'header');
+                    $tr->addCell('Nome do Aluno', 'left', 'header');
+                    $tr->addCell('Nota', 'center', 'header');
+                    $tr->addCell('Faltas', 'center', 'header');
+                    $tr->addCell('Freq. %', 'center', 'header');
+                    $tr->addCell('Média Final', 'center', 'header');
+                    $tr->addCell('Situação', 'center', 'header');
+                    $tr->addCell('Mat.', 'center', 'header');
+                    
+                    $colour = FALSE;
+                    
+                    foreach ($alunos_filtrados as $object)
+                    {
+                        $style = $colour ? 'datai' : 'datap';
 
-                if (!file_exists("app/output/VwPapeleta.{$format}") OR is_writable("app/output/VwPapeleta.{$format}"))
-                {
-                    $tr->save("app/output/VwPapeleta.{$format}");
+                        $notaBimestre = '-'; 
+                        $faltasBimestre = '0';
+                        $mediaFinal = '-';
+                        $frequencia = '-';
+
+                        // CORREÇÃO 1: Consultar Notas e Faltas diretamente de FiNotasFaltas baseado no Bimestre atual
+                        $NotasFaltas = FiNotasFaltas::where('CodMatriculaEtapa', '=', $object->CodMatriculaEtapa)
+                                                    ->where('CodDisciplina', '=', $object->CodDisciplina)
+                                                    ->where('Avaliacao', '=', $Bimestre)
+                                                    ->load();
+
+                        if ($NotasFaltas) {
+                            $notaBimestre = !is_null($NotasFaltas[0]->Nota1) ? $NotasFaltas[0]->Nota1 : '-';
+                            $faltasBimestre = !is_null($NotasFaltas[0]->Faltas) ? $NotasFaltas[0]->Faltas : '0';
+                        }
+
+                        // CORREÇÃO 2: Buscar Frequência Geral e Média Final Semestral da View VwFiDisciplinasATADDP
+                        $repoSpecs = new TRepository('VwFiDisciplinasATADDP');
+                        $critSpecs = new TCriteria;
+                        $critSpecs->add(new TFilter('CodMatriculaEtapa', '=', $object->CodMatriculaEtapa));
+                        $critSpecs->add(new TFilter('CodDisciplina', '=', $object->CodDisciplina));
+                        $resSpecs = $repoSpecs->load($critSpecs);
+                        
+                        if ($resSpecs) {
+                            $frequencia = !is_null($resSpecs[0]->Frequencia) ? $resSpecs[0]->Frequencia . '%' : '-';
+                            $mediaFinal = !is_null($resSpecs[0]->MediaSem) ? $resSpecs[0]->MediaSem : '-';
+                        }
+
+                        // Transformer da Situação
+                        $situacaoFormatada = '';
+                        $resultadoBruto = $object->resultado ?? ($object->Resultado ?? '');
+                        switch (trim(strtoupper($resultadoBruto))) {
+                            case 'A': case 'AP': case 'APROVADO': $situacaoFormatada = 'Aprovado'; break;
+                            case 'R': case 'RP': case 'REPROVADO': $situacaoFormatada = 'Reprovado'; break;
+                            case 'E': case 'EXAME': $situacaoFormatada = 'Exame'; break;
+                            case 'DP': case 'DEPENDENCIA': $situacaoFormatada = 'Dependência'; break;
+                            case 'RF': case 'REPROVADO POR FALTA': $situacaoFormatada = 'Rep. Falta'; break;
+                            case 'TR': case 'TRANCADO': $situacaoFormatada = 'Trancado'; break;
+                            case 'MA': case 'MATRICULADO': $situacaoFormatada = 'Matriculado'; break;
+                            default: $situacaoFormatada = !empty($resultadoBruto) ? $resultadoBruto : 'Pendente'; break;
+                        }
+
+                        // Transformer do Tipo de Disciplina
+                        $tipoDisciplinaFormatada = '';
+                        $tipoDisBruto = $object->tipodisciplina ?? ($object->TipoDis ?? '');
+                        switch (trim(strtoupper($tipoDisBruto))) {
+                            case 'A': case 'AT': case 'ATUAL': $tipoDisciplinaFormatada = 'Atual'; break;
+                            case 'DP': case 'DEPENDENCIA': $tipoDisciplinaFormatada = 'Dependência'; break;
+                            case 'AD': case 'ADAPTADO': $tipoDisciplinaFormatada = 'Adaptado'; break;
+                            case 'TR': case 'TRANCADO': $tipoDisciplinaFormatada = 'Trancado'; break;
+                            default: $tipoDisciplinaFormatada = !empty($tipoDisBruto) ? $tipoDisBruto : '?'; break;
+                        }
+
+                        $tr->addRow();
+                        $tr->addCell($object->codaluno, 'center', $style);
+                        $tr->addCell($object->Nome, 'left', $style);
+                        $tr->addCell($notaBimestre, 'center', $style);
+                        $tr->addCell($faltasBimestre, 'center', $style);
+                        $tr->addCell($frequencia, 'center', $style);
+                        $tr->addCell($mediaFinal, 'center', $style);
+                        $tr->addCell($situacaoFormatada, 'center', $style);
+                        $tr->addCell($tipoDisciplinaFormatada, 'center', $style);
+                        
+                        $colour = !$colour;
+                    }
+                    
+                    // Rodapé
+                    $tr->addRow();
+                    $tr->addCell('Documento gerado em: ' . date('d/m/Y H:i:s'), 'center', 'footer', 8);
+                    $tr->addRow(); $tr->addRow(); $tr->addRow(); $tr->addRow(); $tr->addRow();
+                    $tr->addCell('____________________________________________________', 'center', 'footer2', 8);
+                    $tr->addRow();
+                    $tr->addCell('Docente: ' . $NomeProfessor, 'center', 'footer', 8);
+
+                    if (!file_exists("app/output/VwPapeleta.{$format}") OR is_writable("app/output/VwPapeleta.{$format}"))
+                    {
+                        $tr->save("app/output/VwPapeleta.{$format}");
+                    }
+                    else
+                    {
+                        throw new Exception(_t('Permission denied') . ': ' . "app/output/VwPapeleta.{$format}");
+                    }
+                    
+                    parent::openFile("app/output/VwPapeleta.{$format}");
+                    new TMessage('info', 'Papeleta gerada com sucesso!');
                 }
-                else
-                {
-                    throw new Exception(_t('Permission denied') . ': ' . "app/output/VwPapeleta.{$format}");
-                }
-                
-                parent::openFile("app/output/VwPapeleta.{$format}");
-                
-                new TMessage('info', 'Papeleta gerada com sucesso!');
             }
             else
             {
-                new TMessage('waring', 'NÃO EXISTEM NOTAS OU ALUNOS PARA ESTA DISCIPLINA NESTE BIMESTRE!');
+                new TMessage('warning', 'NÃO EXISTEM NOTAS OU ALUNOS PARA ESTA DISCIPLINA NESTE BIMESTRE!');
             }
     
             $this->form->setData($formdata);

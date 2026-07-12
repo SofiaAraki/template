@@ -12,6 +12,8 @@ class FiAluno extends TRecord
     use SystemChangeLogTrait;
     
     private $solicitacao_aluno;
+    private $responsavel;
+    private $cidade_aluno;
 
     /**
      * Constructor method

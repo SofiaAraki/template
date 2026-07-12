@@ -5,42 +5,33 @@ class EstagioPendenteProfessorList extends TPage
     private $form;
     private $datagrid;
     private $pageNavigation;
-    private $formgrid;
     private $loaded;
-    private $deleteButton;
-    
 
     public function __construct()
     {
         parent::__construct();
         
-        
         // creates the form
         $this->form = new BootstrapFormBuilder('form_search_Estagio');
         $this->form->setFormTitle('<h4>Estágios para Análise</h4>');
         
-
         // create the form fields
         $nome_aluno = new TEntry('nome_aluno');
         $nome_curso = new TEntry('nome_curso');
         $status_estagio = new TEntry('status_estagio');
-
 
         // add the fields
         $this->form->addFields( [ new TLabel('Aluno') ], [ $nome_aluno ] );
         $this->form->addFields( [ new TLabel('Curso') ], [ $nome_curso ] );
         $this->form->addFields( [ new TLabel('Status') ], [ $status_estagio ] );
 
-
         // set sizes
         $nome_aluno->setSize('80%');
         $nome_curso->setSize('80%');
         $status_estagio->setSize('80%');
 
-        
         // keep the form filled during navigation with session data
         $this->form->setData( TSession::getValue(__CLASS__ . '_filter_data') );
-        
         
         // add the search form actions
         $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');        
@@ -52,7 +43,6 @@ class EstagioPendenteProfessorList extends TPage
         $this->datagrid->disableDefaultClick();
         $this->datagrid->setGroupColumn('nome_aluno', '<b>{nome_aluno} - HORAS PENDENTES: {CalcularHorasPendentes} horas</b>');
         
-
         // creates the datagrid columns
         $column_nome_aluno = new TDataGridColumn('nome_aluno', 'Aluno', 'left');
         $column_nome_curso = new TDataGridColumn('nome_curso', 'Curso', 'left');
@@ -60,9 +50,7 @@ class EstagioPendenteProfessorList extends TPage
         $column_status_estagio = new TDataGridColumn('status_estagio', 'Status', 'center');
         $column_data_reg = new TDataGridColumn('data_reg', 'Registrado em', 'center');
 
-
         $column_status_estagio->setTransformer( array($this, 'setStatusColor') );
-
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_nome_aluno);
@@ -71,14 +59,12 @@ class EstagioPendenteProfessorList extends TPage
         $this->datagrid->addColumn($column_status_estagio);
         $this->datagrid->addColumn($column_data_reg);
 
-
         $action_download = new TDataGridAction([$this, 'onDownload']);
         $action_download->setUseButton(TRUE);
         $action_download->setButtonClass('btn btn-default');
         $action_download->setLabel('Download comprovante');
         $action_download->setImage('fas:cloud-download-alt blue');
         $action_download->setField('id');
-        
         
         $action_analisar = new TDataGridAction(['EstagioAnaliseProfessorForm', 'onEdit']);
         $action_analisar->setUseButton(TRUE);
@@ -87,20 +73,16 @@ class EstagioPendenteProfessorList extends TPage
         $action_analisar->setImage('fas:pencil-alt orange');
         $action_analisar->setField('id');
         
-        
         $this->datagrid->addAction($action_download);
         $this->datagrid->addAction($action_analisar);
         
-        
         // create the datagrid model
         $this->datagrid->createModel();
-        
         
         // creates the page navigation
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction([$this, 'onReload']));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
-        
         
         // vertical box container
         $container = new TVBox;
@@ -111,7 +93,6 @@ class EstagioPendenteProfessorList extends TPage
         
         parent::add($container);
     }
-
 
     public function setStatusColor($column_status_estagio, $object, $row)
     {
@@ -134,7 +115,6 @@ class EstagioPendenteProfessorList extends TPage
             return $column_status_estagio;
         }    
     }
-    
     
     public static function onDownload($param)
     {
@@ -166,7 +146,6 @@ class EstagioPendenteProfessorList extends TPage
         }
     }
     
-
     public function onSearch()
     {
         $data = $this->form->getData();
@@ -241,7 +220,7 @@ class EstagioPendenteProfessorList extends TPage
             TTransaction::open('Felabs_DB');
             
             $repository = new TRepository('Estagio');
-            $limit = 20;
+            $limit = 10;
 
             $criteria = new TCriteria;
             $criteria->add(new TFilter('cod_prof_responsavel', '=', $professor->Codprofessor));

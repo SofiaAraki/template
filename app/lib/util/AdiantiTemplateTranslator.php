@@ -4,7 +4,7 @@ use Adianti\Core\AdiantiCoreTranslator;
 /**
  * AdiantiTemplateTranslator
  *
- * @version    8.5
+ * @version    8.6
  * @package    util
  * @author     Pablo Dall'Oglio
  * @copyright  Copyright (c) 2006 Adianti Solutions Ltd. (http://www.adianti.com.br)
@@ -3814,6 +3814,69 @@ class AdiantiTemplateTranslator
         $this->messages['it'][] = 'Data di fine';
         $this->messages['fr'][] = 'Date de fin';
         $this->messages['de'][] = 'Enddatum';
+
+        $this->messages['en'][] = 'Insert sample data';
+        $this->messages['pt'][] = 'Inserir amostras de dados';
+        $this->messages['es'][] = 'Insertar datos de muestra';
+        $this->messages['it'][] = 'Inserire dati di esempio';
+        $this->messages['fr'][] = 'Insérer des données d\'exemple';
+        $this->messages['de'][] = 'Beispieldaten einfügen';
+
+        $this->messages['en'][] = 'Do you want to insert the sample data?';
+        $this->messages['pt'][] = 'Deseja inserir as amostras de dados?';
+        $this->messages['es'][] = '¿Desea insertar los datos de muestra?';
+        $this->messages['it'][] = 'Vuoi inserire i dati di esempio?';
+        $this->messages['fr'][] = 'Souhaitez-vous insérer les données d\'exemple ?';
+        $this->messages['de'][] = 'Möchten Sie die Beispieldaten einfügen?';
+
+        $this->messages['en'][] = 'Sample data inserted successfully';
+        $this->messages['pt'][] = 'Amostras de dados inseridas com sucesso';
+        $this->messages['es'][] = 'Datos de muestra insertados con éxito';
+        $this->messages['it'][] = 'Dati di esempio inseriti con successo';
+        $this->messages['fr'][] = 'Données d\'exemple insérées avec succès';
+        $this->messages['de'][] = 'Beispieldaten erfolgreich eingefügt';
+
+        $this->messages['en'][] = 'Once an hour';
+        $this->messages['pt'][] = 'Uma vez por hora';
+        $this->messages['es'][] = 'Una vez por hora';
+        $this->messages['it'][] = "Una volta all'ora";
+        $this->messages['fr'][] = 'Une fois par heure';
+        $this->messages['de'][] = 'Einmal pro Stunde';
+        
+        $this->messages['en'][] = 'Permission to use this program will be automatically granted to all user groups selected here';
+        $this->messages['pt'][] = 'A permissão de uso deste programa será concedida automaticamente à todos grupos de usuários selecionados aqui';
+        $this->messages['es'][] = 'El permiso para usar este programa se concederá automáticamente a todos los grupos de usuarios seleccionados aquí';
+        $this->messages['it'][] = 'L\'autorizzazione all\'uso di questo programma verrà concessa automaticamente a tutti i gruppi di utenti selezionati qui';
+        $this->messages['fr'][] = 'L\'autorisation d\'utiliser ce programme sera automatiquement accordée à tous les groupes d\'utilisateurs sélectionnés ici';
+        $this->messages['de'][] = 'Die Berechtigung zur Nutzung dieses Programms wird automatisch allen hier ausgewählten Benutzergruppen erteilt';
+
+        $this->messages['en'][] = 'When defining a restricted method, only users with the selected role will be able to execute that method';
+        $this->messages['pt'][] = 'Ao definir um método restrito, apenas usuários com o papel selecionado poderão executar aquele método';
+        $this->messages['es'][] = 'Al definir un método restringido, solo los usuarios con el rol seleccionado podrán ejecutar dicho método';
+        $this->messages['it'][] = 'Quando si definisce un metodo con restrizioni, solo gli utenti con il ruolo selezionato potranno eseguire quel metodo';
+        $this->messages['fr'][] = 'Lors de la définition d\'une méthode restreinte, seuls les utilisateurs ayant le rôle sélectionné pourront exécuter cette méthode';
+        $this->messages['de'][] = 'Beim Definieren einer eingeschränkten Methode können nur Benutzer mit der ausgewählten Rolle diese Methode ausführen';
+
+        $this->messages['en'][] = 'The programs selected here will automatically have access permission granted to this user group';
+        $this->messages['pt'][] = 'Os programas selecionados aqui terão a permissão de acesso concedida automaticamente à este grupo de usuários';
+        $this->messages['es'][] = 'Los programas seleccionados aquí tendrán el permiso de acceso concedido automáticamente a este grupo de usuarios';
+        $this->messages['it'][] = 'I programmi selezionati qui avranno automaticamente il permesso di accesso concesso a questo gruppo di utenti';
+        $this->messages['fr'][] = 'Les programmes sélectionnés ici auront automatiquement l\'autorisation d\'accès accordée à ce groupe d\'utilisateurs';
+        $this->messages['de'][] = 'Den hier ausgewählten Programmen wird automatisch die Zugriffsberechtigung für diese Benutzergruppe erteilt';
+
+        $this->messages['en'][] = 'Select all users who will be part of this group';
+        $this->messages['pt'][] = 'Selecione todos os usuários que farão parte deste grupo';
+        $this->messages['es'][] = 'Seleccione todos los usuarios que formarán parte de este grupo';
+        $this->messages['it'][] = 'Seleziona tutti gli utenti che faranno parte di questo gruppo';
+        $this->messages['fr'][] = 'Sélectionnez tous les utilisateurs qui feront partie de ce groupe';
+        $this->messages['de'][] = 'Wählen Sie alle Benutzer aus, die Teil dieser Gruppe sein werden';
+
+        $this->messages['en'][] = 'Disable two-factor authentication';
+        $this->messages['pt'][] = 'Desabilitar autenticação de dois fatores';
+        $this->messages['es'][] = 'Deshabilitar la autenticación de dos factores';
+        $this->messages['it'][] = 'Disabilitare l\'autenticazione a due fattori';
+        $this->messages['fr'][] = 'Désactiver l\'authentification à deux facteurs';
+        $this->messages['de'][] = 'Zwei-Faktor-Authentifizierung deaktivieren';
 
         foreach ($this->messages as $lang => $messages)
         {

@@ -43,7 +43,7 @@ class ContratoAlunoListDigitalizacao extends TPage
         
         // add the search form actions
         $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
-        //$this->form->addActionLink(_t('New'), new TAction(['', 'onEdit']), 'fa:plus green');
+        //$this->form->addActionLink('Novo', new TAction(['', 'onEdit']), 'fa:plus green');
         
         
         // creates a Datagrid

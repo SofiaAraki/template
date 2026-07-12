@@ -2,7 +2,7 @@
 /**
  * SystemUnitList
  *
- * @version    8.5
+ * @version    8.6
  * @package    control
  * @subpackage admin
  * @author     Pablo Dall'Oglio
@@ -43,10 +43,12 @@ class SystemUnitList extends TStandardList
         $name = new TEntry('name');
         
         // add the fields
-        $this->form->addFields( [new TLabel('Id')], [$id] );
-        $this->form->addFields( [new TLabel(_t('Name'))], [$name] );
+        $this->form->addFields( [new TLabel('Id')] );
+        $this->form->addFields( [$id] );
+        $this->form->addFields( [new TLabel(_t('Name'))] );
+        $this->form->addFields( [$name] );
 
-        $id->setSize('30%');
+        $id->setSize('100%');
         $name->setSize('100%');
         
         // keep the form filled during navigation with session data
@@ -65,7 +67,7 @@ class SystemUnitList extends TStandardList
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'center', 50);
         $column_name = new TDataGridColumn('name', _t('Name'), 'left');
-        $column_custom = new TDataGridColumn('systemuser_codlegado', _t('Custom code'), 'left');
+        $column_custom = new TDataGridColumn('custom_code', _t('Custom code'), 'left');
         
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);

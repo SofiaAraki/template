@@ -258,7 +258,7 @@ class DespesaProfessorParecerForm extends TPage
         //$this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'far:save')->addStyleClass('btn-primary');
         //$this->form->addAction(_t('Save'), new TAction(array($this, 'onSave')), 'far:save red');
         $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
+        
         //$this->form->addAction('Limpar formulário', new TAction([$this, 'onClear']), 'fa:eraser #dd5a43');
         //$this->form->addAction(('Nova Despesa'),  new TAction(array($this, 'onClear')), 'bs:plus-sign green');
         //$this->form->addAction(('Listar Despesas Realizadas'),  new TAction(array('DespesaList','onReload')), 'fa:list blue');

@@ -39,7 +39,6 @@ class CarteiraAluno extends TPage
             $criteria_tecnico->add(new TFilter('AnoMatricula', '=', $anoAtual)); 
             $criteria_tecnico->add(new TFilter('CodEntidade', '=', 1)); 
 
-
             //Técnico Connext
             $cod_curso = [121, 130, 131];
             

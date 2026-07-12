@@ -130,7 +130,7 @@ class ConteudoProgramaticoFormEdit extends TPage
         $this->form->addContent( [$panel] );
 
         //$btn = $this->form->addAction( _t('Save'),  new TAction([$this, 'onSave']), 'fa:save');
-        //$btn->class = 'btn btn-sm btn-primary';
+        //
         //$this->form->addAction( _t('Clear'), new TAction([$this, 'onClear']), 'fa:eraser red');
         $this->form->addAction('Voltar',new TAction(['ConteudoProgramaticoList','onReload']),'far:arrow-left blue');
 

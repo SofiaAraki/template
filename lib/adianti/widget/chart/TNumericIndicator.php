@@ -9,7 +9,7 @@ use Exception;
 /**
  * Numeric indicator widget
  *
- * @version    8.5
+ * @version    8.6
  * @package    widget
  * @subpackage chart
  * @author     Pablo Dall'Oglio

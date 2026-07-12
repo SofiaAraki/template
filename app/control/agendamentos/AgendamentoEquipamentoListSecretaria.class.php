@@ -261,7 +261,7 @@ class AgendamentoEquipamentoListSecretaria extends TPage
             $user = new SystemUser($userid);
 
             $repository = new TRepository('AgendamentoEquipamento');
-            $limit = 30;
+            $limit = 10;
             $criteria = new TCriteria;
 
             if ($loggedUnit == 2) {

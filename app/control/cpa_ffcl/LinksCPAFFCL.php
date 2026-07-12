@@ -1,8 +1,6 @@
 <?php
 /**
-
  * @author     Pamella Scapim
-
  */
 class LinksCPAFFCL extends TPage
 {
@@ -15,12 +13,9 @@ class LinksCPAFFCL extends TPage
                        
        try 
        {
-
         TTransaction::open('Felabs_DB');
         $logged  = SystemUser::newFromLogin(TSession::getValue('login'));
         $loggedUnit = TSession::getValue('userunitid');
-        
-        
 
         TTransaction::open('dados_fei');
         $criteria_cpa_ffcl = new TCriteria;                        
@@ -60,7 +55,6 @@ class LinksCPAFFCL extends TPage
                         $iframe->scrolling = "yes";
                         $iframe->width = "100%";
                         $iframe->height = "700px";
-                        
                         break;
                     case 3:
                         $iframe = new TElement('iframe');
@@ -79,7 +73,6 @@ class LinksCPAFFCL extends TPage
                         $iframe->scrolling = "yes";
                         $iframe->width = "100%";
                         $iframe->height = "700px";
-                        
                         break;
                     case 7:
                         $iframe = new TElement('iframe');
@@ -91,7 +84,6 @@ class LinksCPAFFCL extends TPage
                         $iframe->height = "700px";
                         break;                    
                 }
-
         } 
 
         else if ($CodCurso == 10) //Administração
@@ -170,9 +162,7 @@ class LinksCPAFFCL extends TPage
                     $iframe->scrolling = "yes";
                     $iframe->width = "100%";
                     $iframe->height = "700px";
-                    
                     break;
-                
             }
         }
 
@@ -296,70 +286,70 @@ class LinksCPAFFCL extends TPage
                     $iframe->height = "700px";
                     break; 
             }
+        }
 
-    } 
-    else if ($CodCurso == 67) //Engenharia Mecânica
-        {
-            switch ($EtapaMatricula)
+        else if ($CodCurso == 67) //Engenharia Mecânica
             {
-                case 1:
-                    $iframe = new TElement('iframe');
-                    $iframe->id = "iframe_external";
-                    $iframe->src = "https://forms.gle/Yj2jsRk8wcttVs7d7";
-                    $iframe->frameborder = "0";
-                    $iframe->scrolling = "yes";
-                    $iframe->width = "100%";
-                    $iframe->height = "700px";
-                    break;
-                case 2:
-                    $iframe = new TElement('iframe');
-                    $iframe->id = "iframe_external";
-                    $iframe->src = "https://forms.gle/A9812k1oafY2suHr5";
-                    $iframe->frameborder = "0";
-                    $iframe->scrolling = "yes";
-                    $iframe->width = "100%";
-                    $iframe->height = "700px";
-                    break;
-                case 3:
-                    $iframe = new TElement('iframe');
-                    $iframe->id = "iframe_external";
-                    $iframe->src = "https://forms.gle/ARhTw7WzoR3MHoYD9";
-                    $iframe->frameborder = "0";
-                    $iframe->scrolling = "yes";
-                    $iframe->width = "100%";
-                    $iframe->height = "700px";
-                    break;
-                case 5:
-                    $iframe = new TElement('iframe');
-                    $iframe->id = "iframe_external";
-                    $iframe->src = "https://forms.gle/2jEa5QU4fTexCBm7A";
-                    $iframe->frameborder = "0";
-                    $iframe->scrolling = "yes";
-                    $iframe->width = "100%";
-                    $iframe->height = "700px";                    
-                    break;
-                case 7:
-                    $iframe = new TElement('iframe');
-                    $iframe->id = "iframe_external";
-                    $iframe->src = "https://forms.gle/msoCsTKvXmrWvkss5";
-                    $iframe->frameborder = "0";
-                    $iframe->scrolling = "yes";
-                    $iframe->width = "100%";
-                    $iframe->height = "700px";
-                    break;
-                case 9:
-                    $iframe = new TElement('iframe');
-                    $iframe->id = "iframe_external";
-                    $iframe->src = "https://forms.gle/5So6SW4nMUqAtyKn7";
-                    $iframe->frameborder = "0";
-                    $iframe->scrolling = "yes";
-                    $iframe->width = "100%";
-                    $iframe->height = "700px";
-                    break; 
-            }
+                switch ($EtapaMatricula)
+                {
+                    case 1:
+                        $iframe = new TElement('iframe');
+                        $iframe->id = "iframe_external";
+                        $iframe->src = "https://forms.gle/Yj2jsRk8wcttVs7d7";
+                        $iframe->frameborder = "0";
+                        $iframe->scrolling = "yes";
+                        $iframe->width = "100%";
+                        $iframe->height = "700px";
+                        break;
+                    case 2:
+                        $iframe = new TElement('iframe');
+                        $iframe->id = "iframe_external";
+                        $iframe->src = "https://forms.gle/A9812k1oafY2suHr5";
+                        $iframe->frameborder = "0";
+                        $iframe->scrolling = "yes";
+                        $iframe->width = "100%";
+                        $iframe->height = "700px";
+                        break;
+                    case 3:
+                        $iframe = new TElement('iframe');
+                        $iframe->id = "iframe_external";
+                        $iframe->src = "https://forms.gle/ARhTw7WzoR3MHoYD9";
+                        $iframe->frameborder = "0";
+                        $iframe->scrolling = "yes";
+                        $iframe->width = "100%";
+                        $iframe->height = "700px";
+                        break;
+                    case 5:
+                        $iframe = new TElement('iframe');
+                        $iframe->id = "iframe_external";
+                        $iframe->src = "https://forms.gle/2jEa5QU4fTexCBm7A";
+                        $iframe->frameborder = "0";
+                        $iframe->scrolling = "yes";
+                        $iframe->width = "100%";
+                        $iframe->height = "700px";                    
+                        break;
+                    case 7:
+                        $iframe = new TElement('iframe');
+                        $iframe->id = "iframe_external";
+                        $iframe->src = "https://forms.gle/msoCsTKvXmrWvkss5";
+                        $iframe->frameborder = "0";
+                        $iframe->scrolling = "yes";
+                        $iframe->width = "100%";
+                        $iframe->height = "700px";
+                        break;
+                    case 9:
+                        $iframe = new TElement('iframe');
+                        $iframe->id = "iframe_external";
+                        $iframe->src = "https://forms.gle/5So6SW4nMUqAtyKn7";
+                        $iframe->frameborder = "0";
+                        $iframe->scrolling = "yes";
+                        $iframe->width = "100%";
+                        $iframe->height = "700px";
+                        break; 
+                }
+        }
 
-    } 
-    else if ($CodCurso == 104) //Engenharia Elétrica
+        else if ($CodCurso == 104) //Engenharia Elétrica
         {
             switch ($EtapaMatricula)
             {
@@ -400,19 +390,17 @@ class LinksCPAFFCL extends TPage
                     $iframe->height = "700px";                    
                     break;
                 }
+            }
+        }
 
+        TTransaction::close();
+        TTransaction::close();
     }
+    catch (Exception $e)
+    {
+        new TMessage('error', $e->getMessage());            
+        TTransaction::rollback();
     }
-    TTransaction::close();
-    TTransaction::close();
-}
-catch (Exception $e)
-{
-    new TMessage('error', $e->getMessage());            
-    TTransaction::rollback();
-} 
-       
-       parent::add($iframe);
-       
+       parent::add($iframe);  
     }
 }

@@ -61,7 +61,6 @@ class SolicitacaoAlunoForm extends TPage
         $items['6'] ='NEAD';
       //  $items['8'] ='VAN GOGH';
      
-        
         $unidade->addItems($items);
         $unidade->setLayout('horizontal');
 
@@ -76,7 +75,6 @@ class SolicitacaoAlunoForm extends TPage
 
         $filename->setCompleteAction(new TAction(array($this, 'onComplete')));
         $filename->setAllowedExtensions( ['gif', 'png', 'jpg', 'jpeg', 'pdf', 'doc', 'docx', 'txt'] );
-
 
         // add the fields
         $this->form->addFields( [new TLabel('Código do aluno')], [$cod_aluno]);
@@ -99,27 +97,19 @@ class SolicitacaoAlunoForm extends TPage
         $tipo_solicitacao->addValidation('tipo_solicitacao', new TRequiredValidator);
         $unidade->addValidation('unidade', new TRequiredValidator);
 
-        
-        
-
         $exit_action = new TAction(array($this, 'onExitAction'));
         $cod_aluno->setExitAction($exit_action);
         
         $cod_aluno->setSize(200);
         $nome_aluno->setSize('100%');
         $matricula_aluno->setSize('100%');
-
      
         $nome_aluno->setEditable(FALSE);
         $matricula_aluno->setEditable(FALSE);
 
-
-        
-         
         // create the form actions
-        $btn = $this->form->addAction( _t('Save'), new TAction(array($this, 'onSave')), 'far:save');
-        $btn->class = 'btn btn-sm btn-primary';
-        $this->form->addAction(_t('Back'),new TAction(array('SolicitacaoAlunoList','onReload')),'far:arrow-alt-circle-left blue');
+        $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
+        $this->form->addAction('Voltar',new TAction(['SolicitacaoAlunoList','onReload']),'far:arrow-left blue');
       //  $btn1 = $this->form->addAction( 'Salvar e Criar Outra', new TAction(array($this, 'onSaveNew')), 'far:plus-square');
        // $btn1->class = 'btn btn-sm btn-primary';
     //    $this->form->addQuickAction(_t('New'),  new TAction(array($this, 'onClear')), 'bs:plus-sign green');
@@ -130,9 +120,7 @@ class SolicitacaoAlunoForm extends TPage
       //  $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         
-        parent::add($container); 
-
-        
+        parent::add($container);        
     }
 
     /**
@@ -146,39 +134,32 @@ class SolicitacaoAlunoForm extends TPage
 
         if($param['unidade'] == 1){
 
-        $optionsCNSC = [];
+            $optionsCNSC = [];
 
-        $precosCNSC = SolicitacaoCnsc::getObjects();
+            $precosCNSC = SolicitacaoCnsc::getObjects();
 
-        foreach($precosCNSC as $precoCNSC){
-            $optionsCNSC[$precoCNSC->id] = $precoCNSC->tipo_doc_cnsc;
-        }
+            foreach($precosCNSC as $precoCNSC){
+                $optionsCNSC[$precoCNSC->id] = $precoCNSC->tipo_doc_cnsc;
+            }
 
-
-        TCombo::reload('form_SolicitacaoAluno', 'tipo_solicitacao', $optionsCNSC);
+            TCombo::reload('form_SolicitacaoAluno', 'tipo_solicitacao', $optionsCNSC);
         }
 
         if($param['unidade'] == 2 || $param['unidade'] == 6){
         
-        $optionsFFCL = [];
+            $optionsFFCL = [];
 
-        $precosFFCL = SolicitacaoFfcl::getObjects();
+            $precosFFCL = SolicitacaoFfcl::getObjects();
 
-        foreach($precosFFCL as $precoFFCL){
-            $optionsFFCL[$precoFFCL->id] = $precoFFCL->tipo_doc_ffcl;
+            foreach($precosFFCL as $precoFFCL){
+                $optionsFFCL[$precoFFCL->id] = $precoFFCL->tipo_doc_ffcl;
+            }
+
+            TCombo::reload('form_SolicitacaoAluno', 'tipo_solicitacao', $optionsFFCL);
         }
-
-        TCombo::reload('form_SolicitacaoAluno', 'tipo_solicitacao', $optionsFFCL);
-        }
-
-
-
 
         TTransaction::close();
     }
-
-
-
 
     public static function onExitAction($param) //INSERE NOME, EMAIL E DADOS DA MATRÍCULA
     {

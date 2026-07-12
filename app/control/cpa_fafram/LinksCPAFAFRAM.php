@@ -1,13 +1,6 @@
 <?php
 /**
  * SinglePageView
- *
- * @version    1.0
- * @package    samples
- * @subpackage tutor
- * @author     Pablo Dall'Oglio
- * @copyright  Copyright (c) 2006 Adianti Solutions Ltd. (http://www.adianti.com.br)
- * @license    http://www.adianti.com.br/framework-license
  */
 class LinksCPAFAFRAM extends TPage
 {
@@ -17,16 +10,13 @@ class LinksCPAFAFRAM extends TPage
     public function __construct()
     {
         parent::__construct();
-
-                
+         
        try 
        {
-
         TTransaction::open('Felabs_DB');
         $logged  = SystemUser::newFromLogin(TSession::getValue('login'));
         $loggedUnit = TSession::getValue('userunitid');
         
-
         TTransaction::open('dados_fei');
         $criteria_cpa_fafram = new TCriteria;                        
         $criteria_cpa_fafram->add(new TFilter('Codaluno', '=', $logged->systemuser_codlegado));            

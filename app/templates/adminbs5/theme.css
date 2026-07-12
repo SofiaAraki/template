@@ -9,8 +9,8 @@
     --ad-font-size-mini: 0.6rem;
     --ad-font-size-menu: 0.95rem;
     --ad-font-size-super: 1.25rem;
-    --ad-menu-item-color: #4d93ff;
-    --ad-menu-size: 300px;
+    --ad-menu-item-color: #538fec;
+    --ad-menu-size: 340px;
     /* outras que podem ser personalizadas
     border-radius: var(--bs-border-radius);
     border: var(--bs-border-width) solid var(--bs-border-color);
@@ -22,7 +22,7 @@
 }
 
 [data-bs-theme=light] {
-    --bs-dark-bg-subtle: #f4f6f9;
+    --bs-dark-bg-subtle: rgb(240, 241, 247);
 }
 
 iframe
@@ -122,6 +122,9 @@ blockquote {
     border: var(--bs-border-width) solid rgba(255, 255, 255, 0.15);
 }
 
+.nav-pills {
+    --bs-nav-pills-link-active-bg: #607ba3;
+}
 /********************************* CALENDAR ********************************************/
 .system-calendar {
     display: flex;
@@ -140,12 +143,13 @@ blockquote {
 }
 
 .card {
-    --bs-card-box-shadow: 0 0 5px 0 rgb(43 43 43 / 10%), 0 8px 6px -7px rgb(43 43 43 / 10%);
+    --bs-card-box-shadow: 0px 12px 18px 0 rgb(43 43 43 / 10%);
     --bs-card-cap-padding-y: 0.75rem;
     --bs-card-cap-padding-x: 1.25rem;
+    --bs-border-color-translucent: rgba(0, 0, 0, 0.1);
 }
 
-[data-menu-theme=dark] .container-fluid .card {
+.container-fluid .card {
     box-shadow: var(--bs-card-box-shadow);
 }
 
@@ -571,6 +575,8 @@ div[page_name="SystemContactsList"] .card {
 #table_list_container .table-list .card .card-header.card-item-title
 {
     background: var(--bs-light-bg-subtle) !important;
+    border-bottom: 0;
+    font-weight: bold;
 }
 
 #table_list_container .card .card-header.card-item-title
@@ -584,7 +590,8 @@ div[page_name="SystemContactsList"] .card {
     padding-right: 0.5rem;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
-}/****************************** DATAGRIDS **************************************/
+}
+/****************************** DATAGRIDS **************************************/
 .card-body > .table {
     margin-bottom: 0;
 }
@@ -1083,7 +1090,7 @@ table.vertical-middle td
 
 .container-fluid
 {
-    height: 100%;
+    /* height: 100%; */
 }
 
 #adianti_div_content
@@ -1478,9 +1485,9 @@ body.boxed-layout .footer>.container-fluid {
 }
 
 @media (min-width:767.98px) {
-    /*[data-menu-theme=light] #sidebar:not(.collapsed) {
-        box-shadow: 0 2px 2px rgba(0,0,0,.25),0 10px 5px rgba(0,0,0,.22), inset 5px 2px 0px -88px rgba(0,0,0,0.1) !important;
-    }*/
+    [data-menu-theme=light] #sidebar:not(.collapsed) {
+        box-shadow: 0 10px 10px rgba(0,0,0,.05),0 10px 10px rgba(0,0,0,.22), inset -7px 2px 0px -6px rgba(0,0,0,0.1) !important;
+    }
     [data-menu-theme=light] #menu-wrapper:not(.collapsed) {
         border-right: var(--bs-border-width) solid rgba(0,0,0,0.1) !important;
     }
@@ -1677,7 +1684,7 @@ a.sidebar-link.active, a.sidebar-link.active:hover {
 
 [data-menu-theme=dark] #module-menu {
     border-right: var(--bs-border-width) solid rgba(255,255,255,0.2) !important;
-    background: var(--bs-black);
+    background: #202020;
 }
 
 [data-menu-theme=light] #module-menu {
@@ -1696,12 +1703,14 @@ a.sidebar-link.active, a.sidebar-link.active:hover {
 }
 
 [data-menu-theme=light] .master-menu-item.active {
-    background: var(--ad-menu-item-color) !important;
-    color: white;
+    /*background: var(--ad-menu-item-color) !important;*/
+    /*color: white;*/
+    background: #ebebeb !important;
 }
 
 [data-menu-theme=dark] .master-menu-item.active {
-    background: var(--ad-menu-item-color) !important;
+    /*background: var(--ad-menu-item-color) !important;*/
+    background: #555555 !important;
     color: white;
 }
 
@@ -2122,11 +2131,15 @@ html[data-bs-theme="light"] .theme-toggle .fa-sun {
 }
 
 .ui-dialog > .ui-dialog-titlebar > .ui-button {
-    border-radius: 50%;
     width: 24px;
     height: 24px;
-    background-color: var(--bs-secondary-bg-subtle);
-    border-color: var(--bs-secondary-border-subtle);
+    background-color: var(--bs-dark-bg-subtle);
+    border-radius: var(--bs-border-radius);
+    border-color: var(--bs-secondary-bg-subtle);
+}
+
+.ui-state-active .ui-icon, .ui-button:active .ui-icon {
+    background-image: url(../../../lib/jquery/css/images/ui-icons_777777_256x240.png);
 }
 
 .ui-dialog-title {
@@ -2147,4 +2160,9 @@ html[data-bs-theme="light"] .theme-toggle .fa-sun {
 .ui-dialog .ui-dialog-buttonpane {
     border-color: var(--bs-border-color);
     background: var(--bs-body-bg);
+}
+
+.ui-widget-overlay {
+    background: #000;
+    opacity: .2;
 }

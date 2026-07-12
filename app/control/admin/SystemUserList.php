@@ -2,7 +2,7 @@
 /**
  * SystemUserList
  *
- * @version    8.5
+ * @version    8.6
  * @package    control
  * @subpackage admin
  * @author     Pablo Dall'Oglio
@@ -221,6 +221,14 @@ class SystemUserList extends TPage
         $action_person->setFields(['id','login']);
         $this->datagrid->addAction($action_person);
         
+        $action_unlock = new TDataGridAction(array($this, 'onUnlock'));
+        $action_unlock->setButtonClass('btn btn-default');
+        $action_unlock->setLabel(_t('Disable two-factor authentication'));
+        $action_unlock->setImage('fa:unlock gray');
+        $action_unlock->setFields(['id','login']);
+        $action_unlock->setDisplayCondition([$this,'displayUnlock']);
+        $this->datagrid->addAction($action_unlock);
+        
         // create the datagrid model
         $this->datagrid->createModel();
         
@@ -400,7 +408,7 @@ class SystemUserList extends TPage
     /**
      * Impersonation user
      */
-    public function onImpersonationNativo($param)
+    public function onImpersonationAdianti($param)
     {
         try
         {
@@ -421,72 +429,6 @@ class SystemUserList extends TPage
         }
     }
 
-    /**
-     * Impersonation user (Com Dump de Informações)
-     */
-    public function onImpersonationDump($param)
-    {
-        try
-        {
-            $login_impersonated = TSession::getValue('login');
-
-            TTransaction::open('permission');
-            TSession::regenerate();
-            $user = SystemUser::validate( $param['login'] );
-            
-            // 1. Carrega as variáveis nativas do Adianti
-            ApplicationAuthenticationService::loadSessionVars($user);
-            
-            // 2. Busca o vínculo de unidades na tabela nativa do framework
-            $user_units = SystemUserUnit::where('system_user_id', '=', $user->id)
-                                        ->getIndexedArray('system_unit_id');
-            
-            if (!empty($user_units))
-            {
-                TSession::setValue('userunitids', $user_units);
-                TSession::setValue('user_unit', reset($user_units));
-            }
-
-            // =========================================================================
-            // INÍCIO DO DUMP DE DEBUG
-            // =========================================================================
-            echo "<div style='background: #1e1e24; color: #64e572; padding: 20px; font-family: monospace; border-radius: 8px; margin: 20px; border: 2px solid #ff9f43; z-index: 99999; position: relative;'>";
-            echo "<h2 style='color: #ff9f43; border-bottom: 1px solid #ff9f43; padding-bottom: 10px;'>DUMP DE PERSONIFICAÇÃO</h2>";
-            
-            echo "<h3>1. Dados do Objeto SystemUser (Banco de Dados):</h3>";
-            echo "<pre style='background: #2d2d34; color: #fff; padding: 10px; overflow-x: auto;'>";
-            print_r($user->toArray());
-            echo "</pre>";
-
-            echo "<h3>2. Unidades encontradas para este usuário (SystemUserUnit):</h3>";
-            echo "<pre style='background: #2d2d34; color: #fff; padding: 10px;'>";
-            print_r($user_units);
-            echo "</pre>";
-
-            echo "<h3>3. Estado atual da Sessão ($_SESSION) após carregar o Aluno:</h3>";
-            echo "<pre style='background: #2d2d34; color: #fff; padding: 10px;'>";
-            print_r($_SESSION);
-            echo "</pre>";
-            echo "</div>";
-            
-            // Paramos a execução aqui (die) para o redirecionamento não limpar a tela
-            die(); 
-            // =========================================================================
-
-            SystemAccessLogService::registerLogin(true, $login_impersonated);
-            AdiantiCoreApplication::gotoPage('EmptyPage');
-            TTransaction::close();
-        }
-        catch (Exception $e)
-        {
-            new TMessage('error', $e->getMessage());
-            TTransaction::rollback();
-        }
-    }
-
-    /**
-     * Impersonation user
-     */
     public function onImpersonation($param)
     {
         try
@@ -523,6 +465,40 @@ class SystemUserList extends TPage
             AdiantiCoreApplication::gotoPage('EmptyPage');
             
             TTransaction::close();
+        }
+        catch (Exception $e)
+        {
+            new TMessage('error', $e->getMessage());
+            TTransaction::rollback();
+        }
+    }
+    
+    /**
+     * Display condition for unlock
+     */
+    public function displayUnlock($object)
+    {
+        return !empty($object->otp_secret);
+    }
+    
+    /**
+     *
+     */
+    public function onUnlock($param)
+    {
+        try
+        {
+            TTransaction::open('permission');
+            $user = SystemUser::find($param['id']);
+            if ($user instanceof SystemUser)
+            {
+                $user->otp_secret = null;
+                $user->store();
+            }
+            
+            TTransaction::close();
+            
+            $this->onReload($param);
         }
         catch (Exception $e)
         {

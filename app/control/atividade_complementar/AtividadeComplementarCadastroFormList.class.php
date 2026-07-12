@@ -154,7 +154,6 @@ class AtividadeComplementarCadastroFormList extends TPage
 
         // create the form actions
         $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
-        $btn->class = 'btn btn-sm btn-primary';
         $this->form->addAction('Limpar campos', new TAction([$this, 'onClear']), 'fa:eraser red');
         $this->form->addAction('Voltar', new TAction(array('AtividadeComplementarCategoriaFormList','onReload')), 'fas:arrow-alt-circle-left blue');
         
@@ -331,8 +330,7 @@ class AtividadeComplementarCadastroFormList extends TPage
         $search_form->setData( TSession::getValue(__CLASS__.'_filter_data') );
         
 
-        $btn = $search_form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
-        $btn->class = 'btn btn-sm btn-primary';
+        $search_form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
         
         
         $page = TWindow::create('Filtros', 600, null);

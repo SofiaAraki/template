@@ -479,7 +479,7 @@ class EstagioSecretariaList extends TPage
             TTransaction::open('Felabs_DB');      
 
             $repository = new TRepository('Estagio');
-            $limit = 20;
+            $limit = 10;
 
             $criteria = new TCriteria;
             $criteria->add(new TFilter('cod_curso', 'IN', $items));

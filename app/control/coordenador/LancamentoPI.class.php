@@ -44,7 +44,7 @@ class LancamentoPI extends TPage
         
         // add the search form actions
         //$btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
-        //$btn->class = 'btn btn-sm btn-primary';
+        //
 
         $this->form->addQuickAction('Listar Turmas',  new TAction(array('CoordenadorPIList','onReload')), 'fa:list orange');
 
@@ -56,7 +56,6 @@ class LancamentoPI extends TPage
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
         
- 
         // creates the datagrid columns
         $column_Codaluno = new TDataGridColumn('Codaluno', 'Código', 'left');
         $column_Nome = new TDataGridColumn('NomeAluno', 'Nome', 'left'); 
@@ -65,7 +64,6 @@ class LancamentoPI extends TPage
         $column_TotalAcertosPI = new TDataGridColumn('totalacertosPI_widget', 'Acertos PI', 'left');
         $column_NotaNI = new TDataGridColumn('NotaNI_widget', 'Nota NI', 'left');        
         $column_Situacao = new TDataGridColumn('SituacaoMatricula', 'Matric.', 'center');
-        
         
         //Coluna da nota seleciona a nota na tabela notasfaltasfrente
         $column_TotalAcertosPI->setTransformer( function($value, $object, $row) {
@@ -118,8 +116,6 @@ class LancamentoPI extends TPage
         //$this->datagrid->addColumn($column_CodTurmaetapa);
         $this->datagrid->addColumn($column_IdentificacaoMatricula);
         $this->datagrid->addColumn($column_Situacao);
-        
-               
     
         // create the datagrid model
         $this->datagrid->createModel();
@@ -139,9 +135,7 @@ class LancamentoPI extends TPage
         parent::add($container);
     }
 
-    
-
-/**
+    /**
      * Save the datagrid objects
      */
     public static function onSaveInline($param)
@@ -176,7 +170,6 @@ class LancamentoPI extends TPage
         }
     }
     
-    
     /**
      * Load the datagrid with data
      */
@@ -184,13 +177,11 @@ class LancamentoPI extends TPage
     {
         try
         {
-            
             // open a transaction with database 'dados_fei'
             TTransaction::open('dados_fei');
             //TTransaction::setLogger(new TLoggerSTD); // standard output
             //TTransaction::setLogger(new TLoggerTXT('log3.txt')); // file
 
-            
             $sessao_coordenador = TSession::getValue('sessao_coordenador');
 
             //var_dump($sessao_coordenador);
@@ -205,19 +196,19 @@ class LancamentoPI extends TPage
             //echo $codprofessor;
             //die();
             
-           // $sessao_bimestre = TSession::getValue('sessao_bimestre');
-           // $Bimestre = $sessao_bimestre["Bimestre"];
+            // $sessao_bimestre = TSession::getValue('sessao_bimestre');
+            // $Bimestre = $sessao_bimestre["Bimestre"];
           
             // creates a repository for VwAlunosnotas
 
             $repository = new TRepository('VwAlunoMatriculaEtapa');
             $limit = 500;
+
             // creates a criteria
             $criteria = new TCriteria();
           
             $criteria->add(new TFilter('CodTurmaetapa', '=', $CodTurmaetapa));
           
-
             // default order
             if (empty($param['order']))
             {
@@ -227,7 +218,6 @@ class LancamentoPI extends TPage
             $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
             
-
             if (TSession::getValue('VwAlunosnotasList_filter_Codaluno')) {
                 $criteria->add(TSession::getValue('VwAlunosnotasList_filter_Codaluno')); // add the session filter
             }
@@ -244,7 +234,6 @@ class LancamentoPI extends TPage
                 $criteria->add(TSession::getValue('VwAlunosnotasList_filter_Resultado')); // add the session filter
             }
 
-            
             // load the objects according to criteria
             $objects = $repository->load($criteria, FALSE);
             
@@ -268,9 +257,9 @@ class LancamentoPI extends TPage
             $criteria->resetProperties();
             $count= $repository->count($criteria);
             
-           // $this->pageNavigation->setCount($count); // count of records
-           // $this->pageNavigation->setProperties($param); // order, page
-           // $this->pageNavigation->setLimit($limit); // limit
+            // $this->pageNavigation->setCount($count); // count of records
+            // $this->pageNavigation->setProperties($param); // order, page
+            // $this->pageNavigation->setLimit($limit); // limit
             
             //$this->form->clear(); 
 
@@ -287,7 +276,6 @@ class LancamentoPI extends TPage
         }
     }
     
-
     public function show()
     {
         // check if the datagrid is already loaded
@@ -305,12 +293,10 @@ class LancamentoPI extends TPage
         parent::show();
     }
 
-
-
     /* public function onPapeleta($param)
     {
         // get the parameter and shows the message
-       $key = $param['key'];
+        $key = $param['key'];
        
         //die();
         // get the course description
@@ -320,9 +306,9 @@ class LancamentoPI extends TPage
         {
             if ($key == $object->CodGradeDisciplinaEtapaFrente)
             {
-               // $CodDisciplina = $object->CodDisciplina;
-               // $etapa = $object->Etapa;
-               // $NomeDisciplina = $object->NomeDisciplina;
+                // $CodDisciplina = $object->CodDisciplina;
+                // $etapa = $object->Etapa;
+                // $NomeDisciplina = $object->NomeDisciplina;
 
                 //echo $object->CodGradeDisciplinaEtapaFrente;
                 //die();
@@ -339,12 +325,8 @@ class LancamentoPI extends TPage
                                                             'CodDisciplina'  => $object->CodDisciplina
                                                         )
                                    );
-        
             }
         }
-        
-
-        
 
        //var_dump(TSession::getValue('sessao_papeleta'));
        //die();
@@ -352,4 +334,3 @@ class LancamentoPI extends TPage
         TApplication::loadPage('VwPapeletaReport');
     }*/
 }
-

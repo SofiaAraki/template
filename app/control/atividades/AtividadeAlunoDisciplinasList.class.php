@@ -94,7 +94,7 @@ class AtividadeAlunoDisciplinasList extends TPage
 
         if(empty($alunoMatriculas))
         {
-            new TMessage('error', 'Indisponível. Por favor procure o atendimento.');
+            new TMessage('warning', 'Indisponível. Por favor procure o atendimento.');
             TTransaction::close();
         }
         else

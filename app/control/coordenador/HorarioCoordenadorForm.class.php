@@ -24,21 +24,21 @@ class HorarioCoordenadorForm extends TPage
         $nome_horario->placeholder = 'Ex: Agronomia Noturno 1º Semestre 2026/2';
 
         $curso->addItems([
-            'Agronomia' => 'Agronomia',
-            'Medicina Veterinária' => 'Medicina Veterinária',
-            'Enfermagem' => 'Enfermagem',
-            'Direito' => 'Direito',
-            'Psicologia' => 'Psicologia',
-            'Biomedicina' => 'Biomedicina',
             'Administração' => 'Administração',
-            'Ciências Contábeis' => 'Ciências Contábeis',
-            'Sistemas de Informação' => 'Sistemas de Informação',
-            'Engenharia de Produção' => 'Engenharia de Produção',
-            'Engenharia Civil' => 'Engenharia Civil',
-            'Engenharia Mecânica' => 'Engenharia Mecânica',
-            'Engenharia Elétrica' => 'Engenharia Elétrica',
-            'Pedagogia' => 'Pedagogia',
             'Agrocomputação' => 'Agrocomputação',
+            'Agronomia' => 'Agronomia',
+            'Biomedicina' => 'Biomedicina',
+            'Ciências Contábeis' => 'Ciências Contábeis',
+            'Direito' => 'Direito',
+            'Enfermagem' => 'Enfermagem',
+            'Engenharia Civil' => 'Engenharia Civil',
+            'Engenharia Elétrica' => 'Engenharia Elétrica',
+            'Engenharia Mecânica' => 'Engenharia Mecânica',
+            'Engenharia de Produção' => 'Engenharia de Produção',
+            'Medicina Veterinária' => 'Medicina Veterinária',
+            'Pedagogia' => 'Pedagogia',
+            'Psicologia' => 'Psicologia',
+            'Sistemas de Informação' => 'Sistemas de Informação',
         ]);
 
         $periodo->addItems([

@@ -138,7 +138,7 @@ class DiplomaMantenedoraFormList extends TPage
         
         // create the form actions
         $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
-        $btn->class = 'btn btn-sm btn-primary';
+        
 
         
         // creates a Datagrid

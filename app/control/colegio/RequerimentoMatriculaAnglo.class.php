@@ -222,18 +222,9 @@ class RequerimentoMatriculaAnglo extends TPage
          **/
          
         // create the form actions
-        //$btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'far:save');
-        //$btn->class = 'btn btn-sm btn-primary';
         $this->form->addAction('Voltar', new TAction(['ReqMatriculaAlunoListAnglo', 'onReload']), 'fas:arrow-left blue');
-
-
-        
-        
-        // add the action button
         $this->form->addAction('Gerar Requerimento',  new TAction(array('RequerimentoAlunoAngloFormView','onPrint'), $param), 'fa:check-circle green');
 
-
-        
         // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';

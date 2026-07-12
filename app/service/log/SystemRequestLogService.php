@@ -2,7 +2,7 @@
 /**
  * SystemRequestLogService
  *
- * @version    8.5
+ * @version    8.6
  * @package    service
  * @subpackage log
  * @author     Pablo Dall'Oglio

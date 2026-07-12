@@ -49,7 +49,7 @@ class QuestionarioPeriodoList extends TPage
         
         // add the search form actions
         $btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
-        $btn->class = 'btn btn-sm btn-primary';
+        
         $this->form->addQuickAction(_t('New'),  new TAction(array('QuestionarioPeriodoForm', 'onEdit')), 'bs:plus-sign green');
       //  $this->form->addQuickAction('troca',  new TAction(array($this, 'onTroca')), 'bs:plus-sign green');
         

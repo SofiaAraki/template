@@ -27,8 +27,6 @@ class CoordenadorPIList extends TPage
         $this->form->style = 'display: table;width:100%'; // change style
         $this->form->setFormTitle('CoordenadorPIList');
         
-
-        
         // create the form fields
         $NomeProfessor = new TEntry('NomeProfessor');
         $NomeCurso = new TEntry('NomeCurso');
@@ -41,25 +39,22 @@ class CoordenadorPIList extends TPage
 
 
         // add the fields
-        //$this->form->addQuickField('Professor', $NomeProfessor,  '100%' );
-        //$this->form->addQuickField('Nome do Curso', $NomeCurso,  '100%' );
- //     $this->form->addQuickField('Etapa', $Etapa,  '100%' );
-        //$this->form->addQuickField('Nome da Disciplina', $NomeDisciplina,  '100%' );
-        /*$this->form->addQuickField('Identificacao', $Identificacao,  '100%' );
-        $this->form->addQuickField('Ano', $Ano,  '100%' );
-        $this->form->addQuickField('Semestre', $Semestre,  '100%' );
-        $this->form->addQuickField('Mantida', $NomeEntidade,  '100%' );*/
-
+        // $this->form->addQuickField('Professor', $NomeProfessor,  '100%' );
+        // $this->form->addQuickField('Nome do Curso', $NomeCurso,  '100%' );
+        // $this->form->addQuickField('Etapa', $Etapa,  '100%' );
+        // $this->form->addQuickField('Nome da Disciplina', $NomeDisciplina,  '100%' );
+        // $this->form->addQuickField('Identificacao', $Identificacao,  '100%' );
+        // $this->form->addQuickField('Ano', $Ano,  '100%' );
+        // $this->form->addQuickField('Semestre', $Semestre,  '100%' );
+        // $this->form->addQuickField('Mantida', $NomeEntidade,  '100%' );
 
         // keep the form filled during navigation with session data
         //$this->form->setData( TSession::getValue('CoordenadorPI_filter_data') );
         
         // add the search form actions
-       // $btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
-       // $btn->class = 'btn btn-sm btn-primary';
-     // $this->form->addQuickAction( 'Show results', new TAction(array($this, 'showResults')), 'far:check-circle green' );
-        
-    //  $this->form->addQuickAction(_t('New'),  new TAction(array('', 'onEdit')), 'bs:plus-sign green');
+        //$btn = $this->form->addQuickAction(_t('Find'), new TAction(array($this, 'onSearch')), 'fa:search');
+        //$this->form->addQuickAction( 'Show results', new TAction(array($this, 'showResults')), 'far:check-circle green' );
+        //$this->form->addQuickAction(_t('New'),  new TAction(array('', 'onEdit')), 'bs:plus-sign green');
         
         // creates a Datagrid
         $this->datagrid = new TDataGrid;
@@ -68,23 +63,19 @@ class CoordenadorPIList extends TPage
         $this->datagrid->datatable = 'true';
         // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
 
-
         // creates the datagrid columns
         $column_NomeProfessor = new TDataGridColumn('NomeProfessor', 'Professor', 'left');
         $column_NomeCurso = new TDataGridColumn('NomeCurso', 'Curso', 'left','80%');
         $column_Identificacao = new TDataGridColumn('Identificacao', 'Turma', 'left','40%');
         $column_CodTurmaetapa = new TDataGridColumn('CodTurmaetapa', 'CodTurmaetapa', 'left');
 
-
         // add the columns to the DataGrid
         //$this->datagrid->addColumn($column_NomeProfessor);
         $this->datagrid->addColumn($column_Identificacao);
         $this->datagrid->addColumn($column_NomeCurso);
         //$this->datagrid->addColumn($column_CodTurmaetapa);
-
-        
-               
-         // creates the datagrid actions
+   
+        // creates the datagrid actions
         $action_select = new TDataGridAction(array($this, 'onSelect'));
         $action_select->setUseButton(FALSE);
         $action_select->setButtonClass('btn btn-default');
@@ -108,8 +99,6 @@ class CoordenadorPIList extends TPage
         //$this->pageNavigation = new TPageNavigation;
         //$this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         //$this->pageNavigation->setWidth($this->datagrid->getWidth());
-        
-
 
         // vertical box container
         $container = new TVBox;
@@ -121,7 +110,6 @@ class CoordenadorPIList extends TPage
         parent::add($container);
     }
     
-  
     /**
      * Register the filter in the session
      */
@@ -137,7 +125,6 @@ class CoordenadorPIList extends TPage
             $filter = new TFilter('NomeCurso', 'like', "%{$data->NomeCurso}%"); // create the filter
             TSession::setValue('CoordenadorPIList_filter_NomeCurso',   $filter); // stores the filter in the session
         }
-
 
         // fill the form with data again
         $this->form->setData($data);
@@ -157,16 +144,15 @@ class CoordenadorPIList extends TPage
     public function onSelect($param)
     {
         // get the parameter and shows the message
-       $key = $param['key'];
-       
+        $key = $param['key'];
+        
         //die();
         // get the course description
         //var_dump($key);
         //die();
         foreach ($this->datagrid->getItems() as $object)
         {
-                //echo $object->CodTurmaetapa;
-                
+            //echo $object->CodTurmaetapa;
             if ($key == $object->CodTurmaetapa)
             {
                // $CodDisciplina = $object->CodDisciplina;
@@ -186,20 +172,14 @@ class CoordenadorPIList extends TPage
                                                                 'CodCurso'       => $object->CodCurso
                                                             )
                                    );
-        
             }
         }
-        
-  
-        
        //var_dump(TSession::getValue('sessao_coordenador'));
        //die();
 
         TApplication::loadPage('LancamentoPI');
     }
     
-    
-
     public function onPapeletaPI($param)
     {
         // get the parameter and shows the message
@@ -232,21 +212,13 @@ class CoordenadorPIList extends TPage
                                                                 'CodCurso'       => $object->CodCurso
                                                             )
                                    );
-        
             }
         }
-        
-
-        
-
        //var_dump(TSession::getValue('sessao_papeletaPI'));
        //die();
 
         TApplication::loadPage('PINIReport');
     }
-    
-
-
 
     public function onReload($param = NULL)
     {
@@ -280,7 +252,6 @@ class CoordenadorPIList extends TPage
                 $repository = new TRepository('VwCoordenadorturmaetapa');
                 $limit = 50;
                 
-
                 // creates a criteria
                 $criteria = new TCriteria;
                 
@@ -302,17 +273,14 @@ class CoordenadorPIList extends TPage
                     
                      new TMessage('error', "Função não disponível para a Entidade");
                 }
-                
 
                 if (TSession::getValue('VwProfessordisciplinassemestreList_filter_NomeProfessor')) {
                     $criteria->add(TSession::getValue('VwProfessordisciplinassemestreList_filter_NomeProfessor')); // add the session filter
                 }
 
-
                 if (TSession::getValue('VwProfessordisciplinassemestreList_filter_NomeCurso')) {
                     $criteria->add(TSession::getValue('VwProfessordisciplinassemestreList_filter_NomeCurso')); // add the session filter
                 }
-
 
                 // load the objects according to criteria
                 $objects = $repository->load($criteria, FALSE);
@@ -358,7 +326,6 @@ class CoordenadorPIList extends TPage
             TTransaction::rollback();
         }
     }
-    
    
     /**
      * method show()

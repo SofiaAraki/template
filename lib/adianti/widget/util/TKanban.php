@@ -17,7 +17,7 @@ use Exception;
 /**
  * Kanban
  *
- * @version    8.5
+ * @version    8.6
  * @package    widget
  * @subpackage util
  * @author     Pablo Dall'Oglio
@@ -570,7 +570,7 @@ class TKanban extends TElement
      */
     private function renderStageActions($stage_id, $stage)
     {
-        $icon = new TImage('fa:ellipsis-vertical');
+        $icon = new TImage('fa:ellipsis');
         $icon->{'data-toggle'} = 'dropdown';
         $icon->{'data-bs-toggle'} = 'dropdown';
         

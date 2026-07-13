@@ -67,16 +67,36 @@ class CadastroResponsavelList extends TPage
     
     public function onSearch($param = null)
     {
+        // 1. Obtém os dados do formulário
         $data = $this->form->getData();
-        TSession::setValue(__CLASS__.'_filter_data', $data);
+        
+        // 2. Gerenciamento do estado dos filtros de busca (Sessão vs Formulário)
+        if (isset($param['method']) AND $param['method'] == 'onSearch') {
+            TSession::setValue(__CLASS__.'_filter_data', $data);
+        } else {
+            $data = TSession::getValue(__CLASS__.'_filter_data');
+            // Mantém os campos do formulário preenchidos visualmente
+            $this->form->setData($data);
+        }
         
         TTransaction::open('dados_fei');
         $repository = new TRepository('FiResponsavel');
         $criteria = new TCriteria;
         
-        if (!empty($data->Nome)) $criteria->add(new TFilter('Nome', 'like', "%{$data->Nome}%"));
-        if (!empty($data->CPF))  $criteria->add(new TFilter('CPF', '=', $data->CPF));
+        // Aplica o deslocamento de registros se estiver navegando pelas páginas
+        if (isset($param['offset'])) {
+            $criteria->setProperty('offset', $param['offset']);
+        }
         
+        // 3. Aplica os filtros ativos
+        if (isset($data->Nome) AND ($data->Nome != '')) {
+            $criteria->add(new TFilter('Nome', 'like', "%{$data->Nome}%"));
+        }
+        if (isset($data->CPF) AND ($data->CPF != '')) {
+            $criteria->add(new TFilter('CPF', '=', $data->CPF));
+        }
+        
+        // Conta a quantidade total de registros encontrados para atualizar o componente de paginação
         $this->pageNavigation->setCount($repository->count($criteria));
         
         $criteria->setProperty('limit', 10);
@@ -93,6 +113,7 @@ class CadastroResponsavelList extends TPage
         }
         
         TTransaction::close();
+        $this->loaded = true;
     }
     
     public function onDelete($param)

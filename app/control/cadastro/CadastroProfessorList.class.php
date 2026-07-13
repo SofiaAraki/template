@@ -69,17 +69,36 @@ class CadastroProfessorList extends TPage
     
     public function onSearch($param = null)
     {
+        // 1. Obtém os dados do formulário
         $data = $this->form->getData();
-        TSession::setValue(__CLASS__.'_filter_data', $data);
+        
+        // 2. Controla o estado dos filtros (Sessão vs Formulário)
+        if (isset($param['method']) AND $param['method'] == 'onSearch') {
+            TSession::setValue(__CLASS__.'_filter_data', $data);
+        } else {
+            $data = TSession::getValue(__CLASS__.'_filter_data');
+            // Mantém os campos preenchidos ao mudar de página
+            $this->form->setData($data);
+        }
         
         TTransaction::open('dados_fei');
         $repository = new TRepository('FiProfessor');
         $criteria = new TCriteria;
         
-        if (!empty($data->Nome)) $criteria->add(new TFilter('Nome', 'like', "%{$data->Nome}%"));
-        if (!empty($data->CPF))  $criteria->add(new TFilter('CPF', '=', $data->CPF));
+        // Aplica o offset para mudar de página corretamente
+        if (isset($param['offset'])) {
+            $criteria->setProperty('offset', $param['offset']);
+        }
         
-        // CORREÇÃO SQL SERVER: Executa o count antes de injetar o ORDER BY no critério
+        // 3. Aplica os filtros ativos de forma segura
+        if (isset($data->Nome) AND ($data->Nome != '')) {
+            $criteria->add(new TFilter('Nome', 'like', "%{$data->Nome}%"));
+        }
+        if (isset($data->CPF) AND ($data->CPF != '')) {
+            $criteria->add(new TFilter('CPF', '=', $data->CPF));
+        }
+        
+        // Conta os registros para a paginação antes de aplicar a ordenação e limites (ótimo para SQL Server e outros SGBDs)
         $this->pageNavigation->setCount($repository->count($criteria));
         
         $criteria->setProperty('limit', 10);
@@ -96,6 +115,7 @@ class CadastroProfessorList extends TPage
         }
         
         TTransaction::close();
+        $this->loaded = true;
     }
     
     public function onDelete($param)

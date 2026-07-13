@@ -72,17 +72,40 @@ class CadastroAlunoList extends TPage
     
     public function onSearch($param = null)
     {
+        // 1. Obtém os dados do formulário
         $data = $this->form->getData();
-        TSession::setValue(__CLASS__.'_filter_data', $data);
+        
+        // 2. Se o usuário clicou em "Buscar" (o formulário enviou dados novos), guardamos na sessão.
+        // Caso contrário (veio por paginação ou refresh), recuperamos o que já estava salvo.
+        if (isset($param['method']) AND $param['method'] == 'onSearch') {
+            TSession::setValue(__CLASS__.'_filter_data', $data);
+        } else {
+            $data = TSession::getValue(__CLASS__.'_filter_data');
+            // Devolve os dados salvos de volta para o formulário para mantê-lo preenchido na tela
+            $this->form->setData($data);
+        }
         
         TTransaction::open('dados_fei');
         $repository = new TRepository('FiAluno');
         $criteria = new TCriteria;
         
-        if (!empty($data->Ra))   $criteria->add(new TFilter('Ra', 'like', "%{$data->Ra}%"));
-        if (!empty($data->Nome)) $criteria->add(new TFilter('Nome', 'like', "%{$data->Nome}%"));
-        if (!empty($data->CPF))  $criteria->add(new TFilter('CPF', '=', $data->CPF));
+        // Se houver limite/offset na paginação, passamos ao critério
+        if (isset($param['offset'])) {
+            $criteria->setProperty('offset', $param['offset']);
+        }
+        
+        // 3. Aplica os filtros baseando-se no objeto de dados ($data)
+        if (isset($data->Ra) AND ($data->Ra != '')) {
+            $criteria->add(new TFilter('Ra', 'like', "%{$data->Ra}%"));
+        }
+        if (isset($data->Nome) AND ($data->Nome != '')) {
+            $criteria->add(new TFilter('Nome', 'like', "%{$data->Nome}%"));
+        }
+        if (isset($data->CPF) AND ($data->CPF != '')) {
+            $criteria->add(new TFilter('CPF', '=', $data->CPF));
+        }
 
+        // Define a contagem de registros para alimentar a paginação
         $this->pageNavigation->setCount($repository->count($criteria));
         
         $criteria->setProperty('limit', 10);
@@ -99,6 +122,7 @@ class CadastroAlunoList extends TPage
         }
         
         TTransaction::close();
+        $this->loaded = true;
     }
     
     public function onDelete($param)

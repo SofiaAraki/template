@@ -11,60 +11,60 @@ class CadastroProfessorForm extends TPage
         $this->form = new BootstrapFormBuilder('form_FIProfessor');
         $this->form->setFormTitle('Cadastro de Professor');
         
-        // ---- INSTANCIAÇÃO DOS CAMPOS ----
+        // ---- 1. INSTANCIAÇÃO DOS CAMPOS ----
         $codprofessor = new TEntry('Codprofessor'); $codprofessor->setEditable(FALSE);
         $nome         = new TEntry('Nome');
+        $admissao     = new TDate('DataAdmissao'); $admissao->setMask('dd/mm/yyyy');
+        $sexo         = new TRadioGroup('Sexo'); $sexo->addItems(['M' => 'Masculino', 'F' => 'Feminino']); $sexo->setLayout('horizontal');
+        
+        $endereco     = new TEntry('Endereco');
+        $bairro       = new TEntry('Bairro');
+        $cep          = new TEntry('CEP'); $cep->setMask('99999-999');
+        $cidade       = new TDBCombo('CodCidade', 'dados_fei', 'FiCidade', 'CodCidade', 'Nome');
+        
         $cpf          = new TEntry('CPF'); $cpf->setMask('999.999.999-99');
         $rg           = new TEntry('Rg');
+        $rd           = new TEntry('RD');
         $nascimento   = new TDate('DataNascimento'); $nascimento->setMask('dd/mm/yyyy');
-        $sexo         = new TRadioGroup('Sexo'); $sexo->addItems(['M' => 'Masculino', 'F' => 'Feminino']); $sexo->setLayout('horizontal');
         $nacionalidade= new TEntry('Nacionalidade');
         
-        $cep        = new TEntry('CEP'); $cep->setMask('99999-999');
-        $endereco   = new TEntry('Endereco');
-        $bairro     = new TEntry('Bairro');
-        $cidade     = new TDBCombo('CodCidade', 'dados_fei', 'FiCidade', 'CodCidade', 'Nome');
-        $telefone1  = new TEntry('Telefone1'); $telefone1->setMask('(99)99999-9999');
-        $telefone2  = new TEntry('Telefone2'); $telefone2->setMask('(99)99999-9999');
-        $email      = new TEntry('Email');
+        $naturalidade = new TEntry('Naturalidade');
+        $naturalidade_uf = new TEntry('NaturalidadeUf');
+        $telefone1    = new TEntry('Telefone1'); $telefone1->setMask('(99)9999-9999');
+        $telefone2    = new TEntry('Telefone2'); $telefone2->setMask('(99)9999-9999');
+        $telefone3    = new TEntry('Telefone3'); // Adicionado conforme a model e imagem
         
-        $rd         = new TEntry('RD');
-        $admissao   = new TDate('DataAdmissao'); $admissao->setMask('dd/mm/yyyy');
-        $senha      = new TPassword('Senha'); $senha->setMaxLength(4);
-        $hab1       = new TEntry('HabilitacaoProf1');
-        $hab2       = new TEntry('HabilitacaoProf2');
-        $hab3       = new TEntry('HabilitacaoProf3');
+        $hab1         = new TEntry('HabilitacaoProf1');
+        $hab2         = new TEntry('HabilitacaoProf2');
+        $hab3         = new TEntry('HabilitacaoProf3');
+        $email        = new TEntry('Email');
+        $senha        = new TPassword('Senha'); $senha->setMaxLength(4);
 
-        // ---- DISTRIBUIÇÃO DOS CAMPOS NAS ABAS SEQUENCIAIS ----
+        // ---- 2. DISTRIBUIÇÃO DOS CAMPOS NA TELA (Sem Abas - Conforme a imagem) ----
         
-        // 1. Aba: Dados Pessoais
-        $this->form->appendPage('Dados Pessoais');
-        $this->form->addFields([new TLabel('Código:')], [$codprofessor]);
-        $this->form->addFields([new TLabel('Nome Completo:')], [$nome]);
-        $this->form->addFields([new TLabel('CPF:')], [$cpf], [new TLabel('RG:')], [$rg]);
-        $this->form->addFields([new TLabel('Nascimento:')], [$nascimento], [new TLabel('Sexo:')], [$sexo]);
-        $this->form->addFields([new TLabel('Nacionalidade:')], [$nacionalidade]);
+        $this->form->addFields([new TLabel('Código:')], [$codprofessor], [new TLabel('Nome Completo:')], [$nome], [new TLabel('Data Admissão:')], [$admissao]);
+        $this->form->addFields([new TLabel('Endereço:')], [$endereco], [new TLabel('Sexo:')], [$sexo]);
+        $this->form->addFields([new TLabel('Bairro:')], [$bairro], [new TLabel('CEP:')], [$cep]);
+        $this->form->addFields([new TLabel('Cidade:')], [$cidade]);
+        
+        // Linha de Documentos fracionada para evitar erro de índice no BootstrapFormBuilder
+        $this->form->addFields([new TLabel('CPF:')], [$cpf], [new TLabel('RG:')], [$rg], [new TLabel('RD (Reg. Docente):')], [$rd]);
+        $this->form->addFields([new TLabel('Data Nascimento:')], [$nascimento], [new TLabel('Nacionalidade:')], [$nacionalidade]);
+        
+        // Linha de Naturalidade e Telefones
+        $this->form->addFields([new TLabel('Naturalidade:')], [$naturalidade], [new TLabel('UF:')], [$naturalidade_uf]);
+        $this->form->addFields([new TLabel('Telefone 1:')], [$telefone1], [new TLabel('Telefone 2:')], [$telefone2], [new TLabel('Telefone 3:')], [$telefone3]);
+        
+        // Habilitações, E-mail e Senha
+        $this->form->addFields([new TLabel('1ª Habilitação:')], [$hab1], [new TLabel('E-mail:')], [$email]);
+        $this->form->addFields([new TLabel('2ª Habilitação:')], [$hab2], [new TLabel('Senha do Portal:')], [$senha]);
+        $this->form->addFields([new TLabel('3ª Habilitação:')], [$hab3]);
 
-        // 2. Aba: Endereço e Contato
-        $this->form->appendPage('Endereço e Contato');
-        $this->form->addFields([new TLabel('CEP:')], [$cep], [new TLabel('Cidade:')], [$cidade]);
-        $this->form->addFields([new TLabel('Logradouro:')], [$endereco], [new TLabel('Bairro:')], [$bairro]);
-        $this->form->addFields([new TLabel('Telefone 1:')], [$telefone1], [new TLabel('Telefone 2:')], [$telefone2]);
-        $this->form->addFields([new TLabel('E-mail:')], [$email]);
-
-        // 3. Aba: Profissional e Habilitações
-        $this->form->appendPage('Profissional e Habilitações');
-        $this->form->addFields([new TLabel('Registro Docente (RD):')], [$rd], [new TLabel('Data de Admissão:')], [$admissao]);
-        $this->form->addFields([new TLabel('Senha do Portal (Máx 4 dig.):')], [$senha]);
-        $this->form->addFields([new TLabel('Habilitação Principal:')], [$hab1]);
-        $this->form->addFields([new TLabel('Habilitação Secundária:')], [$hab2]);
-        $this->form->addFields([new TLabel('Outras Informações/Habilitação:')], [$hab3]);
-
-        // Mapeamento de campos para processamento interno
+        // ---- 3. MAPEAMENTO GLOBAL DOS CAMPOS ----
         $this->form->setFields([
-            $codprofessor, $nome, $cpf, $rg, $nascimento, $sexo, $nacionalidade,
-            $cep, $endereco, $bairro, $cidade, $telefone1, $telefone2, $email,
-            $rd, $admissao, $senha, $hab1, $hab2, $hab3
+            $codprofessor, $nome, $admissao, $sexo, $endereco, $bairro, $cep, $cidade,
+            $cpf, $rg, $rd, $nascimento, $nacionalidade, $naturalidade, $naturalidade_uf,
+            $telefone1, $telefone2, $telefone3, $hab1, $hab2, $hab3, $email, $senha
         ]);
 
         // Botões de Ação
@@ -90,6 +90,7 @@ class CadastroProfessorForm extends TPage
             }
             $professor->CodOperador = TSession::getValue('userid');
             
+            // Tratamento das datas para o Banco de Dados
             if (!empty($professor->DataNascimento)) {
                 $professor->DataNascimento = TDate::convertToMask($professor->DataNascimento, 'dd/mm/yyyy', 'yyyy-mm-dd');
             }
@@ -117,6 +118,7 @@ class CadastroProfessorForm extends TPage
                 TTransaction::open('dados_fei');
                 $object = new FiProfessor($param['key']);
                 
+                // Conversão das datas vinda do Banco de Dados para a Interface
                 if (!empty($object->DataNascimento)) {
                     $object->DataNascimento = TDate::convertToMask($object->DataNascimento, 'yyyy-mm-dd', 'dd/mm/yyyy');
                 }

@@ -27,7 +27,7 @@ class EquivalenciaForm extends TPage
 
         $this->form->addFields( [ $aluno_id ], [ $grade_id ] );
         $this->form->addFields( [ new TLabel('Aluno:') ], [ $exibe_aluno ] );
-        $this->form->addFields( [ new TLabel('Grade / Currículo:') ], [ $exibe_grade ] );
+        $this->form->addFields( [ new TLabel('Grade:') ], [ $exibe_grade ] );
 
         // Botões superiores focados na operação atual
         $this->form->addActionLink('Voltar', new TAction(['EquivalenciaList', 'onReload']), 'fa:arrow-left blue');

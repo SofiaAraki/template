@@ -211,4 +211,27 @@ class CurriculoDigital extends TRecord
         return CurriculoAtividadeCadastro::where('curriculo_id', '=', $this->id)->load();
     }
 
+    /**
+     * Method get_fi_grade_curso_descricao
+     * Busca a descricao da grade de forma dinâmica utilizando o código de negócio ao invés da PK física
+     * @returns FiGradeCurso instance ou NULL
+     */
+    public function get_fi_grade_curso_descricao()
+    {
+        if (empty($this->fi_grade_curso)) {
+            if (!empty($this->cod_grade)) {
+                try {
+                    TTransaction::open('dados_fei');
+                    
+                    $this->fi_grade_curso = FiGradeCurso::where('CodGradecurso', '=', $this->cod_grade)->first();
+                    
+                    TTransaction::close();
+                } catch (Exception $e) {
+                    TTransaction::rollback();
+                    $this->fi_grade_curso = new FiGradeCurso;
+                }
+            }
+        }
+        return $this->fi_grade_curso ?? new FiGradeCurso;
+    }
 }

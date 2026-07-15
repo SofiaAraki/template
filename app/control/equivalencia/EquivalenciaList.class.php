@@ -14,8 +14,7 @@ class EquivalenciaList extends TPage
     
         $aluno_id = new TDBUniqueSearch('aluno_id', 'Felabs_DB', 'SystemUser', 'systemuser_codlegado', 'name');
         $aluno_id->setSize('80%');
-
-        $grade_id = new TDBCombo('grade_id', 'Felabs_DB', 'CurriculoDigital', 'cod_grade', 'Grade: ({cod_grade}) - Curso: {cod_curso}');
+        $grade_id = new TDBCombo('grade_id', 'Felabs_DB', 'CurriculoDigital', 'cod_grade', 'Grade: ({cod_grade}) - {fi_grade_curso_descricao->Descricao} - Curso: {diploma_digital_curso->nome_curso_sistema}');
         $grade_id->setSize('80%');
 
         $this->form->addFields( [ new TLabel('Aluno') ], [ $aluno_id ] );

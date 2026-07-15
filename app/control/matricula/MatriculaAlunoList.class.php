@@ -5,6 +5,7 @@ class MatriculaAlunoList extends TPage
     private $form;
     private $datagrid;
     private $pageNavigation;
+    private $loaded; // Declarado para evitar alertas de propriedades dinâmicas nas versões recentes do PHP
     
     public function __construct()
     {
@@ -76,17 +77,39 @@ class MatriculaAlunoList extends TPage
     
     public function onSearch($param = null)
     {
+        // 1. Obtém os dados do formulário
         $data = $this->form->getData();
-        TSession::setValue(__CLASS__.'_filter_data', $data);
+        
+        // 2. Controla o estado dos filtros (Sessão vs Formulário)
+        if (isset($param['method']) AND $param['method'] == 'onSearch') {
+            TSession::setValue(__CLASS__.'_filter_data', $data);
+        } else {
+            $data = TSession::getValue(__CLASS__.'_filter_data');
+            // Mantém os campos (incluindo o TDBUniqueSearch e TDBCombo) preenchidos
+            $this->form->setData($data);
+        }
         
         TTransaction::open('dados_fei');
         $repository = new TRepository('FiMatriculaEtapa');
         $criteria = new TCriteria;
         
-        if (!empty($data->Codaluno))     $criteria->add(new TFilter('Codaluno', '=', $data->Codaluno));
-        if (!empty($data->CodTurmaetapa)) $criteria->add(new TFilter('CodTurmaetapa', '=', $data->CodTurmaetapa));
-        if (!empty($data->Situacao))      $criteria->add(new TFilter('Situacao', '=', $data->Situacao));
+        // Aplica o offset para paginação correta
+        if (isset($param['offset'])) {
+            $criteria->setProperty('offset', $param['offset']);
+        }
         
+        // 3. Aplica os filtros ativos de forma segura
+        if (isset($data->Codaluno) AND ($data->Codaluno != '')) {
+            $criteria->add(new TFilter('Codaluno', '=', $data->Codaluno));
+        }
+        if (isset($data->CodTurmaetapa) AND ($data->CodTurmaetapa != '')) {
+            $criteria->add(new TFilter('CodTurmaetapa', '=', $data->CodTurmaetapa));
+        }
+        if (isset($data->Situacao) AND ($data->Situacao != '')) {
+            $criteria->add(new TFilter('Situacao', '=', $data->Situacao));
+        }
+        
+        // Conta os registros encontrados para alimentar a paginação antes do limite/ordenação
         $this->pageNavigation->setCount($repository->count($criteria));
         
         $criteria->setProperty('limit', 10);
@@ -103,6 +126,7 @@ class MatriculaAlunoList extends TPage
         }
         
         TTransaction::close();
+        $this->loaded = true;
     }
     
     public function show()

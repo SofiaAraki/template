@@ -39,7 +39,7 @@ class TicketList extends TPage
         $items = [];
         foreach($colaboradores as $colaborador)
         {
-            $items[$colaborador->id] = $colaborador->name;
+            $items[$colaborador->id] = $colaborador->name ?? '';
         }
         $system_user_id->addItems($items);
 
@@ -52,7 +52,7 @@ class TicketList extends TPage
         $this->form->addQuickField('Data Reg', $data_reg, '80%');
 
         // keep the form filled during navigation with session data
-        $this->form->setData( TSession::getValue('Ticket_filter_data') );
+        $this->form->setData( TSession::getValue('Ticket_filter_data') );        
         
         // add the search form actions
         $this->form->addQuickAction('Buscar', new TAction(array($this, 'onSearch')), 'fas:search blue');
@@ -91,8 +91,8 @@ class TicketList extends TPage
         $this->datagrid->addColumn($column_matricula_aluno);
         $this->datagrid->addColumn($column_categoria);
         $this->datagrid->addColumn($column_status);
-        $this->datagrid->addColumn($column_edicao_user_id);
-        $this->datagrid->addColumn($column_ultima_edicao);
+        // $this->datagrid->addColumn($column_edicao_user_id);
+        // $this->datagrid->addColumn($column_ultima_edicao);
         $this->datagrid->addColumn($column_quem_abriu);
         $this->datagrid->addColumn($column_data_reg);
         

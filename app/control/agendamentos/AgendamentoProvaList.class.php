@@ -354,7 +354,7 @@ class AgendamentoProvaList extends TPage
             $loggedUnit = TSession::getValue('userunitid');
 
             $repository = new TRepository('AgendamentoProva');
-            $limit = 15;
+            $limit = 10;
 
 
             $criteria = new TCriteria;

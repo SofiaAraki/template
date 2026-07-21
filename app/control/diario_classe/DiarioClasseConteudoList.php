@@ -62,7 +62,6 @@ class DiarioClasseConteudoList extends TPage
 
         $col_conteudo->setEditAction($actionEdit);
 
-
         $col_frequencia->setTransformer(
             function ($value, $object, $row)
             {
@@ -72,10 +71,10 @@ class DiarioClasseConteudoList extends TPage
                 $tooltip = '';
 
                 if ($object->FrequenciaLancada == 'SIM') {
-                    $tooltip = 'Frequência registrada.';
+                    $tooltip = 'Frequência registrada';
                     $btn->class = 'btn btn-primary btn-sm';
                 } else {
-                    $tooltip = 'Frequência não registrada.';
+                    $tooltip = 'Frequência não registrada';
                     $btn->class = 'btn btn-success btn-sm';
                 }
                 $btn->add('Frequências');
@@ -90,7 +89,7 @@ class DiarioClasseConteudoList extends TPage
                         "__adianti_load_page('{$url}'); return false";
                 }
                 else {
-                    $tooltip = "Conteúdo não registrado.";
+                    $tooltip = "Conteúdo não registrado";
                     $btn->disabled = 'disabled';
                     $btn->class = 'btn btn-secondary btn-sm';
                 }
@@ -144,7 +143,7 @@ class DiarioClasseConteudoList extends TPage
             $sessao = TSession::getValue('sessao_diarioclasse');
 
             $criteria = new TCriteria;
-            $criteria->add(new TFilter('Codprofessor', '=', $sessao['Codprofessor']));
+            $criteria->add(new TFilter('CodProfessor', '=', $sessao['Codprofessor']));
             $criteria->add(new TFilter('CodDisciplina', '=', $sessao['CodGradeDisciplinaEtapaFrente']));
             $criteria->add(new TFilter('CodCurso', '=', $sessao['CodCurso']));
             $criteria->add(new TFilter('CodTurmaEtapa', '=', $sessao['CodTurmaetapa']));
@@ -152,12 +151,13 @@ class DiarioClasseConteudoList extends TPage
 
             $criteria->setProperty('order', 'Data');
             $criteria->setProperty('direction', 'DESC');
-            $criteria->setProperty('limit', 10);
 
             if ($param)
             {
                 $criteria->setProperties($param);
             }
+
+            $criteria->setProperty('limit', 10);
 
             $repository = new TRepository('Vw_DiarioClasseProfessor');
 
@@ -181,11 +181,11 @@ class DiarioClasseConteudoList extends TPage
                         )
                         : '';
 
-                    $object->conteudo_exibicao =
-                        !empty($object->conteudo)
+                    $object->conteudo_vazio = empty($object->conteudo);
+
+                    $object->conteudo_exibicao = !empty($object->conteudo)
                         ? $object->conteudo
                         : "Clique para registrar o conteúdo";
-
 
                     $object->row_key = $object->id . '_' . $object->data_formatada;
                     
@@ -291,7 +291,7 @@ class DiarioClasseConteudoList extends TPage
         {
             $this->onReload();
         }
-
+        
         parent::show();
     }
 }

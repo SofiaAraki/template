@@ -20,7 +20,7 @@ class RelatorioDiarioClasse extends TPage
         102 => 'ENGENHARIA CIVIL',
         68  => 'ENGENHARIA DE PRODUÇÃO',
         104 => 'ENGENHARIA ELÉTRICA',
-        103 => 'ENGENHARIA MECÂNICA',
+        67 => 'ENGENHARIA MECÂNICA',
         20  => 'MEDICINA VETERINÁRIA',
         6   => 'PEDAGOGIA',
         147 => 'PSICOLOGIA',

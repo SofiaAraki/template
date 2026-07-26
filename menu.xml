@@ -542,10 +542,6 @@
             <action>ConteudoProgramaticoListCoordenador</action>
             <icon>fas:file-text fa-fw</icon> 
         </menuitem>
-        <menuitem label="Relatório Diário de Classe">
-            <action>ConteudoDiarioClasseListCoordenador</action>
-            <icon>fas:file-text fa-fw</icon> 
-        </menuitem>
         <menuitem label="Plano de Ensino">
             <action>ProgramaEnsinoDisciplinaListCoordenador</action>
             <icon>fas:book fa-fw</icon>
@@ -557,6 +553,19 @@
         <menuitem label="Horário">
             <action>HorarioCoordenadorList</action>
             <icon>far:clock fa-fw</icon>
+        </menuitem>
+        <menuitem label="Relatórios">
+            <icon>fas:file fa-fw</icon>
+            <menu>
+                <menuitem label="Diário de Classe">
+                    <action>RelatorioDiarioClasse</action>
+                    <icon>fas:clipboard-list fa-fw</icon>
+                </menuitem>
+                <menuitem label="Lançamento de Notas">
+                    <action>RelatorioLancamentoNotas</action>
+                    <icon>fas:clipboard-list fa-fw</icon>
+                </menuitem>
+            </menu>
         </menuitem>
         </menu>
     </menuitem>

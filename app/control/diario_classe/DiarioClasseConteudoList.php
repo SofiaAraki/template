@@ -72,10 +72,10 @@ class DiarioClasseConteudoList extends TPage
 
                 if ($object->FrequenciaLancada == 'SIM') {
                     $tooltip = 'Frequência registrada';
-                    $btn->class = 'btn btn-primary btn-sm';
+                    $btn->class = 'btn btn-success btn-sm';
                 } else {
                     $tooltip = 'Frequência não registrada';
-                    $btn->class = 'btn btn-success btn-sm';
+                    $btn->class = 'btn btn-danger btn-sm';
                 }
                 $btn->add('Frequências');
 

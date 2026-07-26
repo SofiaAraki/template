@@ -17,14 +17,14 @@ class RelatorioDiarioClasse extends TPage
         16  => 'DIREITO',
         70  => 'ENFERMAGEM',
         15  => 'ENGENHARIA AGRONÔMICA',
-        102 => 'ENGENHARIA CIVIL',
+        69 => 'ENGENHARIA CIVIL',
         68  => 'ENGENHARIA DE PRODUÇÃO',
         104 => 'ENGENHARIA ELÉTRICA',
         67 => 'ENGENHARIA MECÂNICA',
         20  => 'MEDICINA VETERINÁRIA',
-        6   => 'PEDAGOGIA',
+        6  => 'PEDAGOGIA',
         147 => 'PSICOLOGIA',
-        21  => 'SISTEMAS DE INFORMAÇÃO',
+        21  => 'SISTEMAS DE INFORMAÇÃO'
     ];
 
 
@@ -156,7 +156,8 @@ class RelatorioDiarioClasse extends TPage
     
     private static function getProfessores($codCurso)
     {
-        try{
+        try
+        {
             TTransaction::open('dados_fei');
             
             $conn = TTransaction::get();
@@ -245,7 +246,7 @@ class RelatorioDiarioClasse extends TPage
 
     private static function getSemestre()
     {
-        return date('n') <= 6 ? 1 : 2;
+       return date('n') <= 6 ? 1 : 2;
     }
 
     public function show()

@@ -39,14 +39,18 @@ class RelatorioDiarioClasse extends TPage
         $this->curso = new TCombo('CodCurso');
         $this->curso->setSize('40%');
         $this->curso->addItems(self::CURSOS);
+        $this->curso->addValidation('Curso', new TRequiredValidator);
         $this->curso->setChangeAction(new TAction([$this, 'onChangeCurso']));
+
 
         $this->professor = new TCombo('CodProfessor');
         $this->professor->setSize('40%');
+        $this->professor->addValidation('Professor', new TRequiredValidator);
         $this->professor->setChangeAction(new TAction([$this, 'onChangeProfessor']));
 
         $this->disciplina = new TCombo('disc');
         $this->disciplina->setSize('40%');
+        $this->disciplina->addValidation('Disciplina', new TRequiredValidator);
 
         $this->form->addFields([new TLabel('Curso')], [$this->curso]);
         $this->form->addFields([new TLabel('Professor')], [$this->professor]);
@@ -260,18 +264,31 @@ class RelatorioDiarioClasse extends TPage
 
     public function onSearch()
     {
-        $data = $this->form->getData();
+        try
+        {
+            $this->form->validate();
 
-        TSession::setValue('RelatorioDisciplinas_filter', $data);
+            $data = $this->form->getData();
 
-        $this->form->setData($data);
+            TSession::setValue('RelatorioDisciplinas_filter', $data);
 
-        $this->onReload(
-            [
-                'offset' => 0,
-                'first_page' => 1
-            ]
-        );
+            $this->form->setData($data);
+
+            $this->onReload(
+                [
+                    'offset' => 0,
+                    'first_page' => 1
+                ]
+            );
+        }
+        catch (Exception $e) {
+            $data = $this->form->getData();
+
+            $this->restaurarCombos($data);
+            $this->form->setData($data);
+
+            new TMessage('error', $e->getMessage());
+        }
     }
 
     private function restaurarCombos($data)

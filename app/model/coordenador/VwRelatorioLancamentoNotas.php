@@ -1,8 +1,8 @@
 <?php
 
-class VwRelatorioLacamentoNotas extends TRecord
+class VwRelatorioLancamentoNotas extends TRecord
 {
-    const TABLENAME = 'VW_RelatorioLacamentoNotas';
+    const TABLENAME = 'VW_RelatorioLancamentoNotas';
     const PRIMARYKEY = 'CodDisciplina';
 
     public function __construct($id = NULL, $callObjectLoad = TRUE)

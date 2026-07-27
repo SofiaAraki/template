@@ -113,7 +113,7 @@ class RelatorioLancamentoNotas extends TPage
 
             $this->form->setData($data);
 
-            $repository = new TRepository('VwRelatorioLacamentoNotas');
+            $repository = new TRepository('VwRelatorioLancamentoNotas');
 
             $criteria = new TCriteria;
             $criteria->add(new TFilter('Ano', '=', date('Y')));

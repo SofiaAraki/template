@@ -144,7 +144,7 @@ class RelatorioLancamentoNotas extends TPage
             $this->form->validate();
             $this->onReload();
         } catch (Exception $e) {
-            new TMessage('error', $e->getMessage());
+            new TMessage('warning', $e->getMessage());
         }
     }
 

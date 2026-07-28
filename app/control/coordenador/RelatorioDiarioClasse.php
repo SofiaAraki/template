@@ -115,13 +115,26 @@ class RelatorioDiarioClasse extends TPage
         $vbox->style = 'width:100%';
         $vbox->add($this->form);
 
-        $vbox->add(
-            TPanelGroup::pack(
-                'Disciplina',
-                $this->datagrid,
-                $this->pageNavigation
-            )
+        $panel = new TPanelGroup('Disciplina');
+
+        $pdfButton = new TButton('pdf');
+        $pdfButton->setAction(
+            new TAction([$this, 'onGeneratePDF']),
+            'Exportar'
         );
+        $pdfButton->setImage('fas:file-pdf red');
+
+        $this->form->setFields(array_merge(
+            $this->form->getFields(),
+            [$pdfButton]
+        ));
+
+        $panel->addHeaderWidget($pdfButton);
+        $panel->add($this->datagrid);
+        $panel->add($this->pageNavigation);
+        
+        $vbox->add($panel);
+
         parent::add($vbox);
     }
 
@@ -328,25 +341,16 @@ class RelatorioDiarioClasse extends TPage
 
             $data = TSession::getValue('RelatorioDisciplinas_filter');
 
-            if (!$data)
+            if (empty($data) || empty($data->CodCurso) || empty($data->CodProfessor) || empty($data->disc))
             {
-                TTransaction::close();
                 return;
             }
 
             // Restaura combos dependentes
             $this->restaurarCombos($data);
 
-            if (empty($data->CodCurso) || empty($data->CodProfessor)
-                || empty($data->disc))
-            {
-                TTransaction::close();
-                return;
-            }
-
-            // Separa disciplina e turma
             $parts = explode('_', $data->disc);
-
+        
             $repository = new TRepository('Vw_DiarioClasseProfessor');
 
             $criteria = new TCriteria;
@@ -356,9 +360,10 @@ class RelatorioDiarioClasse extends TPage
             $criteria->add(new TFilter('CodTurmaEtapa', '=', $parts[1]));
             $criteria->add(new TFilter('AnoTurma', '=', date('Y')));
 
+            $limit = 10;
             $criteria->setProperty('order', 'Data');
             $criteria->setProperty('direction', 'DESC');
-            $criteria->setProperty('limit', 10);
+            $criteria->setProperty('limit', $limit);
 
             if ($param)
             {
@@ -369,10 +374,14 @@ class RelatorioDiarioClasse extends TPage
 
             if ($objects)
             {
-                foreach($objects as $object)
+                foreach ($objects as $object)
                 {
                     $this->datagrid->addItem($object);
                 }
+            }
+            else
+            {
+                new TMessage('warning', 'Nenhum registro encontrado para os filtros informados.');
             }
 
             $countCriteria = clone $criteria;
@@ -382,17 +391,19 @@ class RelatorioDiarioClasse extends TPage
             // Paginação
             $this->pageNavigation->setCount($count);
             $this->pageNavigation->setProperties($param);
-            $this->pageNavigation->setLimit(10);
+            $this->pageNavigation->setLimit($limit);
 
             // Manter dados no formulário
             $this->form->setData($data);
-
-            TTransaction::close();
         }
-        catch(Exception $e)
+        catch (Exception $e)
         {
             TTransaction::rollback();
             new TMessage('error', $e->getMessage());
+        }
+        finally
+        {
+            TTransaction::close();
         }
     }
 

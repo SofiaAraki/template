@@ -101,7 +101,7 @@ class ControleFrequencia extends TStandardList
         $criteriaDia->add(new TFilter('CodDisciplina', '=', $verifica_disciplina));
         $criteriaDia->add(new TFilter('CodTurmaetapa', '=', $verifica_turma));
         $criteriaDia->add(new TFilter('CodGradeDisciplinaEtapa_Frente', '=', $verifica_frente_disciplina));
-        $criteriaDia->add(new TFilter('Ano', '=', '2026'));
+        $criteriaDia->add(new TFilter('Ano', '=', date('Y')));
         $criteriaDia->add(new TFilter('Período', '=', $verifica_periodo));
         $criteriaDia->add(new TFilter('DiaSemana', '=', $diasemana_numero));
         
@@ -195,7 +195,7 @@ class ControleFrequencia extends TStandardList
         $criteriaDia->add(new TFilter('CodTurmaetapa', '=', $verifica_turma));
         $criteriaDia->add(new TFilter('CodGradeDisciplinaEtapa_Frente', '=', $verifica_frente_disciplina));
         $criteriaDia->add(new TFilter('Período', '=', $verifica_periodo));
-        $criteriaDia->add(new TFilter('Ano', '=', '2026'));
+        $criteriaDia->add(new TFilter('Ano', '=', date('Y')));
         $criteriaDia->add(new TFilter('DiaSemana', '=', $diasemana_numero));
 
         //echo $criteriaDia->dump();

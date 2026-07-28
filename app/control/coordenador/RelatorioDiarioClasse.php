@@ -182,7 +182,7 @@ class RelatorioDiarioClasse extends TPage
             $sql = "
                 SELECT DISTINCT
                     CodProfessor,
-                    NomeProfessor
+                    UPPER(NomeProfessor) AS NomeProfessor
                 FROM VW_ProfessorDisciplinasSemestre
                 WHERE Ano = :ano
                 AND CodCurso = :codCurso
@@ -300,7 +300,7 @@ class RelatorioDiarioClasse extends TPage
             $this->restaurarCombos($data);
             $this->form->setData($data);
 
-            new TMessage('error', $e->getMessage());
+            new TMessage('warning', $e->getMessage());
         }
     }
 
@@ -381,7 +381,9 @@ class RelatorioDiarioClasse extends TPage
             }
             else
             {
-                new TMessage('warning', 'Nenhum registro encontrado para os filtros informados.');
+                TSession::delValue('RelatorioDisciplinas_filter');
+                
+                new TMessage('warning', 'Nenhum registro encontrado para a disciplina.');
             }
 
             $countCriteria = clone $criteria;
@@ -429,6 +431,156 @@ class RelatorioDiarioClasse extends TPage
         catch(Exception $e)
         {
             new TMessage('error', $e->getMessage());
+        }
+    }
+
+    public function onGeneratePDF($param)
+    {
+        try
+        {
+            TTransaction::open('dados_fei');
+
+            $data = TSession::getValue('RelatorioDisciplinas_filter');
+
+            if (empty($data) || empty($data->CodCurso) || empty($data->CodProfessor) || empty($data->disc))
+            {
+                throw new Exception('Selecione o curso, o professor e a disciplina antes de gerar o PDF.');
+            }
+
+            $parts = explode('_', $data->disc);
+
+            $repository = new TRepository('Vw_DiarioClasseProfessor');
+
+            $criteria = new TCriteria;
+            $criteria->add(new TFilter('CodProfessor', '=', $data->CodProfessor));
+            $criteria->add(new TFilter('CodDisciplina', '=', $parts[0]));
+            $criteria->add(new TFilter('CodCurso', '=', $data->CodCurso));
+            $criteria->add(new TFilter('CodTurmaEtapa', '=', $parts[1]));
+            $criteria->add(new TFilter('AnoTurma', '=', date('Y')));
+            $criteria->setProperty('order', 'Data');
+            $criteria->setProperty('direction', 'DESC');
+
+            $objects = $repository->load($criteria);
+
+            if (!$objects)
+            {
+                new TMessage('warning', 'Nenhum registro encontrado para a disciplina.');
+                return;
+            }
+
+            $widths = [70, 350, 70];
+            $tr = new TTableWriterHTML($widths);
+
+            $tr->addStyle('title', 'Arial', '14', 'B', '#000000', '#f0f0f0'); 
+            $tr->addStyle('header', 'Arial', '12', '', '#222222', '#f0f0f0'); 
+            $tr->addStyle('info_label', 'Arial', '10', 'B', '#333333', '#ffffff'); 
+            $tr->addStyle('info_value', 'Arial', '10', '', '#333333', '#ffffff'); 
+            $tr->addStyle('th_header', 'Arial', '12', 'B', '#000000', '#f0f0f0');
+            $tr->addStyle('data_cell', 'Arial', '12', '', '#333333', '#ffffff');
+            $tr->addStyle('footer_cell', 'Arial', '10', '', '#222222', '#ffffff');
+
+            $pathLogo = $_SERVER['DOCUMENT_ROOT'] . '/template/app/images/logo-fafram.png';
+            $logoHtml = '';
+
+            if (file_exists($pathLogo)) {
+                $base64Image = 'data:image/png;base64,' . base64_encode(file_get_contents($pathLogo));
+                $logoHtml = "<img src='{$base64Image}' style='max-height: 55px; height: auto;' />";
+            }
+
+            $tr->addRow();
+            $tr->addCell($logoHtml, 'center', 'header', 1);
+            $tr->addCell("RELATÓRIO - DIÁRIO DE CLASSE", 'center', 'title', 2);
+
+            $object = $objects[0];
+
+            $tr->addRow();
+            $tr->addCell("Curso:", 'right', 'info_label', 1);
+            $tr->addCell($object->NomeCurso, 'left', 'info_value', 2);
+
+            $tr->addRow();
+            $tr->addCell("Disciplina:", 'right', 'info_label', 1);
+            $tr->addCell($object->NomeDisciplina, 'left', 'info_value', 2);
+
+             $tr->addRow();
+            $tr->addCell("Professor:", 'right', 'info_label', 1);
+            $tr->addCell(mb_strtoupper($object->NomeProfessor, 'UTF-8'), 'left', 'info_value', 2);
+
+            $tr->addRow();
+            $tr->addCell('Data da aula', 'center', 'th_header', 1);
+            $tr->addCell('Conteúdo', 'center', 'th_header', 1);
+            $tr->addCell('Frequência registrada', 'center', 'th_header', 1);
+
+            foreach ($objects as $item)
+            {
+                $dataAula = !empty($item->Data) ? TDate::date2br($item->Data) : '';
+                
+                $conteudoTexto = !empty(trim((string)($item->conteudo ?? ''))) 
+                    ? nl2br(htmlspecialchars($item->conteudo)) 
+                    : '<span style="color: #FF0000; font-weight: bold;">Conteúdo não registrado</span>';
+                
+                $frequencia = ($item->FrequenciaLancada == 'SIM') 
+                    ? 'SIM' 
+                    : '<span style="color: #FF0000; font-weight: bold;">NÃO</span>';
+
+                $tr->addRow();
+                $tr->addCell($dataAula, 'center', 'data_cell');
+                $tr->addCell($conteudoTexto, 'left', 'data_cell');
+                $tr->addCell($frequencia, 'center', 'data_cell');
+            }
+
+            $tr->addRow();
+            $tr->addCell("Relatório gerado em: " . date('d/m/Y H:i:s'), 'center', 'footer_cell', 3);
+
+            $htmlPath = "app/output/relatorio_diario_classe.html";
+            $pdfPath  = "app/output/relatorio_diario_classe.pdf";
+            
+            $tr->save($htmlPath);
+
+            if (!file_exists($htmlPath))
+            {
+                throw new Exception('Não foi possível gerar o arquivo temporário do relatório.');
+            }
+
+            $content = file_get_contents($htmlPath);
+            
+            $wrapStyle = '<style>
+                            body { font-family: Arial, sans-serif; margin: 10px; }
+                            table { border-collapse: collapse !important; table-layout: fixed !important; }
+                            th, td { border: 1px solid #cccccc !important; padding: 6px !important;
+                                        word-wrap: break-word !important; overflow: hidden !important; }
+                         </style>';
+            
+            if (strpos($content, '</head>') !== false) {
+                $content = str_replace('</head>', $wrapStyle . '</head>', $content);
+            } else {
+                $content = $wrapStyle . $content;
+            }
+
+            $colGroupTag = '<colgroup>
+                                <col style="width: 17%;">
+                                <col style="width: 68%;">
+                                <col style="width: 15%;">
+                            </colgroup>';
+            
+            $content = str_replace('<table>', '<table style="width: 100%; table-layout: fixed;">' . $colGroupTag, $content);
+
+            $dompdf = new \Dompdf\Dompdf();
+            $dompdf->loadHtml($content);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
+
+            file_put_contents($pdfPath, $dompdf->output());
+
+            parent::openFile($pdfPath);
+        }
+        catch (Exception $e)
+        {
+            TTransaction::rollback();
+            new TMessage('error', 'Erro ao gerar o relatório: ' . $e->getMessage());
+        }
+        finally
+        {
+            TTransaction::close();
         }
     }
 }

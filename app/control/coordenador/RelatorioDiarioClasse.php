@@ -488,8 +488,20 @@ class RelatorioDiarioClasse extends TPage
             }
 
             $tr->addRow();
-            $tr->addCell($logoHtml, 'center', 'header', 1);
-            $tr->addCell("RELATÓRIO - DIÁRIO DE CLASSE", 'center', 'title', 2);
+            
+            $logoHtmlWithPadding = str_replace('<img ', '<img style="padding-left: 10px; max-height: 55px; height: auto;" ', $logoHtml);
+
+            $headerHtml = '<table style="width: 100%; border: none !important; background: transparent !important; margin: 0; padding: 0; table-layout: fixed;">
+                <tr>
+                    <td style="width: 25%; border: none !important; text-align: left; vertical-align: middle; padding: 0;">' . $logoHtmlWithPadding . '</td>
+                    <td style="width: 50%; border: none !important; text-align: center; vertical-align: middle; padding: 0;">
+                        <span style="font-family: Arial; font-size: 16px; font-weight: bold; color: #000000;">RELATÓRIO - DIÁRIO DE CLASSE</span>
+                    </td>
+                    <td style="width: 25%; border: none !important; padding: 0;"></td>
+                </tr>
+            </table>';
+
+            $tr->addCell($headerHtml, 'left', 'title', 3);
 
             $object = $objects[0];
 
@@ -497,11 +509,15 @@ class RelatorioDiarioClasse extends TPage
             $tr->addCell("Curso:", 'right', 'info_label', 1);
             $tr->addCell($object->NomeCurso, 'left', 'info_value', 2);
 
+            // retorna o nome da disciplina com ciclo e período
+            $disciplinas = self::getDisciplinas($data->CodProfessor, $data->CodCurso);
+            $disciplina = $disciplinas[$data->disc] ?? '';
+
             $tr->addRow();
             $tr->addCell("Disciplina:", 'right', 'info_label', 1);
-            $tr->addCell($object->NomeDisciplina, 'left', 'info_value', 2);
+            $tr->addCell($disciplina, 'left', 'info_value', 2);
 
-             $tr->addRow();
+            $tr->addRow();
             $tr->addCell("Professor:", 'right', 'info_label', 1);
             $tr->addCell(mb_strtoupper($object->NomeProfessor, 'UTF-8'), 'left', 'info_value', 2);
 
@@ -512,19 +528,19 @@ class RelatorioDiarioClasse extends TPage
 
             foreach ($objects as $item)
             {
-                $dataAula = !empty($item->Data) ? TDate::date2br($item->Data) : '';
+                $dataAula = TDate::date2br($item->Data);
                 
-                $conteudoTexto = !empty(trim((string)($item->conteudo ?? ''))) 
+                $conteudo = !empty(trim((string)($item->conteudo ?? ''))) 
                     ? nl2br(htmlspecialchars($item->conteudo)) 
-                    : '<span style="color: #FF0000; font-weight: bold;">Conteúdo não registrado</span>';
+                    : '<span style="background-color: #e74c3c; color: #ffffff; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 14px;">Conteúdo não registrado</span>';
                 
-                $frequencia = ($item->FrequenciaLancada == 'SIM') 
-                    ? 'SIM' 
-                    : '<span style="color: #FF0000; font-weight: bold;">NÃO</span>';
+                $frequencia = ($item->FrequenciaLancada == 'SIM')
+                    ? 'Sim'
+                    : '<span style="background-color: #e74c3c; color: #ffffff; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 14px;">Não</span>';
 
                 $tr->addRow();
                 $tr->addCell($dataAula, 'center', 'data_cell');
-                $tr->addCell($conteudoTexto, 'left', 'data_cell');
+                $tr->addCell($conteudo, 'left', 'data_cell');
                 $tr->addCell($frequencia, 'center', 'data_cell');
             }
 

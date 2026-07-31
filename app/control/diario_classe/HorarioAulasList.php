@@ -306,8 +306,8 @@ class HorarioAulasList extends TPage
             // creates a criteria
             $criteria = new TCriteria;
             $criteria->add(new TFilter('Codprofessor', '=', $logged->systemuser_codlegado), TExpression::AND_OPERATOR); 
-            $criteria->add(new TFilter('Ano', '=', 2026), TExpression::AND_OPERATOR);
-            $criteria->add(new TFilter('Semestre', '=', 1), TExpression::AND_OPERATOR);
+            $criteria->add(new TFilter('Ano', '=', date('Y')), TExpression::AND_OPERATOR);
+            $criteria->add(new TFilter('Semestre', '=', self::getSemestre()), TExpression::AND_OPERATOR);
             $criteria->add(new TFilter('CodEntidade', '=', $Unidade), TExpression::AND_OPERATOR);
             
             // default order
@@ -377,5 +377,10 @@ class HorarioAulasList extends TPage
             }
         }
         parent::show();
+    }
+
+     private static function getSemestre()
+    {
+       return date('n') <= 6 ? 1 : 2;
     }
 }

@@ -174,5 +174,12 @@ class FiAluno extends TRecord
         return $this->cidade_aluno->Nome;
     }
 
+    public function get_Operador()
+    {
+        if (!empty($this->CodOperador)) {
+            return new FiOperador($this->CodOperador);
+        }
+        return '-';
+    }
 
 }

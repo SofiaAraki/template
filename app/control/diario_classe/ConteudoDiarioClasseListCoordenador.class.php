@@ -27,9 +27,9 @@ class ConteudoDiarioClasseListCoordenador extends TPage
         $disciplina = new TEntry('nome_disciplina');
         $data_aula  = new TDate('data_aula');
 
-        $this->form->addQuickField('Professor(a)', $professor, '100%');
-        $this->form->addQuickField('Disciplina', $disciplina, '100%');
-        $this->form->addQuickField('Data da Aula', $data_aula, '100%');
+        $this->form->addQuickField('Professor(a)', $professor, '80%');
+        $this->form->addQuickField('Disciplina', $disciplina, '80%');
+        $this->form->addQuickField('Data da Aula', $data_aula, '80%');
         
         $data_aula->setMask('dd/mm/yyyy');
         
@@ -45,17 +45,19 @@ class ConteudoDiarioClasseListCoordenador extends TPage
         $this->datagrid->datatable = 'true';        
 
         // Colunas focadas na auditoria do coordenador
-        $column_id          = new TDataGridColumn('id', 'ID', 'right');
+        $column_id          = new TDataGridColumn('id', 'ID', 'center');
         $column_professor   = new TDataGridColumn('nome_professor', 'Professor(a)', 'left');
         $column_disciplina  = new TDataGridColumn('nome_disciplina', 'Disciplina', 'left');
         $column_cod_turma   = new TDataGridColumn('cod_turma_etapa', 'Cód. Turma Etapa', 'center');
+        $column_turma       = new TDataGridColumn('Identificacao', 'Turma', 'left');
         $column_data        = new TDataGridColumn('data_aula', 'Data da Aula', 'center');
         $column_conteudo    = new TDataGridColumn('conteudo', 'Conteúdo Lançado', 'left');
 
         $this->datagrid->addColumn($column_id);
         $this->datagrid->addColumn($column_professor);
         $this->datagrid->addColumn($column_disciplina);
-        $this->datagrid->addColumn($column_cod_turma);
+        //$this->datagrid->addColumn($column_cod_turma);
+        //$this->datagrid->addColumn($column_turma);
         $this->datagrid->addColumn($column_data);
         $this->datagrid->addColumn($column_conteudo);
 
@@ -134,6 +136,13 @@ class ConteudoDiarioClasseListCoordenador extends TPage
                 }
                 $turmasPermitidas = array_unique($turmasPermitidas);
             }
+
+            $mapaTurmas = [];
+
+            foreach ($turmasCoord as $tc)
+            {
+                $mapaTurmas[$tc->CodTurmaetapa] = $tc->Identificacao;
+            }
             TTransaction::close(); 
 
             // Bloqueio de segurança: Se o coordenador não possuir turmas este ano, para e limpa a tela
@@ -149,7 +158,7 @@ class ConteudoDiarioClasseListCoordenador extends TPage
             TTransaction::open('Felabs_DB');
             
             $repository = new TRepository('ConteudoDiarioClasse');
-            $limit = 20;
+            $limit = 10;
             $criteria = new TCriteria;
 
             // Ordenação padrão idêntica à regra original por ID decrescente (mais recentes primeiro)
@@ -186,7 +195,7 @@ class ConteudoDiarioClasseListCoordenador extends TPage
             
             if ($objects) {
                 foreach ($objects as $object) {
-                    // Como data_aula já é VARCHAR(50), jogamos direto na grid sem converter formato
+                    $object->Identificacao = $mapaTurmas[$object->cod_turma_etapa] ?? '-';
                     $this->datagrid->addItem($object);
                 }
             }

@@ -90,8 +90,9 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
         $container->style = 'width: 100%';
         //$container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add(TPanelGroup::pack('Listagem Geral - Programa de Ensino da Disciplina', $this->form));
-        //$container->add(TPanelGroup::pack('', $this->datagrid, $this->pageNavigation));
-        $container->add(TPanelGroup::pack('', $this->datagrid));
+        
+        // AJUSTADO: Passando o $this->pageNavigation como o terceiro parâmetro para exibi-lo no rodapé do painel da tabela
+        $container->add(TPanelGroup::pack('', $this->datagrid, $this->pageNavigation));
         
         parent::add($container);
     }
@@ -297,55 +298,87 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
     {
         try
         {
-            TTransaction::open('Felabs_DB');
-            
+            $anoAtual = date('Y');
             $loggedUnit = TSession::getValue('userunitid');
-            $userid = TSession::getValue('userid');
-            $user = new SystemUser($userid);
+            $nomeCoordenador = TSession::getValue('username'); 
+
+            $cursosPermitidos = [];
+
+            // -------------------------------------------------------------------------
+            // PASSO 1: Buscar na base 'dados_fei' o escopo de cursos do coordenador
+            // -------------------------------------------------------------------------
+            TTransaction::open('dados_fei');
+            
+            $criteriaCoord = new TCriteria;
+            $criteriaCoord->add(new TFilter('NomeCoordenador', '=', $nomeCoordenador));
+            $criteriaCoord->add(new TFilter('Ano', '=', $anoAtual));
+            $criteriaCoord->add(new TFilter('CodEntidade', '=', $loggedUnit));
+            
+            $turmasCoord = VwCoordenadorturmaetapa::getObjects($criteriaCoord);
+            
+            if (!empty($turmasCoord)) {
+                foreach ($turmasCoord as $tc) {
+                    if (!empty($tc->CodCurso)) {
+                        $cursosPermitidos[] = $tc->CodCurso;
+                    }
+                }
+                $cursosPermitidos = array_unique($cursosPermitidos);
+            }
+            
+            TTransaction::close(); 
+
+            // Bloqueio de segurança: Se o coordenador não possuir cursos vinculados este ano, limpa a tela
+            if (empty($cursosPermitidos)) {
+                $this->datagrid->clear();
+                $this->pageNavigation->setCount(0);
+                return;
+            }
+
+            // -------------------------------------------------------------------------
+            // PASSO 2: Consultar os Programas de Ensino na base Felabs_DB
+            // -------------------------------------------------------------------------
+            TTransaction::open('Felabs_DB');
             
             $repository = new TRepository('ProgramaEnsinoDisciplina');
             $limit = 10;
-
             $criteria = new TCriteria;
-            $criteria->add(new TFilter('unidade', '=', $loggedUnit));
-            
 
-            if (empty($param['order']))
-            {
+            // Restrição de Escopo: Traz somente da unidade logada e dos cursos do coordenador
+            $criteria->add(new TFilter('unidade', '=', $loggedUnit));
+            $criteria->add(new TFilter('CodCurso', 'IN', $cursosPermitidos));
+
+            // AJUSTADO: Respeita os parâmetros de paginação (offset e limit) vindos do componente visual
+            if (isset($param['offset'])) {
+                $criteria->setProperty('offset', $param['offset']);
+            }
+            $criteria->setProperty('limit', $limit);
+
+            // Ordenação padrão
+            if (empty($param['order'])) {
                 $param['order'] = 'id';
                 $param['direction'] = 'desc';
             }
             
             $criteria->setProperties($param); 
-            $criteria->setProperty('limit', $limit);
-            
 
+            // Aplica filtros de busca dinâmicos do formulário
             if (TSession::getValue('ProgramaEnsinoDisciplinaList_filter_curso')) {
                 $criteria->add(TSession::getValue('ProgramaEnsinoDisciplinaList_filter_curso')); 
             }
-
             if (TSession::getValue('ProgramaEnsinoDisciplinaList_filter_disciplina')) {
                 $criteria->add(TSession::getValue('ProgramaEnsinoDisciplinaList_filter_disciplina')); 
             }
-
             if (TSession::getValue('ProgramaEnsinoDisciplinaList_filter_obg_optativa')) {
                 $criteria->add(TSession::getValue('ProgramaEnsinoDisciplinaList_filter_obg_optativa')); 
             }
-
             if (TSession::getValue('ProgramaEnsinoDisciplinaList_filter_periodo')) {
                 $criteria->add(TSession::getValue('ProgramaEnsinoDisciplinaList_filter_periodo'));
             }
-
             if (TSession::getValue('ProgramaEnsinoDisciplinaList_filter_data_reg')) {
                 $criteria->add(TSession::getValue('ProgramaEnsinoDisciplinaList_filter_data_reg'));
             }
 
             $objects = $repository->load($criteria, FALSE);
-            
-            if (is_callable($this->transformCallback))
-            {
-                call_user_func($this->transformCallback, $objects, $param);
-            }
             
             $this->datagrid->clear();
             
@@ -353,52 +386,29 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
             {
                 foreach ($objects as $object)
                 {
-                    // Abre conexão auxiliar externa externa
+                    // Abre conexão auxiliar externa para traduzir o código da disciplina para o Nome Legível
                     TTransaction::open('dados_fei');
 
                     $criteria2 = new TCriteria;
                     $criteria2->add(new TFilter('CodGradeDisciplinaEtapaFrente', '=', $object->disciplina));
                     $disciplinaNome = VwProfessordisciplinassemestre::getObjects($criteria2);
 
-                    $criteria1 = new TCriteria;
-                    $criteria1->add(new TFilter('CodGradecurso', '=', $object->CodGradecurso));
-                    $coordenadores = FiCoordenador::getObjects($criteria1);
+                    TTransaction::close();
 
-                    TTransaction::close(); // Fecha a conexão externa
-
-                    // --- CORREÇÃO DOS WARNINGS: Validação de Segurança ---
-                    if (!empty($disciplinaNome) && isset($disciplinaNome[0])) 
-                    {
+                    if (!empty($disciplinaNome) && isset($disciplinaNome[0])) {
                         $object->disciplina = $disciplinaNome[0]->NomeDisciplina;
-                        $codEntidade = $disciplinaNome[0]->CodEntidade;
-                    } 
-                    else 
-                    {
+                    } else {
                         $object->disciplina = "Disciplina não localizada (" . $object->disciplina . ")";
-                        $codEntidade = null;
                     }
-
-                    $codProfessorCoordenador = null;
-                    if (!empty($coordenadores) && isset($coordenadores[0])) 
-                    {
-                        $codProfessorCoordenador = $coordenadores[0]->Codprofessor;
-                    }
-                    // -----------------------------------------------------
 
                     $object->data_reg = TDate::date2br($object->data_reg);
                     
-                    // Só adiciona à listagem se os dados cruzados existirem e baterem com as regras de permissão
-                    if ($codEntidade == $loggedUnit) // SE REGISTRO PERTENCE A UNIDADE DO USUÁRIO LOGADO
-                    {
-                        if ($codProfessorCoordenador !== null && $codProfessorCoordenador == $user->systemuser_codlegado)
-                        {
-                            $this->datagrid->addItem($object);
-                        }                        
-                    }                    
+                    // Adiciona o item na grid com segurança
+                    $this->datagrid->addItem($object);
                 }
             }
             
-
+            // Recalcula o contador total do repositório respeitando os filtros e travas de escopo
             $criteria->resetProperties();
             $count = $repository->count($criteria);
             
@@ -406,14 +416,13 @@ class ProgramaEnsinoDisciplinaListCoordenador extends TPage
             $this->pageNavigation->setProperties($param); 
             $this->pageNavigation->setLimit($limit); 
             
-
             TTransaction::close();
             $this->loaded = true;
         }
         catch (Exception $e) 
         {
             new TMessage('error', $e->getMessage());
-            TTransaction::rollback();
+            try { TTransaction::rollback(); } catch (Exception $ex) {}
         }
     }
 

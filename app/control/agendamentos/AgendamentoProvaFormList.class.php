@@ -28,7 +28,9 @@ class AgendamentoProvaFormList extends TPage
         $data_prova = new TDateTime('data_prova');
         $observacao = new TText('observacao');
         $status = new THidden('status');
-        $unidade = new TDBCombo('unidade', 'Felabs_DB', 'SystemUnit', 'id', 'name');
+        //$unidade = new TDBCombo('unidade', 'Felabs_DB', 'SystemUnit', 'id', 'name');
+        $unidade = new TCombo('unidade');
+        $unidade->addItems(['2' => 'Campus 1', '3' => 'Campus 2']);
         $system_user_id = new THidden('system_user_id');
         $data_reg = new THidden('data_reg');
 
@@ -40,7 +42,7 @@ class AgendamentoProvaFormList extends TPage
         TTransaction::open('dados_fei');
         $ano = date('Y');
         $mes = date('m');
-        $semestre = ($mes < 8) ? 1 : 2;
+        $semestre = ($mes < 7) ? 1 : 2;
             
         $criteria = new TCriteria;
         if ($user->funcao_legado == 'Professor') {

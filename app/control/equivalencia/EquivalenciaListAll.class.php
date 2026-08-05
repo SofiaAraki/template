@@ -12,13 +12,14 @@ class EquivalenciaListAll extends TPage
         $this->form = new BootstrapFormBuilder('form_search_Equivalencia');
         $this->form->setFormTitle('<h4>Consultar Equivalências Realizadas</h4>');
     
-        $aluno_id = new TDBUniqueSearch('aluno_id', 'Felabs_DB', 'SystemUser', 'systemuser_codlegado', 'name');
-        $aluno_id->setSize('80%');
+        // Campo alterado para TEntry
+        $nome_aluno = new TEntry('nome_aluno');
+        $nome_aluno->setSize('80%');
 
         $grade_id = new TDBCombo('grade_id', 'Felabs_DB', 'CurriculoDigital', 'cod_grade', 'Grade: ({cod_grade}) - {fi_grade_curso_descricao->Descricao} - Curso: {diploma_digital_curso->nome_curso_sistema}');
         $grade_id->setSize('80%');
 
-        $this->form->addFields( [ new TLabel('Aluno') ], [ $aluno_id ] );
+        $this->form->addFields( [ new TLabel('Nome do Aluno') ], [ $nome_aluno ] );
         $this->form->addFields( [ new TLabel('Grade / Currículo') ], [ $grade_id ] );
 
         $this->form->setData( TSession::getValue(__CLASS__.'_filter_data') );
@@ -30,7 +31,6 @@ class EquivalenciaListAll extends TPage
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
         $this->datagrid->style = 'width: 100%';
 
-        //$this->datagrid->addColumn(new TDataGridColumn('aluno_id', 'Cód. Aluno', 'center', '10%'));
         $this->datagrid->addColumn(new TDataGridColumn('nome_aluno', 'Aluno', 'left', '25%'));
         $this->datagrid->addColumn(new TDataGridColumn('grade_id', 'Grade', 'center', '20%'));
         $this->datagrid->addColumn(new TDataGridColumn('nome_curso', 'Curso', 'left', '25%'));
@@ -41,14 +41,14 @@ class EquivalenciaListAll extends TPage
         $action_edit = new TDataGridAction(['EquivalenciaForm', 'onCarregaDisciplinas']);
         $action_edit->setLabel('Gerenciar Matérias');
         $action_edit->setImage('fa:edit blue');
-        $action_edit->setFields(['aluno_id', 'grade_id']);
+        $action_edit->setFields(['nome_aluno', 'grade_id']);
         $this->datagrid->addAction($action_edit);
 
         // Ação para imprimir o relatório
         $action_print = new TDataGridAction(['EquivalenciaReport', 'onGenerate']);
         $action_print->setLabel('Imprimir Relatório');
         $action_print->setImage('far:file-pdf red');
-        $action_print->setFields(['aluno_id', 'grade_id', 'nome_aluno', 'nome_curso']);
+        $action_print->setFields(['nome_aluno', 'grade_id', 'nome_curso']);
         $this->datagrid->addAction($action_print);
 
         $this->datagrid->createModel();
@@ -79,14 +79,14 @@ class EquivalenciaListAll extends TPage
     public function onNovoRegistro($param)
     {
         $data = $this->form->getData();
-        if (empty($data->grade_id)) {
-            new TMessage('warning', 'selecione uma Grade Curricular no combo superior antes de iniciar um Novo Registro.');
+        if (empty($data->grade_id) || empty($data->nome_aluno)) {
+            new TMessage('warning', 'Preencha o Nome do Aluno e selecione uma Grade Curricular antes de iniciar um Novo Registro.');
             return;
         }
 
         TApplication::loadPage('EquivalenciaForm', 'onCarregaDisciplinas', [
-            'aluno_id' => $data->aluno_id,
-            'grade_id' => $data->grade_id
+            'nome_aluno' => $data->nome_aluno,
+            'grade_id'  => $data->grade_id
         ]);
     }
 
@@ -102,11 +102,11 @@ class EquivalenciaListAll extends TPage
             $repository = new TRepository('ViewEquivalencia');
             $criteria = new TCriteria;
             
-            // Filtros mantidos
+            // Filtros atualizados
             $data = TSession::getValue(__CLASS__.'_filter_data');
             if ($data) {
-                if (!empty($data->aluno_id)) {
-                    $criteria->add(new TFilter('aluno_id', '=', $data->aluno_id));
+                if (!empty($data->nome_aluno)) {
+                    $criteria->add(new TFilter('nome_aluno', 'like', "%{$data->nome_aluno}%"));
                 }
                 if (!empty($data->grade_id)) {
                     $criteria->add(new TFilter('grade_id', '=', $data->grade_id));
@@ -128,7 +128,6 @@ class EquivalenciaListAll extends TPage
             if ($objects) {
                 foreach ($objects as $object) {
                     $item = new StdClass;
-                    $item->aluno_id = $object->aluno_id;
                     $item->nome_aluno = $object->nome_aluno ?? 'Não identificado';
                     $item->grade_id = $object->grade_id;
                     $item->nome_curso = !empty($object->nome_curso) ? $object->nome_curso : "Curso (Grade {$object->grade_id})";

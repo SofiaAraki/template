@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<!--[main]-->
+<html>
+    <head>
+        <style>
+            .background-frente-diploma {
+                width: 1280px;
+                height: 800px;
+                position: relative;
+                background-image: url("app/images/diploma/background/diploma_frente_fafram.jpg");
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: center;
+            } 
+
+            .container-frente-diploma {
+                position: absolute;
+                width: 61%;
+                left: 24%;
+                top: 29.5%;    
+            }
+            
+            .background-verso-diploma {
+                width: 1280px;
+                height: 800px;
+                position: relative;
+                background-image: url("app/images/diploma/background/verso_diploma.jpg");
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: center;
+            } 
+            
+            .container-emissora-diploma{
+                display: inline-block;
+                width: 42.4%;
+                margin-left: 5.5%;
+                margin-top: 10.2%;
+            }
+            
+            #container-ano-conclusao {
+              display: inline-block;
+              margin-top: 5px;
+              margin-left: 110px;
+              width: 16%;
+              height: 5%;
+              border: 1px solid #000000;
+              text-align: center;
+              font-family: 'Arial', sans-serif;
+              font-size: 10px;
+            }
+            
+            #container-num-registro-emissora {
+              display: inline-block;
+              width: 16%;
+              height: 5%;
+              border: 1px solid #000000;
+              text-align: center;
+              font-family: 'Arial', sans-serif;
+              font-size: 10px;
+            }
+            
+            #container-livro-emissora {
+              display: inline-block;
+              width: 16%;
+              height: 5%;
+              border: 1px solid #000000;
+              text-align: center;
+              font-family: 'Arial', sans-serif;
+              font-size: 10px;
+            }
+            
+            #container-folha-emissora {
+              display: inline-block;
+              width: 16%;
+              height: 5%;
+              border: 1px solid #000000;
+              text-align: center;
+              font-family: 'Arial', sans-serif;
+              font-size: 10px;
+            }
+            
+            #container-data-colacao {
+              display: inline-block;
+              margin-left: 30px;
+              width: 16%;
+              height: 5%;
+              border: 1px solid #000000;
+              text-align: center;
+              font-family: 'Arial', sans-serif;
+              font-size: 10px;
+            }
+            
+            #container-data-expedicao {
+              display: inline-block;
+              margin-left: 30px;
+              width: 16%;
+              height: 5%;
+              border: 1px solid #000000;
+              text-align: center;
+              font-family: 'Arial', sans-serif;
+              font-size: 10px;
+            }
+            
+            #container-assinatura-diretor {
+                display: inline-block;
+                margin-top: 2%;
+                width: 40%;
+                height: 7%;
+                text-align: center;
+                font-family: 'Arial', sans-serif;
+                font-size: 10px;
+            }
+            
+            #container-assinatura-secretaria {
+                display: inline-block;
+                margin-top: 2%;
+                width: 40%;
+                height: 7%;
+                float: right;   
+                text-align: center;
+                font-family: 'Arial', sans-serif;
+                font-size: 10px;
+            }
+            
+            .container-registradora-diploma {
+                display: inline-block;
+                width: 42.4%;
+                margin-left: 4.1%;
+                margin-top: 10.2%;
+            }
+            
+            .qrcode {
+                float: right;
+                margin-top: 5%;
+                margin-right: 10%;
+            }
+        </style>
+    </head>
+    
+    <body>    
+      <div class="background-frente-diploma">
+          <div class="container-frente-diploma">
+              <p style="line-height: 1.9; text-align: center; font-family: 'Arial', sans-serif; font-size:11.2pt;">O Diretor da Faculdade "Dr. Francisco Maeda", no uso de suas atribuições e tendo em vista a conclusão do curso de<br> <b>{$NomeCurso}</b>, na data de <b>{$DataConclusaoExtenso}</b>, e a colação de grau em <b>{$DataColacaoExtenso}</b>, confere o Grau de <b>{$TituloConferido} em {$NomeCurso}</b> a</p>
+              <p style="text-align: center; font-family: 'Arial', sans-serif; font-size:25.0pt;text-transform: capitalize;"><b>{$NomeDiplomado}</b></p>    
+              <p style="line-height: 1.9; text-align: center; font-family: 'Arial', sans-serif; font-size:11.2pt;">{$Nascimento} a <b>{$DataNascimentoExtenso}</b>, natural de <b>{$Naturalidade}</b>, <b>{$Nacionalidade}</b>, {$DocumentoIdentificacaoTexto} <b>{$DocumentoIdentificacaoValor}</b>, e outorga-lhe o presente Diploma, a fim de que possa gozar de todos os direitos e prerrogativas legais.</p>    
+              <br>
+              <p style="text-align: center; font-family: 'Arial', sans-serif; font-size:13.0pt;"><b>Ituverava-SP, {$DataExpedicaoDiplomaExtenso}.</b></p>
+              <p style="margin-top: 1%; margin-left:15%; display: inline-block; text-align: center; font-family: 'Arial', sans-serif; font-size:7.5pt;">Original Assinado<br> Segundo a Portaria 554/2019/MEC<br> <b>Prof. Dr. Roberto Inácio Barbosa Filho</b><br> Diretor Geral da FAFRAM</p>
+              <p style="margin-top: 0; margin-left: 30%; display: inline-block; text-align: center; font-family: 'Arial', sans-serif; font-size:7.5pt;">Original Assinado<br> Segundo a Portaria 554/2019/MEC<br> <b>Profª. Tania Regina C. Menezes de Melo</b><br> Secretária Geral da FAFRAM</p>
+              <p style="margin-top: 3%; margin-right: 0; text-align: right; font-family: 'Arial', sans-serif; font-size:7.0pt;">https://academico.feituverava.com.br/consultadiploma<br> Código de validação<br> {$CodigoValidacao}</p>    
+          </div>
+      </div>
+      
+      <div class="background-verso-diploma">
+          <div class="container-emissora-diploma">
+              <p style="text-align: center; font-family: 'Arial', sans-serif; font-size:10.2pt;"><b>{$NomeEmissora}</b></p>
+              <p style="text-align: left; font-family: 'Arial', sans-serif; font-size:10.2pt;">Razão Social da Mantenedora: {$NomeMantenedora}</p>
+              <p style="text-align: left; font-family: 'Arial', sans-serif; font-size:10.2pt;">CNPJ: {$CnpjMantenedora}</p>
+              <p style="text-align: left; font-family: 'Arial', sans-serif; font-size:10.2pt;">{$TextoEmecEmissora}.</p>
+              <p style="text-align: left; font-family: 'Arial', sans-serif; font-size:10.2pt;">Curso: {$NomeCurso} - {$GrauConferido}</p>
+              <p style="text-align: left; font-family: 'Arial', sans-serif; font-size:10.2pt;">{$TextoEmecCurso}.</p>
+              <div id="container-ano-conclusao">Ano Concl.<br> {$AnoConclusao}</div>
+              <!--<div id="container-num-registro-emissora">Dipl. Reg. N.<br> {$NumRegistroDiplomaEmissora}</div>-->	  
+              <!--<div id="container-livro-emissora">Livro<br> {$LivroRegistroDiplomaEmissora}</div>-->	
+              <!--<div id="container-folha-emissora">Folha<br> {$FolhaRegistroDiplomaEmissora}</div>-->	
+              <div id="container-data-colacao">Colação<br> {$DataColacaoAbreviada}</div>
+              <div id="container-data-expedicao">Data exp.<br> {$DataExpedicaoDiplomaAbreviada}</div>
+              <div id="container-assinatura-diretor">Original Assinado<br> Segundo a Portaria 554/2019/MEC<br> <b>Prof. Dr. Roberto Inácio Barbosa Filho</b><br> Diretor Geral da FAFRAM</div>
+	          <div id="container-assinatura-secretaria">Original Assinado<br> Segundo a Portaria 554/2019/MEC<br> <b>Profª. Tania Regina C. Menezes de Melo</b><br> Secretária Geral da FAFRAM</div>
+          </div>
+          
+          <div class="container-registradora-diploma">
+                <p style="text-align: center; font-family: 'Arial', sans-serif; font-size:10.2pt;"><b>{$NomeRegistradora}</b></p>
+                <p style="text-align: left; font-family: 'Arial', sans-serif; font-size:10.2pt;">{$TextoEmecRegistradora}</p>
+                <p style="text-align: left; font-family: 'Arial', sans-serif; font-size:10.2pt;">{$LivroRegistroDiplomaRegistradora} - {$NumProcessoDiploma}</p>
+                <p style="text-align: left; font-family: 'Arial', sans-serif; font-size:10.2pt;">{$InformacoesRegistro}</p>
+                <p style="text-align: left; font-family: 'Arial', sans-serif; font-size:10.2pt;">{$TextoAutorizacaoRegistro}</p>
+                <p style="text-align: left; font-family: 'Arial', sans-serif; font-size:10.2pt;">Data de registro: {$DataRegistroDiplomaAbreviada}</p>
+                <br>
+                <p style="text-align: center; font-family: 'Arial', sans-serif; font-size:10px;">Original Assinado <br> Segundo a Portaria 554/2019/MEC <br> <b>{$NomeResposavelRegistro}</b> <br> CPF: {$CpfResponsavelRegistro} <br> {$MatriculaResponsavelRegistro}</p>
+          </div>
+
+          <div class="qrcode">
+              <img src={$CaminhoQrCode}>
+          </div>
+      </div>
+	</body>
+</html>
+<!--[/main]-->	

@@ -15,13 +15,13 @@ class CadastroAlunoList extends TPage
         $this->form = new BootstrapFormBuilder('form_search_Aluno');
         $this->form->setFormTitle('Listagem de Alunos');
         
-        $ra   = new TEntry('Ra');
+        $id   = new TEntry('Codaluno'); // fazer uma validação para não permitir letras
+        $id->setMask('99999');
         $nome = new TEntry('Nome');
-        $cpf  = new TEntry('CPF');
-        $cpf->setMask('999.999.999-99');
 
-        $this->form->addFields([new TLabel('RA')], [$ra], [new TLabel('Nome')], [$nome], [new TLabel('CPF')], [$cpf]);
+        $this->form->addFields([new TLabel('Cod.Aluno')], [$id], [new TLabel('Nome')], [$nome]);
         
+        $this->form->addAction('Limpar', new TAction([$this, 'onClear']), 'fa:eraser red');
         $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
         $this->form->addAction('Novo Aluno', new TAction(['CadastroAlunoForm', 'onEdit']), 'fa:plus green');
         
@@ -29,17 +29,13 @@ class CadastroAlunoList extends TPage
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
         $this->datagrid->style = 'width: 100%';
         
-        $col_id    = new TDataGridColumn('Codaluno', 'Código', 'center', '10%');
-        $col_ra    = new TDataGridColumn('Ra', 'RA', 'left', '15%');
-        $col_nome  = new TDataGridColumn('Nome', 'Nome', 'left', '40%');
-        $col_cpf   = new TDataGridColumn('CPF', 'CPF', 'left', '20%');
-        $col_fone  = new TDataGridColumn('Telefone', 'Telefone', 'left', '15%');
+        $col_id   = new TDataGridColumn('Codaluno', 'Código', 'center', '10%');
+        $col_nome = new TDataGridColumn('Nome', 'Nome', 'left', '60%');
+        $col_operador = new TDataGridColumn('{Operador->Nome}', 'Operador', 'left', '30%');
         
         $this->datagrid->addColumn($col_id);
-        $this->datagrid->addColumn($col_ra);
         $this->datagrid->addColumn($col_nome);
-        $this->datagrid->addColumn($col_cpf);
-        $this->datagrid->addColumn($col_fone);
+        $this->datagrid->addColumn($col_operador);
         
         // Ações da Datagrid
         $action_edit = new TDataGridAction(['CadastroAlunoForm', 'onEdit'], ['key' => '{Codaluno}']);
@@ -72,57 +68,62 @@ class CadastroAlunoList extends TPage
     
     public function onSearch($param = null)
     {
-        // 1. Obtém os dados do formulário
-        $data = $this->form->getData();
-        
-        // 2. Se o usuário clicou em "Buscar" (o formulário enviou dados novos), guardamos na sessão.
-        // Caso contrário (veio por paginação ou refresh), recuperamos o que já estava salvo.
-        if (isset($param['method']) AND $param['method'] == 'onSearch') {
-            TSession::setValue(__CLASS__.'_filter_data', $data);
-        } else {
-            $data = TSession::getValue(__CLASS__.'_filter_data');
-            // Devolve os dados salvos de volta para o formulário para mantê-lo preenchido na tela
-            $this->form->setData($data);
-        }
-        
-        TTransaction::open('dados_fei');
-        $repository = new TRepository('FiAluno');
-        $criteria = new TCriteria;
-        
-        // Se houver limite/offset na paginação, passamos ao critério
-        if (isset($param['offset'])) {
-            $criteria->setProperty('offset', $param['offset']);
-        }
-        
-        // 3. Aplica os filtros baseando-se no objeto de dados ($data)
-        if (isset($data->Ra) AND ($data->Ra != '')) {
-            $criteria->add(new TFilter('Ra', 'like', "%{$data->Ra}%"));
-        }
-        if (isset($data->Nome) AND ($data->Nome != '')) {
-            $criteria->add(new TFilter('Nome', 'like', "%{$data->Nome}%"));
-        }
-        if (isset($data->CPF) AND ($data->CPF != '')) {
-            $criteria->add(new TFilter('CPF', '=', $data->CPF));
-        }
-
-        // Define a contagem de registros para alimentar a paginação
-        $this->pageNavigation->setCount($repository->count($criteria));
-        
-        $criteria->setProperty('limit', 10);
-        $criteria->setProperty('order', 'Nome');
-        $criteria->setProperty('direction', 'asc');
-        
-        $objects = $repository->load($criteria);
-        $this->datagrid->clear();
-
-        if ($objects) {
-            foreach ($objects as $object) {
-                $this->datagrid->addItem($object);
+        try {
+            // 1. Obtém os dados do formulário ou da sessão
+            $data = $this->form->getData();
+            
+            if (isset($param['method']) && $param['method'] == 'onSearch') {
+                TSession::setValue(__CLASS__.'_filter_data', $data);
+            } else {
+                $data = TSession::getValue(__CLASS__.'_filter_data');
+                $this->form->setData($data);
             }
+            
+            TTransaction::open('dados_fei');
+            $repository = new TRepository('FiAluno');
+            $criteria = new TCriteria;
+            
+            // 2. Aplica os filtros
+            if (!empty($data->Codaluno)) {
+                $criteria->add(new TFilter('Codaluno', '=', $data->Codaluno));
+            }
+            if (!empty($data->Nome)) {
+                $criteria->add(new TFilter('Nome', 'like', "%{$data->Nome}%"));
+            }
+
+            // 3. Contagem para paginação (feita antes do offset/limit)
+            $count = $repository->count($criteria);
+            $this->pageNavigation->setCount($count);
+            
+            // 4. Configuração da consulta paginada
+            $limit = 10;
+            $criteria->setProperty('limit', $limit);
+            $criteria->setProperty('order', 'Codaluno');
+            $criteria->setProperty('direction', 'desc');
+            
+            if (isset($param['offset'])) {
+                $criteria->setProperty('offset', $param['offset']);
+            }
+
+            $this->pageNavigation->setProperties($param);
+            $this->pageNavigation->setLimit($limit);
+
+            // 5. Carrega os objetos
+            $objects = $repository->load($criteria);
+            $this->datagrid->clear();
+
+            if ($objects) {
+                foreach ($objects as $object) {
+                    $this->datagrid->addItem($object);
+                }
+            }
+            
+            TTransaction::close();
+            $this->loaded = true;
+        } catch (Exception $e) {
+            new TMessage('error', $e->getMessage());
+            TTransaction::rollback();
         }
-        
-        TTransaction::close();
-        $this->loaded = true;
     }
     
     public function onDelete($param)
@@ -139,11 +140,70 @@ class CadastroAlunoList extends TPage
             $object = new FiAluno($param['key']);
             $object->delete();
             TTransaction::close();
+            
             $this->onSearch();
             new TMessage('info', 'Registro excluído com sucesso!');
         } catch (Exception $e) {
             new TMessage('error', $e->getMessage());
+            TTransaction::rollback();
         }
+    }
+
+    public function onReload($param = null)
+    {
+        try {
+            TTransaction::open('teste');
+            
+            $repository = new TRepository('FiAluno');
+            $limit = 10;
+            
+            $criteria = new TCriteria;
+            
+            $criteria->setProperties($param); // Aplica direction, offset e limit
+            $criteria->setProperty('limit', $limit);
+
+            // Carrega os filtros mantidos em sessão
+            if (TSession::getValue(__CLASS__.'_filter_Codaluno')) {
+                $criteria->add(TSession::getValue(__CLASS__.'_filter_Codaluno'));
+            }
+            if (TSession::getValue(__CLASS__.'_filter_Nome')) {
+                $criteria->add(TSession::getValue(__CLASS__.'_filter_Nome'));
+            }
+
+            // 1. Contagem total de registros filtrados (antes do limit)
+            $count = $repository->count($criteria);
+            
+            // 2. Carrega os objetos
+            $objects = $repository->load($criteria);
+            
+            $this->datagrid->clear();
+            if ($objects) {
+                foreach ($objects as $object) {
+                    $this->datagrid->addItem($object);
+                }
+            }
+            
+            // 3. Configura o componente de paginação
+            $this->pageNavigation->setCount($count);
+            $this->pageNavigation->setProperties($param);
+            $this->pageNavigation->setLimit($limit);
+            
+            TTransaction::close();
+            $this->loaded = true;
+        } catch (Exception $e) {
+            new TMessage('error', $e->getMessage());
+            TTransaction::rollback();
+        }
+    }
+
+    public function onClear()
+    {
+        TSession::setValue(__CLASS__.'_filter_data', NULL);
+        TSession::setValue(__CLASS__.'_filter_Codaluno', NULL);
+        TSession::setValue(__CLASS__.'_filter_Nome', NULL);
+        
+        $this->form->clear();
+        $this->onReload();
     }
     
     public function show()

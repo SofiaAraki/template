@@ -17,7 +17,7 @@ class TicketListProf extends TPage
         // create the form fields
         $id = new THidden('id');
         $ticket_id = new TEntry('ticket_id');
-        $system_user_id = new TEntry('system_user_id');
+        $system_user_id = new TDBUniqueSearch('system_user_id', 'SystemUser', 'id', 'name', 'name');
         $status = new TCombo('status');
         $status->addItems( [ 'A' => 'Aberto', 'E' => 'Em Progresso', 'F' => 'Finalizado' ] );
 

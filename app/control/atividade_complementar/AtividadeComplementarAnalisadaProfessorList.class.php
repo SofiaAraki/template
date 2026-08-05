@@ -72,7 +72,7 @@ class AtividadeComplementarAnalisadaProfessorList extends TPage
         $action_download = new TDataGridAction([$this, 'onDownload']);
         $action_download->setUseButton(TRUE);
         $action_download->setButtonClass('btn btn-default');
-        $action_download->setLabel('Download comprovante');
+        $action_download->setLabel('Download');
         $action_download->setImage('fas:cloud-download-alt blue');
         $action_download->setField('id');
         
@@ -80,7 +80,7 @@ class AtividadeComplementarAnalisadaProfessorList extends TPage
         $action_visualizar = new TDataGridAction(['AtividadeComplementarAnalisadaProfessorFormView', 'onEdit']);
         $action_visualizar->setUseButton(TRUE);
         $action_visualizar->setButtonClass('btn btn-default');
-        $action_visualizar->setLabel('Visualizar atividade');
+        $action_visualizar->setLabel('Visualizar');
         $action_visualizar->setImage('fa:search green');
         $action_visualizar->setField('id');
         

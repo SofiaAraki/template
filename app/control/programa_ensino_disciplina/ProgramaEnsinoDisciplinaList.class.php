@@ -143,7 +143,7 @@ class ProgramaEnsinoDisciplinaList extends TPage
                 $designer->addCell($toIso('Professor Responsável: ' . $object->system_user_id), 'left', 'value', 2);
                 
                 $designer->addRow();
-                $designer->addCell($toIso('Código: ' . ($object->codigo ?? '')), 'left', 'value', 1);
+                $designer->addCell($toIso('Cód. Disciplina: ' . ($object->codigo ?? '')), 'left', 'value', 1);
                 $designer->addCell($toIso('Obrigatória/Optativa: ' . ($object->obg_optativa ?? '')), 'left', 'value', 1);
                 
                 $designer->addRow();
@@ -163,7 +163,7 @@ class ProgramaEnsinoDisciplinaList extends TPage
                 $designer->addRow();
                 $designer->addCell($toIso('Distribuição Carga Horária Semanal'), 'center', 'table_head', 2);
                 $designer->addRow();
-                $designer->addCell($toIso('Teórica: ' . ($object->teorica ?? '') . '   |   Prática: ' . ($object->pratica ?? '') . '   |   Teórica/Prática: ' . ($object->pratica ?? '')), 'center', 'value', 2);
+                $designer->addCell($toIso('Teórica: ' . ($object->teorica ?? '') . '   |   Prática: ' . ($object->pratica ?? '') . '   |   Teórica/Prática: ' . ($object->teorica_pratica ?? '')), 'center', 'value', 2);
 
                 // --- 4. BLOCOS TEXTUAIS DINÂMICOS (ESTILO CAIXA INTEGRADA SEM LINHAS INTERNAS) ---
                 $blocosTextuais = [
@@ -201,7 +201,7 @@ class ProgramaEnsinoDisciplinaList extends TPage
 
                 // --- 5. TABELA DE ASSINATURA ---
                 $designer->addRow();
-                $designer->addCell($toIso('Data / Assinatura'), 'center', 'table_head', 2);
+                $designer->addCell($toIso('Assinatura'), 'center', 'table_head', 2);
                 
                 $designer->addRow();
                 $designer->addCell("\n\n_________________________________________", 'center', 'value', 2);

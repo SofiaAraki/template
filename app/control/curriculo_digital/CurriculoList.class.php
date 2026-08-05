@@ -745,7 +745,7 @@ class CurriculoList extends TPage
             TTransaction::open('Felabs_DB');
             
             $repository = new TRepository('CurriculoDigital');
-            $limit = 30;
+            $limit = 10;
   
             $criteria = new TCriteria;
             $criteria->add(new TFilter('cod_curso', 'IN', $items));

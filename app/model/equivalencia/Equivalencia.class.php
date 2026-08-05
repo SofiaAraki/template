@@ -14,7 +14,7 @@ class Equivalencia extends TRecord
     public function __construct($id = NULL, $callObjectLoad = TRUE)
     {
         parent::__construct($id, $callObjectLoad);
-        parent::addAttribute('aluno_id');
+        parent::addAttribute('nome_aluno');
         parent::addAttribute('grade_id');
         parent::addAttribute('disciplina_grade_id');
         parent::addAttribute('disciplina_equivalente');

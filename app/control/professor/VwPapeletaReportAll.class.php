@@ -29,6 +29,7 @@ class VwPapeletaReportAll extends TPage
         $CodGradeDisciplinaEtapa_Frente = new TEntry('CodGradeDisciplinaEtapa_Frente');
         $NomeDisciplina = new TEntry('NomeDisciplina');
         $Periodo = new TEntry('Periodoturma');
+        $Etapa = new TEntry('Etapa');
         $NomeCurso = new TEntry('NomeCurso');
         $output_type = new TRadioGroup('output_type');
          

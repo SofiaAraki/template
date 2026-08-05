@@ -1,5 +1,6 @@
 <?php
 use template\Widget\TStory;
+
 class WelcomeView extends TPage
 {
     private $fc;
@@ -101,21 +102,27 @@ class WelcomeView extends TPage
             $container = new TElement('div');
             $container->class = 'container-fluid';
 
-            // --- PRIMEIRA LINHA: CARDS DE ACESSO RÁPIDO ---
+            // --- PRIMEIRA LINHA: CARDS DE ACESSO RÁPIDO (5 CARDS) ---
             $row1 = new TElement('div');
             $row1->class = 'row';
 
             $linkMoodle     = 'https://moodlefe.com.br/feituverava/eva4/my/courses.php'; 
             $linkBiblioteca = 'https://biblioteca.feituverava.com.br/';
+            $linkManual = 'https://heyzine.com/flip-book/d7fa02866e.html';
 
             $labelDiario = $isProfessor ? 'Diário Eletrônico' : 'Boletim';
-            $linkDiario  = $isProfessor ? 'index.php?class=HorarioAulasList' : 'index.php?class=BoletimNovoList';
-            $linkETicket = $isProfessor ? 'index.php?class=TicketFormListProf' : 'index.php?class=TicketFormListAluno';
+            $linkDiario  = 'index.php?class=' . ($isProfessor ? 'HorarioAulasList' : 'BoletimNovoList');
+            $linkETicket = 'index.php?class=' . ($isProfessor ? 'TicketFormListProf' : 'TicketFormListAluno');
+            
+            // Link de direcionamento interno para a action SSO do Eventos
+            $linkEventos = 'index.php?class=WelcomeView&method=irParaEventos';
 
             $row1->add($this->column($this->card('Moodle', 'fa-graduation-cap', $linkMoodle, true)));
             $row1->add($this->column($this->card($labelDiario, 'fa-book', $linkDiario)));
             $row1->add($this->column($this->card('E-Ticket', 'fa-ticket-alt', $linkETicket)));
             $row1->add($this->column($this->card('Biblioteca', 'fa-university', $linkBiblioteca, true)));
+            $row1->add($this->column($this->card('Eventos', 'fa-calendar-check', $linkEventos)));
+            $row1->add($this->column($this->card('Manual do Aluno', 'fa-book-open', $linkManual, true)));
             $container->add($row1);
 
             // --- SEGUNDA LINHA: CALENDÁRIO DINÂMICO ADAPTATIVO ---
@@ -197,6 +204,64 @@ class WelcomeView extends TPage
         }
     }
 
+    public static function irParaEventos()
+    {
+        try
+        {   
+            TTransaction::open('Felabs_DB');
+            $logged = SystemUser::newFromLogin(TSession::getValue('login'));
+            $Codaluno = $logged->systemuser_codlegado;
+            $Codprofessor = $logged->systemuser_codlegado;
+            TTransaction::close();
+            
+            // 1. Busca o CPF do Aluno/Professor no banco do Acadêmico
+            TTransaction::open('dados_fei');
+            
+            $cpf = null;
+            if ($logged->funcao_legado == 'Aluno') {
+                $aluno = new FiAluno($Codaluno);
+                $cpf   = $aluno->CPF ?? $aluno->cpf ?? null;
+            } else {
+                $professor = FiProfessor::find($Codprofessor);
+                $cpf       = $professor->CPF ?? $professor->cpf ?? null;
+            }
+
+            TTransaction::close();
+
+            if (empty($cpf)) {
+                throw new Exception("CPF não encontrado no cadastro do Acadêmico para geração de acesso.");
+            }
+
+            // Chave secreta que AMBOS os sistemas devem conhecer
+            $secretKey = 'SuaChaveSuperSecretaEUnica123!';
+
+            $dados = [
+                'cpf'     => $cpf,
+                'expires' => time() + 15 // Expira em 15 segundos
+            ];
+
+            // Transforma os dados em texto e cria a assinatura HMAC
+            $payload = base64_encode(json_encode($dados));
+            $hash    = hash_hmac('sha256', $payload, $secretKey);
+
+            // O token final é o payload + assinatura
+            $token = $payload . '.' . $hash;
+
+            $urlEventos = "https://eventos.fafram.com.br/index.php?class=SSOAcademico&method=autenticar&token=" . $token;
+            $urlLocal = "http://localhost/eventos/index.php?class=SSOAcademico&method=autenticar&token=" . urlencode($token);
+            TScript::create("window.location.href = '{$urlLocal}';");
+
+        }
+        catch (Exception $e)
+        {
+            // Fecha transações pendentes se houver
+            if (TTransaction::getDatabase()) {
+                TTransaction::rollback();
+            }
+            new TMessage('error', 'Erro ao conectar ao Eventos: ' . $e->getMessage());
+        }
+    }
+
     public static function getEvents($param=NULL)
     {
         $return = array();
@@ -271,7 +336,8 @@ class WelcomeView extends TPage
     private function column($content)
     {
         $col = new TElement('div');
-        $col->class = 'col-xs-12 col-sm-3';
+        // Ajustado para col-sm-2 para comportar 5 cards de forma harmoniosa no grid Bootstrap (12 colunas)
+        $col->class = 'col-xs-12 col-sm-4 col-md-2';
         $col->add($content);
         return $col;
     }

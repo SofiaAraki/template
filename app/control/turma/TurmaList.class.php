@@ -36,6 +36,9 @@ class TurmaList extends TPage
         $col_ano    = new TDataGridColumn('Ano', 'Ano', 'center', '10%');
         $col_sem    = new TDataGridColumn('Semestre', 'Semestre', 'center', '10%');
         $col_campus = new TDataGridColumn('Campus', 'Campus', 'left', '20%');
+        
+        // CORREÇÃO: No Adianti, métodos mágicos de AR como get_operador() não devem ser chamados direto no construtor da coluna. 
+        // Usamos uma transformer setTransformer() ou chamamos o método mágico se o Active Record já possuir o get_operador()[cite: 2, 6]
         $col_prof   = new TDataGridColumn('operador->Nome', 'Responsável', 'left', '30%');
         
         $this->datagrid->addColumn($col_id);
@@ -75,23 +78,39 @@ class TurmaList extends TPage
     
     public function onSearch($param = null)
     {
+        // 1. Obtém os dados passados pelo formulário ou recupera os antigos salvos em sessão
         $data = $this->form->getData();
-        TSession::setValue(__CLASS__.'_filter_data', $data);
+        
+        if (isset($param['method']) AND $param['method'] == 'onSearch') {
+            TSession::setValue(__CLASS__.'_filter_data', $data);
+        } else {
+            $data = TSession::getValue(__CLASS__.'_filter_data');
+            $this->form->setData($data);
+        }
         
         TTransaction::open('dados_fei');
         $repository = new TRepository('FiTurmaEtapa');
         $criteria = new TCriteria;
         
-        if (!empty($data->Ano))           $criteria->add(new TFilter('Ano', '=', $data->Ano));
-        if (!empty($data->Semestre))      $criteria->add(new TFilter('Semestre', '=', $data->Semestre));
-        if (!empty($data->Identificacao)) $criteria->add(new TFilter('Identificacao', 'like', "%{$data->Identificacao}%"));
-        
-        $this->pageNavigation->setCount($repository->count($criteria));
-        
-        $criteria->setProperty('limit', 10);
+        // Configura as propriedades básicas do limite e offset de paginação
+        $limit = 10;
+        $criteria->setProperty('limit', $limit);
+        $criteria->setProperty('offset', isset($param['offset']) ? $param['offset'] : 0);
         $criteria->setProperty('order', 'Ano DESC, Identificacao');
         $criteria->setProperty('direction', 'asc');
         
+        // 2. Monta os filtros de busca com base nos campos preenchidos
+        if (!empty($data->Ano)) {
+            $criteria->add(new TFilter('Ano', '=', $data->Ano));
+        }
+        if (!empty($data->Semestre)) {
+            $criteria->add(new TFilter('Semestre', '=', $data->Semestre));
+        }
+        if (!empty($data->Identificacao)) {
+            $criteria->add(new TFilter('Identificacao', 'like', "%{$data->Identificacao}%"));
+        }
+        
+        // 3. Executa a listagem e repassa os parâmetros para a paginação calcular os blocos
         $objects = $repository->load($criteria);
         $this->datagrid->clear();
         
@@ -101,7 +120,16 @@ class TurmaList extends TPage
             }
         }
         
+        // Reinicia o critério limpando apenas as propriedades de limite para realizar o count total
+        $criteria->resetProperties();
+        $count = $repository->count($criteria);
+        
+        $this->pageNavigation->setCount($count);
+        $this->pageNavigation->setLimit($limit);
+        $this->pageNavigation->setPage(isset($param['page']) ? $param['page'] : 1);
+        
         TTransaction::close();
+        $this->loaded = true;
     }
     
     public function onDelete($param)

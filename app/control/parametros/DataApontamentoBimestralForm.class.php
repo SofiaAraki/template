@@ -64,10 +64,19 @@ class DataApontamentoBimestralForm extends TPage
             $cronograma = new FiDataapontamentobimestral;
             $cronograma->fromArray((array) $data);
             
-            // Injeção de auditoria operacional obrigatória da DDL
-            $cronograma->CodOperador = TSession::getValue('userid');
+            // 1. Obtém o nome do usuário logado na sessão do Adianti Framework
+            $nomeUsuario = TSession::getValue('username'); // Ou 'userfullname', dependendo de como está gravado na sua sessão
             
-            // Sanitização e formatação de datas combinadas para persistência no banco (Y-m-d H:i:s)
+            // 2. Busca na tabela FI_Operador pelo campo 'Nome'
+            $operador = FiOperador::where('Nome', 'like', "%{$nomeUsuario}%")->first();
+            
+            if ($operador) {
+                $cronograma->CodOperador = $operador->CodOperador;
+            } else {
+                throw new Exception("Operador com o nome '{$nomeUsuario}' não foi encontrado na base de dados de Operadores.");
+            }
+            
+            // Formatação das datas
             if (!empty($cronograma->DataInicio)) {
                 $cronograma->DataInicio = TDateTime::convertToMask($cronograma->DataInicio, 'dd/mm/yyyy hh:ii', 'yyyy-mm-dd hh:ii:ss');
             }

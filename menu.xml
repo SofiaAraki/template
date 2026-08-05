@@ -116,10 +116,10 @@
             <action>ProgramaEnsinoDisciplinaList</action>
             <icon>fas:book fa-fw</icon>
         </menuitem>
-        <menuitem label="Diário Eletronico">
+        <!-- <menuitem label="Diário Eletronico">
             <action>GerenciadorDisciplinaForm</action>
             <icon>fas:calendar-alt fa-fw</icon>
-        </menuitem>
+        </menuitem> -->
         <menuitem label="Diário de Classe">
             <action>HorarioAulasList</action>
             <icon>far:check-square fa-fw</icon>
@@ -131,32 +131,6 @@
         <menuitem label="Lançamento de Notas">
             <action>ApontamentoBimestral</action>
             <icon>fas:pen fa-fw</icon>
-        </menuitem>
-        <menuitem label="Atividade Complementar">
-            <icon>fas:clipboard-list fa-fw</icon>
-            <menu>
-            <menuitem label="Pendentes">
-                <action>AtividadeComplementarPendenteProfessorList</action>
-                <icon>fas:clock fa-fw</icon>
-            </menuitem>
-            <menuitem label="Analisadas">
-                <action>AtividadeComplementarAnalisadaProfessorList</action>
-                <icon>fas:clipboard-check fa-fw</icon>
-            </menuitem>
-            </menu>
-        </menuitem>       
-        <menuitem label="Estágio">
-            <icon>fas:briefcase fa-fw</icon>
-            <menu>
-            <menuitem label="Pendentes">
-                <action>EstagioPendenteProfessorList</action>
-                <icon>fas:clock fa-fw</icon>
-            </menuitem>
-            <menuitem label="Analisados">
-                <action>EstagioAnalisadoProfessorList</action>
-                <icon>fas:clipboard-check fa-fw</icon>
-            </menuitem>
-            </menu>
         </menuitem>
         <menuitem label="Meu Cadastro">
             <action>DadosCadastraisProfessorView</action>
@@ -534,18 +508,57 @@
     <menuitem label="Coordenador">
         <icon>fas:user-cog fa-fw</icon>
         <menu>
-        <menuitem label="Solicitação Marketing">
-            <action>MarketingBriefingFormList</action>
-            <icon>fas:camera fa-fw</icon>
+        <menuitem label="Relatórios">
+            <icon>fas:chart-bar fa-fw</icon>
+            <menu>
+                <menuitem label="Diário de Classe">
+                    <action>RelatorioDiarioClasse</action>
+                    <icon>fas:clipboard-check</icon>
+                </menuitem>
+                <menuitem label="Lançamento de Notas">
+                    <action>RelatorioLancamentoNotas</action>
+                    <icon>fas:pen-square</icon>
+                </menuitem>
+            </menu>
         </menuitem>
-        <menuitem label="Conteúdo Programático">
+        <menuitem label="Atividade Complementar">
+            <icon>fas:clipboard-list fa-fw</icon>
+            <menu>
+            <menuitem label="Pendentes">
+                <action>AtividadeComplementarPendenteProfessorList</action>
+                <icon>fas:clock fa-fw</icon>
+            </menuitem>
+            <menuitem label="Analisadas">
+                <action>AtividadeComplementarAnalisadaProfessorList</action>
+                <icon>fas:clipboard-check fa-fw</icon>
+            </menuitem>
+            <menuitem label="Relatorio">
+                <action>AtividadeComplementarRelatorio</action>
+                <icon>fas:print fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>       
+        <menuitem label="Estágio">
+            <icon>fas:briefcase fa-fw</icon>
+            <menu>
+            <menuitem label="Pendentes">
+                <action>EstagioPendenteProfessorList</action>
+                <icon>fas:clock fa-fw</icon>
+            </menuitem>
+            <menuitem label="Analisados">
+                <action>EstagioAnalisadoProfessorList</action>
+                <icon>fas:clipboard-check fa-fw</icon>
+            </menuitem>
+            </menu>
+        </menuitem>
+        <!-- <menuitem label="Conteúdo Programático">
             <action>ConteudoProgramaticoListCoordenador</action>
             <icon>fas:file-text fa-fw</icon> 
-        </menuitem>
-        <menuitem label="Relatório Diário de Classe">
+        </menuitem> -->
+        <!-- <menuitem label="Relatório Diário de Classe">
             <action>ConteudoDiarioClasseListCoordenador</action>
             <icon>fas:file-text fa-fw</icon> 
-        </menuitem>
+        </menuitem> -->
         <menuitem label="Plano de Ensino">
             <action>ProgramaEnsinoDisciplinaListCoordenador</action>
             <icon>fas:book fa-fw</icon>
@@ -557,6 +570,10 @@
         <menuitem label="Horário">
             <action>HorarioCoordenadorList</action>
             <icon>far:clock fa-fw</icon>
+        </menuitem>
+        <menuitem label="Solicitação Marketing">
+            <action>MarketingBriefingFormList</action>
+            <icon>fas:camera fa-fw</icon>
         </menuitem>
         </menu>
     </menuitem>

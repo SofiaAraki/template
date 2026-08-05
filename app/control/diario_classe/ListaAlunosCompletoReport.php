@@ -116,6 +116,9 @@ class ListaAlunosCompletoReport extends TPage
             
             $repository = new TRepository('VwAlunosCompleto');
             $criteria   = new TCriteria;
+
+            $criteria->add(new TFilter('Situacao','=','FR'), TExpression::AND_OPERATOR);
+            $criteria->add(new TFilter('ConfirmacaoMatricula','=', 'S'), TExpression::AND_OPERATOR);        
             
             if ($data->CodTurmaetapa) {
                 $criteria->add(new TFilter('CodTurmaetapa', 'like', "%{$data->CodTurmaetapa}%"));

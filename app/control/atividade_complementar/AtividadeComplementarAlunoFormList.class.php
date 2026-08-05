@@ -650,6 +650,7 @@ class AtividadeComplementarAlunoFormList extends TPage
             
             $cursos = $repository_curso->load($criteria_curso);
 
+            $items = null;
             foreach($cursos as $curso)
             {
                 $items[$curso->CodCurso] = $curso->CodCurso;

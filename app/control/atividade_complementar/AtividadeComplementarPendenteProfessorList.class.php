@@ -61,14 +61,14 @@ class AtividadeComplementarPendenteProfessorList extends TPage
         $action_download = new TDataGridAction([$this, 'onDownload']);
         $action_download->setUseButton(TRUE);
         $action_download->setButtonClass('btn btn-default');
-        $action_download->setLabel('Download comprovante');
+        $action_download->setLabel('Download');
         $action_download->setImage('fas:cloud-download-alt blue');
         $action_download->setField('id');
         
         $action_analisar = new TDataGridAction(['AtividadeComplementarAnaliseProfessorForm', 'onEdit']);
         $action_analisar->setUseButton(TRUE);
         $action_analisar->setButtonClass('btn btn-default');
-        $action_analisar->setLabel('Analisar atividade');
+        $action_analisar->setLabel('Analisar');
         $action_analisar->setImage('fas:pencil-alt orange');
         $action_analisar->setField('id');
         

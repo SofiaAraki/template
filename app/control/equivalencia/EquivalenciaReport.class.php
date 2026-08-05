@@ -7,9 +7,8 @@ class EquivalenciaReport extends TPage
     {
         parent::__construct();
         
-        if (!empty($param['aluno_id']) && !empty($param['grade_id']))
+        if (!empty($param['nome_aluno']) && !empty($param['grade_id']))
         {
-            TSession::setValue('relatorio_aluno_id',   $param['aluno_id']);
             TSession::setValue('relatorio_nome_aluno', $param['nome_aluno'] ?? TSession::getValue('relatorio_nome_aluno'));
             TSession::setValue('relatorio_grade_id',   $param['grade_id']);
         }
@@ -23,11 +22,10 @@ class EquivalenciaReport extends TPage
         {
             TTransaction::open('Felabs_DB');
             
-            $alunoId   = !empty($param['aluno_id'])   ? $param['aluno_id']   : TSession::getValue('relatorio_aluno_id');
             $nomeAluno = !empty($param['nome_aluno']) ? $param['nome_aluno'] : TSession::getValue('relatorio_nome_aluno');
             $gradeId   = !empty($param['grade_id'])   ? $param['grade_id']   : TSession::getValue('relatorio_grade_id');
             
-            if (empty($alunoId) || empty($gradeId)) {
+            if (empty($nomeAluno) || empty($gradeId)) {
                 throw new Exception("Parâmetros de Aluno ou Grade não identificados na sessão.");
             }
 
@@ -46,6 +44,7 @@ class EquivalenciaReport extends TPage
                 $tr->addStyle('footer2', 'Arial', '10', 'B', '#333333', '#ffffff');
 
                 $obj_grade = CurriculoDigital::where('cod_grade', '=', $gradeId)->first();
+                $obj_curso = DiplomaDigitalCurso::where('codigo_curso_sistema', '=', $obj_grade->cod_curso)->first();
                 
                 if (!$obj_grade) {
                     throw new Exception("Estrutura curricular (Grade {$gradeId}) não encontrada.");
@@ -65,9 +64,10 @@ class EquivalenciaReport extends TPage
                     $tr->addCell('FACULDADE DR. FRANCISCO MAEDA - FAFRAM - RELATÓRIO DE EQUIVALÊNCIAS CURRICULARES', 'center', 'title', 4);
                     
                     $tr->addRow();
-                    $tr->addCell('Aluno: ' . $alunoId . ' - ' . $nomeAluno, 'left', 'meta_header', 4);
-                    $tr->addRow();
-                    $tr->addCell('Estrutura Curricular: Grade ' . $obj_grade->cod_grade . ' - Curso: ' . $obj_grade->cod_curso, 'left', 'meta_header', 4);
+                    $tr->addCell('Aluno: ' . $nomeAluno, 'left', 'meta_header', 2);
+
+                    $descricaoGrade = $obj_grade->fi_grade_curso_descricao->Descricao ?? '';
+                    $tr->addCell('Grade (' . $obj_grade->cod_grade . ') - ' . $descricaoGrade, 'left', 'meta_header', 2);
                     
                     $tr->addRow();
                     $tr->addCell('Etapa', 'center', 'header');
@@ -83,7 +83,7 @@ class EquivalenciaReport extends TPage
                         $disciplinaEquivalente = '';
                         $notaEquivalente = '';
 
-                        $equivalencia = Equivalencia::where('aluno_id', '=', $alunoId)
+                        $equivalencia = Equivalencia::where('nome_aluno', '=', $nomeAluno)
                                                     ->where('grade_id', '=', $gradeId)
                                                     ->where('disciplina_grade_id', '=', $disc->id)
                                                     ->first();
@@ -108,7 +108,7 @@ class EquivalenciaReport extends TPage
                         $colour = !$colour;
                     }
 
-                    $vw_equivalencia = ViewEquivalencia::where('aluno_id', '=', $alunoId)
+                    $vw_equivalencia = ViewEquivalencia::where('nome_aluno', '=', $nomeAluno)
                                                     ->where('grade_id', '=', $gradeId)
                                                     ->first();
 
@@ -121,7 +121,7 @@ class EquivalenciaReport extends TPage
                     $tr->addRow();
                     $tr->addCell('Coordenador Responsável: ' . $nome_coordenador, 'center', 'footer', 4);
 
-                    $output_file = 'app/output/Equivalencias_' . $alunoId . '_' . uniqid() . '.' . $format;
+                    $output_file = 'app/output/Equivalencias_' . $nomeAluno . '_' . uniqid() . '.' . $format;
                     $tr->save($output_file);
 
                     TTransaction::close();

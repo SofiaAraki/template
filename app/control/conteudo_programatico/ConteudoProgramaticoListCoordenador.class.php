@@ -57,7 +57,7 @@ class ConteudoProgramaticoListCoordenador extends TPage
         $this->datagrid->addColumn($column_etapa);
         $this->datagrid->addColumn($column_turma);
         $this->datagrid->addColumn($column_data_reg);
-        $this->datagrid->addColumn($column_system_user_id);
+        //$this->datagrid->addColumn($column_system_user_id);
         
         // ação de visualização/detalhes para o coordenador acompanhar
         $action_view = new TDataGridAction(array('ConteudoProgramaticoFormView', 'onShow'));
@@ -130,12 +130,51 @@ class ConteudoProgramaticoListCoordenador extends TPage
     {
         try
         {
+            $anoAtual = date('Y');
+            $loggedUnit = TSession::getValue('userunitid');
+            $nomeCoordenador = TSession::getValue('username');
+
+            $cursosCoordenados = [];
+
+            // -------------------------------------------------------------------------
+            // PASSO 1: Buscar na base 'dados_fei' as turmas/cursos que estão sob responsabilidade do Coordenador logado
+            // -------------------------------------------------------------------------
+            TTransaction::open('dados_fei');
+            
+            $criteriaCoord = new TCriteria;
+            $criteriaCoord->add(new TFilter('NomeCoordenador', '=', $nomeCoordenador));
+            $criteriaCoord->add(new TFilter('Ano', '=', $anoAtual));
+            $criteriaCoord->add(new TFilter('CodEntidade', '=', $loggedUnit));
+            
+            $turmasCoord = VwCoordenadorturmaetapa::getObjects($criteriaCoord);
+            
+            if (!empty($turmasCoord)) {
+                foreach ($turmasCoord as $tc) {
+                    if (!empty($tc->CodCurso)) {
+                        $cursosCoordenados[] = $tc->CodCurso;
+                    }
+                    if (!empty($tc->CodGradeCurso)) {
+                        $cursosCoordenados[] = $tc->CodGradeCurso;
+                    }
+                }
+                $cursosCoordenados = array_unique($cursosCoordenados);
+            }
+            TTransaction::close();
+
+            // Bloqueio de segurança preventivo: Se o coordenador não gerenciar nenhuma turma/curso, aborta
+            if (empty($cursosCoordenados)) {
+                $this->datagrid->clear();
+                $this->pageNavigation->setCount(0);
+                return;
+            }
+
+            // -------------------------------------------------------------------------
+            // PASSO 2: Consultar os registros originais do conteúdo programático
+            // -------------------------------------------------------------------------
             TTransaction::open('Felabs_DB');
             
-            $loggedUnit = TSession::getValue('userunitid');
             $repository = new TRepository('ConteudoProgramatico');
             $limit = 10;
-
             $criteria = new TCriteria;
 
             if (empty($param['order']))
@@ -168,7 +207,7 @@ class ConteudoProgramaticoListCoordenador extends TPage
             
             if ($objects)
             {
-                // Abre a conexão externa UMA única vez antes do loop (melhora performance drasticamente)
+                // Abre a conexão externa uma única vez antes do loop de tratamento para otimizar a performance
                 TTransaction::open('dados_fei');
 
                 foreach ($objects as $object)
@@ -180,18 +219,30 @@ class ConteudoProgramaticoListCoordenador extends TPage
 
                     $disciplinaNome = VwProfessordisciplinassemestre::getObjects($criteria2);
                     
-                    if (!empty($disciplinaNome)) {
+                    if (!empty($disciplinaNome) && isset($disciplinaNome[0])) {
                         $object->disciplina = $disciplinaNome[0]->NomeDisciplina;
                         
-                        // Só adiciona na grid se o registro pertencer à unidade (User Unit) do coordenador logado
-                        if($disciplinaNome[0]->CodEntidade == $loggedUnit) 
+                        // Validação Cruzada de Segurança:
+                        // 1. O registro deve pertencer à mesma Unidade ($loggedUnit) do Coordenador.
+                        // 2. O curso/grade da disciplina deve estar dentro do vetor de cursos permitidos ($cursosCoordenados).
+                        if ($disciplinaNome[0]->CodEntidade == $loggedUnit) 
                         {
-                            $this->datagrid->addItem($object);
+                            $isCoordinated = false;
+                            
+                            if (isset($disciplinaNome[0]->CodCurso) && in_array($disciplinaNome[0]->CodCurso, $cursosCoordenados)) {
+                                $isCoordinated = true;
+                            }
+                            if (isset($disciplinaNome[0]->CodGradeCurso) && in_array($disciplinaNome[0]->CodGradeCurso, $cursosCoordenados)) {
+                                $isCoordinated = true;
+                            }
+
+                            if ($isCoordinated) {
+                                $this->datagrid->addItem($object);
+                            }
                         }
                     }
                 }
                 
-                // Fecha a transação externa após o término do loop
                 TTransaction::close();
             }
             
@@ -208,7 +259,7 @@ class ConteudoProgramaticoListCoordenador extends TPage
         catch (Exception $e) 
         {
             new TMessage('error', $e->getMessage());
-            TTransaction::rollback();
+            try { TTransaction::rollback(); } catch (Exception $ex) {}
         }
     }    
 

@@ -12,7 +12,6 @@ class ViewEquivalencia extends TRecord
     {
         parent::__construct($id, $callObjectLoad);
         parent::addAttribute('id_virtual');
-        parent::addAttribute('aluno_id');
         parent::addAttribute('nome_aluno');
         parent::addAttribute('grade_id');
         parent::addAttribute('cod_curso');

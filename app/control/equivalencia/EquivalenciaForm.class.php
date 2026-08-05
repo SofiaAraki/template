@@ -21,15 +21,14 @@ class EquivalenciaForm extends TPage
         $exibe_grade = new TEntry('exibe_grade');
         $exibe_grade->setEditable(FALSE);
 
-        // Campos ocultos cruciais para trafegar os IDs reais entre as ações e o PDF
-        $aluno_id = new THidden('aluno_id');
-        $grade_id = new THidden('grade_id');
+        // Campos ocultos
+        $nome_aluno = new THidden('nome_aluno');
+        $grade_id   = new THidden('grade_id');
 
-        $this->form->addFields( [ $aluno_id ], [ $grade_id ] );
+        $this->form->addFields( [ $nome_aluno ], [ $grade_id ] );
         $this->form->addFields( [ new TLabel('Aluno:') ], [ $exibe_aluno ] );
         $this->form->addFields( [ new TLabel('Grade:') ], [ $exibe_grade ] );
 
-        // Botões superiores focados na operação atual
         $this->form->addActionLink('Voltar', new TAction(['EquivalenciaList', 'onReload']), 'fa:arrow-left blue');
         $this->form->addAction('Salvar Equivalências', new TAction([$this, 'onSaveVisual']), 'fa:check green');
 
@@ -56,28 +55,24 @@ class EquivalenciaForm extends TPage
 
     public function onCarregaDisciplinas($param)
     {
-        $cod_aluno = !empty($param['aluno_id']) ? $param['aluno_id'] : 0;
-        $cod_grade = !empty($param['grade_id']) ? $param['grade_id'] : 0;
+        $str_nome_aluno = !empty($param['nome_aluno']) ? $param['nome_aluno'] : '';
+        $cod_grade      = !empty($param['grade_id']) ? $param['grade_id'] : 0;
 
         try
         {
-            if (isset($param['aluno_id']) && isset($param['grade_id']))
+            if (!empty($str_nome_aluno) && !empty($cod_grade))
             {
                 TTransaction::open('Felabs_DB');
-
-                $nome_aluno = "Código do Aluno: {$cod_aluno}";
-                $obj_aluno = SystemUser::where('systemuser_codlegado', '=', $cod_aluno)->first();
-                if ($obj_aluno) {
-                    $nome_aluno = $obj_aluno->name;
-                }
 
                 $obj_grade = CurriculoDigital::where('cod_grade', '=', $cod_grade)->first();
                 
                 $data = new StdClass;
-                $data->exibe_aluno = $nome_aluno;
-                $data->exibe_grade = $obj_grade ? "Grade: {$obj_grade->cod_grade} - Curso: {$obj_grade->cod_curso}" : "Grade: {$cod_grade}";
+                $data->exibe_aluno = $str_nome_aluno;
+
+                $descricaoGrade = $obj_grade->fi_grade_curso_descricao->Descricao ?? '';
+                $data->exibe_grade = $obj_grade ? "Grade: ({$obj_grade->cod_grade}) - {$descricaoGrade}" : "Grade não encontrada";
                 
-                $data->aluno_id    = $cod_aluno;
+                $data->nome_aluno  = $str_nome_aluno;
                 $data->grade_id    = $cod_grade;
 
                 $this->form->setData($data);
@@ -107,20 +102,18 @@ class EquivalenciaForm extends TPage
                             $val_equivalente = '';
                             $val_nota        = '';
                             
-                            // Busca a equivalência gravada no Felabs_DB usando o código puro do aluno
-                            if (!empty($cod_aluno)) {
-                                $equivalencia = Equivalencia::where('aluno_id', '=', $cod_aluno)
-                                                            ->where('grade_id', '=', $cod_grade)
-                                                            ->where('disciplina_grade_id', '=', $object->id)
-                                                            ->first();
-                                                            
-                                if ($equivalencia) {
-                                    $val_equivalente = $equivalencia->disciplina_equivalente;
-                                    $val_nota        = $equivalencia->nota_equivalente;
-                                }
+                            // Busca a equivalência pelo nome_aluno
+                            $equivalencia = Equivalencia::where('nome_aluno', '=', $str_nome_aluno)
+                                                        ->where('grade_id', '=', $cod_grade)
+                                                        ->where('disciplina_grade_id', '=', $object->id)
+                                                        ->first();
+                                                        
+                            if ($equivalencia) {
+                                $val_equivalente = $equivalencia->disciplina_equivalente;
+                                $val_nota        = $equivalencia->nota_equivalente;
                             }
 
-                            // MONTA O INPUT DE DISCIPLINA EQUIVALENTE Inline (AJAX)
+                            // INPUT DISCIPLINA EQUIVALENTE
                             $name_eq = 'equivalente_' . $object->id;
                             $widget_eq = new TEntry($name_eq);
                             $widget_eq->setValue($val_equivalente);
@@ -129,21 +122,23 @@ class EquivalenciaForm extends TPage
 
                             $action_eq = new TAction([__CLASS__, 'onSaveInline']);
                             $action_eq->setParameter('column', 'disciplina_equivalente');
-                            $action_eq->setParameter('aluno_id', $cod_aluno);
+                            $action_eq->setParameter('nome_aluno', $str_nome_aluno);
                             $action_eq->setParameter('grade_id', $cod_grade);
                             $action_eq->setParameter('disciplina_grade_id', $object->id);
                             $widget_eq->setExitAction($action_eq);
 
-                            // MONTA O INPUT DE NOTA Inline (AJAX)
-                            $name_nota = 'nota_' . $object->id;
-                            $widget_nota = new TEntry($name_nota);
+                            // INPUT NOTA
+                            $nota_eq = 'nota_' . $object->id;
+                            $widget_nota = new TEntry($nota_eq);
+                            $widget_nota->setNumericMask(2,',','.', true);
+                            $widget_nota->setMask('19,9');
                             $widget_nota->setValue($val_nota);
                             $widget_nota->setSize('100%');
                             $widget_nota->setFormName('form_Equivalencia');
 
                             $action_nota = new TAction([__CLASS__, 'onSaveInline']);
                             $action_nota->setParameter('column', 'nota_equivalente');
-                            $action_nota->setParameter('aluno_id', $cod_aluno);
+                            $action_nota->setParameter('nome_aluno', $str_nome_aluno);
                             $action_nota->setParameter('grade_id', $cod_grade);
                             $action_nota->setParameter('disciplina_grade_id', $object->id);
                             $widget_nota->setExitAction($action_nota);
@@ -168,34 +163,32 @@ class EquivalenciaForm extends TPage
         }
     }
 
-    /**
-     * Lançamento assíncrono instantâneo via AJAX tratado para a política 'serial'
-     */
     public static function onSaveInline($param)
     {
         $value  = (isset($param['_field_value']) && $param['_field_value'] !== '') ? $param['_field_value'] : ''; 
         $column = $param['column'];       
         
-        $aluno_id = $param['aluno_id'];
-        $grade_id = $param['grade_id'];
+        $nome_aluno           = $param['nome_aluno'];
+        $grade_id             = $param['grade_id'];
         $disciplina_grade_id = $param['disciplina_grade_id'];
 
         try
         {
             TTransaction::open('Felabs_DB');
 
-            $object = Equivalencia::where('aluno_id', '=', $aluno_id)
+            $object = Equivalencia::where('nome_aluno', '=', $nome_aluno)
+                                   ->where('grade_id', '=', $grade_id)
                                    ->where('disciplina_grade_id', '=', $disciplina_grade_id)
                                    ->first();
 
             if (!$object)
             {
                 $object = new Equivalencia;
-                $object->aluno_id = $aluno_id;
-                $object->grade_id = $grade_id;
+                $object->nome_aluno           = $nome_aluno;
+                $object->grade_id             = $grade_id;
                 $object->disciplina_grade_id = $disciplina_grade_id;
-                $object->data_lancamento = date('Y-m-d H:i:s');
-                $object->system_user_id = TSession::getValue('userid') ?? 1;
+                $object->data_lancamento      = date('Y-m-d H:i:s');
+                $object->system_user_id       = TSession::getValue('userid') ?? 1;
                 
                 $object->disciplina_equivalente = '';
                 $object->nota_equivalente       = '';

@@ -26,20 +26,22 @@ class ControleFrequencia extends TStandardList
         $Identificacao      = $sessao_diarioclasse["Identificacao"];
         $NomeDisciplina     = $sessao_diarioclasse["NomeDisciplina"];
         $NomeProfessor      = $sessao_diarioclasse["NomeProfessor"];
-        $NomeDiaSemana      = $sessao_diarioclasse["NomeDiaSemana"];
+        //$NomeDiaSemana      = $sessao_diarioclasse["NomeDiaSemana"];
         $CodDisciplina      = $sessao_diarioclasse["CodDisciplina"];
         $Ciclo              = $sessao_diarioclasse["Etapa"];
         $Codprofessor       = $sessao_diarioclasse["Codprofessor"];
         $CodGradeDisciplinaEtapaFrente = $sessao_diarioclasse["CodGradeDisciplinaEtapaFrente"];
         
-        $sessao_data_escolhida = TSession::getValue('data_escolhida');
-        $data_escolhida = $sessao_data_escolhida["data_escolhida"];
+        //$sessao_data_escolhida = TSession::getValue('data_escolhida');
+        $data_escolhida = TSession::getValue('data_escolhida');
 
-            $criteria = new TCriteria();
-            $criteria->add(new TFilter('Situacao','=','FR'), TExpression::AND_OPERATOR);
-            $criteria->add(new TFilter('CodTurmaetapa','=', $CodTurmaetapa), TExpression::AND_OPERATOR);
-            $criteria->add(new TFilter('CodDisciplina','=', $CodDisciplina), TExpression::AND_OPERATOR);
-            $criteria->add(new TFilter('ConfirmacaoMatricula','=', 'S'), TExpression::AND_OPERATOR);
+        // Critério para buscar os alunos
+        $criteria = new TCriteria();
+        $criteria->add(new TFilter('Situacao','=','FR'), TExpression::AND_OPERATOR);
+        // $criteria->add(new TFilter('TipoDis', '=', 'AT'), TExpression::AND_OPERATOR); // Não exibe alunos com DP na disciplina
+        $criteria->add(new TFilter('CodTurmaetapa','=', $CodTurmaetapa), TExpression::AND_OPERATOR);
+        $criteria->add(new TFilter('CodDisciplina','=', $CodDisciplina), TExpression::AND_OPERATOR);
+        $criteria->add(new TFilter('ConfirmacaoMatricula','=', 'S'), TExpression::AND_OPERATOR);
 
         parent::setCriteria($criteria);
         /////////////****FIM***** Carrega os alunos conforme o dia da semana e a aula escolhida pelo professor na página anterior *********//////////////////
@@ -60,7 +62,7 @@ class ControleFrequencia extends TStandardList
         $row->layout = ['col-sm-4', 'col-sm-3', 'col-sm-5' ];
  
         $this->form->setData( TSession::getValue('Diario_filter_data') );
-        $this->form->addActionLink( 'Listar Disciplinas',  new TAction(['HorarioAulasList', 'onReload']), 'fa:arrow-left blue');
+        $this->form->addActionLink( 'Listar Disciplinas',  new TAction(['HorarioAulasList', 'onReload']), 'fa:reply blue');
         // create the datagrid form wrapper
         $this->formDatagrid = new TForm('datagrid_form');
         
@@ -81,9 +83,18 @@ class ControleFrequencia extends TStandardList
         $verifica_turma = $sessao_diarioclasse["CodTurmaetapa"];
         $verifica_periodo = $sessao_diarioclasse["Periodo"];
  
-        $php_dia = date('w', strtotime($data_escolhida)); // 0 (dom) a 6 (sab)
-        $diasemana_numero = $php_dia + 1; // 1 (dom) a 7 (sab)
+        // $php_dia = date('w', strtotime($data_escolhida)); // 0 (dom) a 6 (sab)
+        // $diasemana_numero = $php_dia + 1; // 1 (dom) a 7 (sab)
 
+        $data = DateTime::createFromFormat('d/m/Y', $data_escolhida);
+
+        if (!$data) {
+            throw new Exception("Data inválida: {$data_escolhida}");
+        }
+
+        $php_dia = (int) $data->format('w');
+        $diasemana_numero = $php_dia + 1;
+        
         // Critério para buscar as aulas
         $criteriaDia = new TCriteria;
         $criteriaDia->add(new TFilter('Codprofessor', '=', $verifica_professor));
@@ -94,7 +105,7 @@ class ControleFrequencia extends TStandardList
         $criteriaDia->add(new TFilter('Período', '=', $verifica_periodo));
         $criteriaDia->add(new TFilter('DiaSemana', '=', $diasemana_numero));
         
-        $repository = new TRepository('VwHorarioprofessor'); 
+        $repository = new TRepository('VwHorarioprofessor');
         $Aulas = $repository->load($criteriaDia);
 
         // Adiciona colunas dinamicamente com base na quantidade de NumeroOrdemAula
@@ -142,9 +153,6 @@ class ControleFrequencia extends TStandardList
         //$this->postAction->setParameters($param); // important!
        
         return parent::onReload( $param );
-
-        
-
     }
     
 
@@ -152,7 +160,9 @@ class ControleFrequencia extends TStandardList
      * Transform the objects before load them into the datagrid
      */
     public function onBeforeLoad($objects)
-    {
+    {   
+        // $objects é a lista de alunos
+
         $sessao_diarioclasse = TSession::getValue('sessao_diarioclasse'); 
         $verifica_frente_disciplina = $sessao_diarioclasse["CodGradeDisciplinaEtapaFrente"];
         $verifica_disciplina = $sessao_diarioclasse["CodDisciplina"];
@@ -160,11 +170,21 @@ class ControleFrequencia extends TStandardList
         $verifica_turma = $sessao_diarioclasse["CodTurmaetapa"];
         $verifica_periodo = $sessao_diarioclasse["Periodo"];
 
-        $sessao_data_escolhida = TSession::getValue('data_escolhida');
-        $data_escolhida = $sessao_data_escolhida["data_escolhida"];
+        // $sessao_data_escolhida = TSession::getValue('data_escolhida');
+        $data_escolhida = TSession::getValue('data_escolhida');
         
-        $php_dia = date('w', strtotime($data_escolhida)); // 0 (dom) a 6 (sab)
-        $diasemana_numero = $php_dia + 1; // 1 (dom) a 7 (sab)
+        // $php_dia = date('w', strtotime($data_escolhida)); // 0 (dom) a 6 (sab)
+        // $diasemana_numero = $php_dia + 1; // 1 (dom) a 7 (sab)
+
+        $data = DateTime::createFromFormat('d/m/Y', $data_escolhida);
+
+        if (!$data) {
+            throw new Exception("Data inválida: {$data_escolhida}");
+        }
+
+        $php_dia = (int) $data->format('w');
+        $diasemana_numero = $php_dia + 1;
+
 
         TTransaction::open('dados_fei');
 
@@ -188,19 +208,22 @@ class ControleFrequencia extends TStandardList
                 // Cria o checkbox dinamicamente para cada aula e aluno
                 $checkName = 'check_' . $object->CodMatriculaEtapa . '_' . $object->CodTurmaetapa . '_' . $verifica_frente_disciplina. '_' . $verifica_disciplina . '_' . $verifica_periodo . '_' . $aula->NumeroOrdemAula;
                 
-                     // Verifica na tabela FiFrqdiariaDisciplinas se a frequência existe
+                $data = DateTime::createFromFormat('d/m/Y', $data_escolhida);
+                $data_sql = $data->format('Y-m-d');
+
+                // Verifica na tabela FiFrqdiariaDisciplinas se a frequência existe
                 $FrqdiariaDisciplinaExistente = VwFrequenciadiaria  ::where('CodGradeDisciplinaEtapa_Frente', '=', $verifica_frente_disciplina)
                                                                     ->where('CodMatriculaEtapa', '=', $object->CodMatriculaEtapa)
                                                                     ->where('CodTurmaetapa', '=', $object->CodTurmaetapa)
                                                                     ->where('CodDisciplina', '=', $verifica_disciplina)
                                                                     ->where('Periodo', 'like', $verifica_periodo)
                                                                     ->where('Aula', '=', $aula->NumeroOrdemAula)
-                                                                    ->where('DataAula', '=', $data_escolhida)
+                                                                    ->where('DataAula', '=', $data_sql)
                                                                     ->first();
 
                                                                     $check = new TCheckButton($checkName);
                                                                     $check->setIndexValue('P');
-                                                                    
+                                                                                                                                            
                  // Verifica se a consulta retornou algo
                  if ($FrqdiariaDisciplinaExistente) {
                      // Verifica se a frequência foi marcada como 'P' ou 'F'
@@ -225,146 +248,109 @@ class ControleFrequencia extends TStandardList
                  // Armazena o checkbox para ser exibido na datagrid
                  $object->{'check_' . $aula->NumeroOrdemAula} = $check;
         }
-
-        
     }
     TTransaction::close();
-}
-        
+    }
 
-
-  
-    
-
-    
-    /**
-     * Get post data and redirects to the next screen
-     */
-    public function onPost( $param )
-    {
+    public function onPost($param) {
         try
         {
-
             TTransaction::open('Felabs_DB');
-                    $logged = SystemUser::newFromLogin(TSession::getValue('login'));                        
+            $logged = SystemUser::newFromLogin(TSession::getValue('login'));
             TTransaction::close();
-            TTransaction::open('dados_fei_t');
-            // TTransaction::setLogger(new TLoggerSTD);
+            
+            TTransaction::open('dados_fei');
 
-            $sessao_diarioclasse            = TSession::getValue('sessao_diarioclasse');
-            $CodGradeDisciplinaEtapa_Frente = $sessao_diarioclasse["CodGradeDisciplinaEtapa_Frente"];
-            $CodDisciplina                  = $sessao_diarioclasse["CodDisciplina"];
-            $NumeroOrdemAula                = $sessao_diarioclasse["NumeroOrdemAula"];
-            $CodTurmaetapa                  = $sessao_diarioclasse["CodTurmaetapa"];
-            $sessao_data_escolhida          = TSession::getValue('data_escolhida');
-            $data_escolhida                 = $sessao_data_escolhida["data_escolhida"];
-            $diasemana_numero = date('w', strtotime('+1 day', strtotime($data_escolhida)));
+            $sessao_diarioclasse = TSession::getValue('sessao_diarioclasse');
+            $data = TSession::getValue('data_escolhida');
+                
+            $CodTurmaEtapa = $sessao_diarioclasse["CodTurmaetapa"];
+            $dataAula = DateTime::createFromFormat('d/m/Y', $data)->format('Y-m-d');
 
-            //$hoje = date('Y-m-d');
             $horaAtual = date('H:i:s');
-            $data = $this->form->getData();
-
-            $this->form->setData($data);
+            $dataAtual = date('Y/m/d');
             
-            $frqdiarias = FiFrqdiaria::where('CodTurmaetapa', '=', $CodTurmaetapa)
-                                     ->where('Data',   '=', $data_escolhida)
-                                     ->load();
-                                    //  var_dump($frqdiarias);
-                                    //  die();
-  
-     
-            foreach ($frqdiarias as $frqdiaria)
+            $dataForm = $this->form->getData();
+            $this->form->setData($dataForm);
+
+            $frqdiaria = FiFrqdiaria::where('CodTurmaetapa', '=', $CodTurmaEtapa)
+                            -> where('Data', '=', $dataAula)
+                            -> first();
+
+            if (is_null($frqdiaria))
             {
-                $CodFrqDiaria   = $frqdiaria->CodFrqDiaria;
-                $CodTurmaetapa  = $frqdiaria->CodTurmaetapa;
-                $Data           = $frqdiaria->Data;
+                $Frqdiaria = new FiFrqdiaria;
+                $Frqdiaria->CodTurmaetapa   = $CodTurmaEtapa;
+                $Frqdiaria->Data            = $dataAula;
+                $Frqdiaria->CodOperador     = '';
+                $Frqdiaria->DataLancamento  = $dataAtual;
+                $Frqdiaria->HoraLancamento  = $horaAtual;
+                $Frqdiaria->store();
 
-                $object_diario = FiFrqdiaria::find($CodFrqDiaria); //busca o registro da aula selecionada
-
-                if ($object_diario)
-                {
-                    
-                    foreach ($this->form->getFields() as $name => $field)
-                    {
-                    //    echo '<pre>';
-                    //     var_dump($name);
-                    //     echo '</pre>';
-                    //    die();
-
-                        if ($field instanceof TCheckButton)
-                        {
-
-                            $parts = explode('_', $name);
-
-                            $check                                  = $parts[0];
-                            $check_CodMatriculaEtapa                = $parts[1];
-                            $check_CodTurmaetapa                    = $parts[2];
-                            $check_CodGradeDisciplinaEtapa_Frente   = $parts[3];
-                            $check_CodDisciplina                    = $parts[4];
-                            $check_Periodo                          = $parts[5];
-                            $check_NumeroOrdemAula                  = $parts[6];
-
-                            // Define 'F' como padrão, para quando o valor estiver vazio ou null
-                            $Freq = 'P'; 
-
-                            if ($field->getValue() == '')
-                            {
-                                $Freq = 'F'; 
-                            } 
-
-        // Verificação da frequência existente
-        $FrqdiariaDisciplinaExistente = FiFrqdiariaDisciplinas::where('CodGradeDisciplinaEtapa_Frente', '=', $check_CodGradeDisciplinaEtapa_Frente)
-            ->where('CodMatriculaEtapa', '=', $check_CodMatriculaEtapa)
-            ->where('CodFrqDiaria', '=', $CodFrqDiaria)
-            ->where('CodDisciplina', '=', $check_CodDisciplina)
-            ->where('Aula', '=', $check_NumeroOrdemAula)
-            ->first();
-
-        if ($FrqdiariaDisciplinaExistente)
-        {
-            // O registro já existe, faça o UPDATE
-            if ($FrqdiariaDisciplinaExistente->Freq !== $Freq) {  // Só atualiza se o valor for diferente
-                $FrqdiariaDisciplinaExistente->Freq = $Freq;
-                $FrqdiariaDisciplinaExistente->DataLancamento = $Data;
-                $FrqdiariaDisciplinaExistente->CodProfessor = $logged->systemuser_codlegado;
-                $FrqdiariaDisciplinaExistente->store(); //Grava update
+                $CodFrqDiaria = $Frqdiaria->CodFrqDiaria;
             }
-        } 
-        else
-        {
-            // O registro não existe, faça o INSERT
-            $FrqdiariaDisciplina = new FiFrqdiariaDisciplinas;
-            $FrqdiariaDisciplina->CodGradeDisciplinaEtapa_Frente    = $check_CodGradeDisciplinaEtapa_Frente;
-            $FrqdiariaDisciplina->CodMatriculaEtapa                 = $check_CodMatriculaEtapa;
-            $FrqdiariaDisciplina->CodFrqDiaria                      = $CodFrqDiaria;
-            $FrqdiariaDisciplina->CodDisciplina                     = $check_CodDisciplina;
-            $FrqdiariaDisciplina->Aula                              = $check_NumeroOrdemAula;
-            $FrqdiariaDisciplina->Freq                              = $Freq;
-            $FrqdiariaDisciplina->DataLancamento                    = $Data;
-            $FrqdiariaDisciplina->HoraLancamento                    = $horaAtual;
-            $FrqdiariaDisciplina->CodProfessor                      = $logged->systemuser_codlegado;
-            $FrqdiariaDisciplina->store(); //Grava insert
-        }
-    }   
-}
-                        }   
-                        
-                    }
-                 
-                
-  
-                
-            
+            else {
+                $CodFrqDiaria = $frqdiaria->CodFrqDiaria;
+            }
+
+            foreach ($this->form->getFields() as $name => $field) {
+
+                if ($field instanceof TCheckButton) {
+
+                    $parts = explode('_', $name);
+
+                    $check_CodMatriculaEtapa              = $parts[1];
+                    $check_CodTurmaetapa                  = $parts[2];
+                    $check_CodGradeDisciplinaEtapa_Frente = $parts[3];
+                    $check_CodDisciplina                  = $parts[4];
+                    $check_Periodo                        = $parts[5];
+                    $check_NumeroOrdemAula                = $parts[6];
+
+                    $Freq = empty($dataForm->$name) ? 'F' : 'P';
+                    
+                    // verifica se a frequência já foi lançada
+                    $FrqdiariaDisciplinaExistente = FiFrqdiariaDisciplinas::where(
+                        'CodGradeDisciplinaEtapa_Frente', '=', $check_CodGradeDisciplinaEtapa_Frente)
+                        ->where('CodMatriculaEtapa', '=', $check_CodMatriculaEtapa)
+                        ->where('CodFrqDiaria', '=', $CodFrqDiaria)
+                        ->where('CodDisciplina', '=', $check_CodDisciplina)
+                        ->where('Aula', '=', $check_NumeroOrdemAula)
+                        ->first();
+
+                    if ($FrqdiariaDisciplinaExistente)
+                        {
+                                if ($FrqdiariaDisciplinaExistente->Freq != $Freq)
+                                    {
+                                    $FrqdiariaDisciplinaExistente->Freq            = $Freq;
+                                    $FrqdiariaDisciplinaExistente->DataLancamento  = $dataAula;
+                                    $FrqdiariaDisciplinaExistente->CodProfessor    = $logged->systemuser_codlegado;
+                                    $FrqdiariaDisciplinaExistente->store(); // Update
+                                }
+                        }
+                    else
+                        {
+                            $FrqdiariaDisciplina = new FiFrqdiariaDisciplinas;
+                            $FrqdiariaDisciplina->CodGradeDisciplinaEtapa_Frente = $check_CodGradeDisciplinaEtapa_Frente;
+                            $FrqdiariaDisciplina->CodMatriculaEtapa              = $check_CodMatriculaEtapa;
+                            $FrqdiariaDisciplina->CodFrqDiaria                   = $CodFrqDiaria;
+                            $FrqdiariaDisciplina->CodDisciplina                  = $check_CodDisciplina;
+                            $FrqdiariaDisciplina->Aula                           = $check_NumeroOrdemAula;
+                            $FrqdiariaDisciplina->Freq                           = $Freq;
+                            $FrqdiariaDisciplina->DataLancamento                 = $dataAula;
+                            $FrqdiariaDisciplina->HoraLancamento                 = $horaAtual;
+                            $FrqdiariaDisciplina->CodProfessor                   = $logged->systemuser_codlegado;    
+                            TTransaction::get()->exec("SET NOCOUNT ON");
+                            $FrqdiariaDisciplina->store(); // Insert
+                        }
+                }
+            }
         
             TTransaction::close();
-            TApplication::loadPage('ConteudoDiarioClasseForm');
-        
+            new TMessage('info', 'Frequência salva com sucesso.');
         }
-        catch (Exception $e) 
-        {
-            new TMessage('error', $e->getMessage());    
+        catch (Exception $e) {
+            TTransaction::rollback();
+            new TMessage('error', $e->getMessage());
         }
     }
 }
-
-

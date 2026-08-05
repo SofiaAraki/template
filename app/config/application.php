@@ -4,11 +4,11 @@ return [
         'timezone' => 'America/Sao_Paulo',
         'language' => 'pt',
         'application' => 'template',
-        'title' => 'Adianti Template 8.6',
+        'title' => 'Portal Acadêmico',
         'theme' => 'adminbs5',
         'seed' => 'odfu6asnodf8as',
         'rest_key' => '',
-        'multiunit' => '1',
+        'multiunit' => '0',
         'public_view' => '0',
         'public_entry' => '',
         'debug' => '1',
@@ -25,7 +25,7 @@ return [
           'it' => 'Italiano',
         ],
         'multi_database' => '0',
-        'validate_strong_pass' => '1',
+        'validate_strong_pass' => '0',
         'notification_login' => '0',
         'welcome_message' => 'Have a great jorney!',
         'request_log_service' => 'SystemRequestLogService',
@@ -47,11 +47,11 @@ return [
           'SystemConcurrentAccessView',
           'SystemInvalidAccessView'
         ],
-        'user_register' => '1',
+        'user_register' => '0',
         'reset_password' => '1',
         'default_groups' => '2',
-        'default_screen' => '30',
-        'default_units' => '1',
+        'default_screen' => '10',
+        'default_units' => '3',
         'user_deletion' => '1'
     ],
     'highlight' => [
@@ -62,8 +62,8 @@ return [
         'string' => '#FFC472',
     ],
     'login' => [
-        'logo' => '',
-        'background' => ''
+        'logo' => 'fafram-logo.png',
+        'background' => 'fafram-background.png'
     ],
     'template' => [
         'navbar' => [
@@ -92,7 +92,7 @@ return [
             'login_mode'  => 'light',
             'menu_mode'  => 'dark',
             'main_mode'  => 'light',
-            'box_layout' => '0'
+            'box_layout' => '1'
         ]
     ]
 ];

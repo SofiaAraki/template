@@ -21,7 +21,9 @@ class AgendamentoEquipamentoForm extends TPage
         $equipamento_id = new TCombo('equipamento_id');
         $observacoes = new TEntry('observacoes');
         $local = new TEntry('local');
-        $unidade = new TDBCombo('unidade', 'Felabs_DB', 'SystemUnit', 'id', 'name');
+        //$unidade = new TDBCombo('unidade', 'Felabs_DB', 'SystemUnit', 'id', 'name');
+        $unidade = new TCombo('unidade');
+        $unidade->addItems(['2' => 'Campus 1', '3' => 'Campus 2']);
         $unidade->setChangeAction(new TAction(array($this, 'onChangeType')));
         $data_reg = new THidden('data_reg');
 

@@ -163,7 +163,8 @@ class ProgramaEnsinoDisciplinaList extends TPage
             $tr->addCell("Carga Horária", 'center', 'th_header', 2);
             
             $tr->addRow();
-            $tr->addCell("Crédito: " . ($object->credito ?? '') . ' | Total: ' . ($object->total ?? '') . ' | Semanal: ' . ($object->semanal ?? '') . ' | Extensão: ' . ($object->extensao ?? ''), 'center', 'info_value', 2);
+            $tr->addCell("Crédito: " . ($object->credito ?? '') . ' | Total: ' . ($object->total ?? '') . ' | Semanal: ' . ($object->semanal ?? '') .
+                ' | Extensão: ' . ($object->extensao ?? ''), 'center', 'info_value', 2);
             
             $tr->addRow();
             $tr->addCell("Distribuição Carga Horária Semanal", 'center', 'th_header', 2);
@@ -179,7 +180,7 @@ class ProgramaEnsinoDisciplinaList extends TPage
                 'Conteúdo Programático: (Título e discriminação das unidades)' => $object->conteudo_programatico ?? '',
                 'Metodologia de Ensino:' => $object->metodologia ?? '',
                 'Critérios de Avaliação de Aprendizagem:' => $object->criterio_avaliacao ?? '',
-                'Recursos de Apoio:' => $object->recusos_apoio ?? '',
+                'Recursos de Apoio:' => $object->recusos ?? '',
                 'Bibliografia Básica:' => $object->bibliografia_basica ?? '',
                 'Bibliografia Complementar:' => $object->bibliografia_complementar ?? ''
             ];

@@ -99,9 +99,9 @@ class ProgramaEnsinoDisciplinaList extends TPage
             $tr->addStyle('title', 'Arial', '18', 'B', '#000000', '#f0f0f0'); 
             $tr->addStyle('header', 'Arial', '14', '', '#222222', '#f0f0f0'); 
             $tr->addStyle('info_label', 'Arial', '10', 'B', '#333333', '#ffffff'); 
-            $tr->addStyle('info_value', 'Arial', '10', '', '#333333', '#ffffff'); 
+            $tr->addStyle('info_value', 'Arial', '12', '', '#333333', '#ffffff'); 
             $tr->addStyle('th_header', 'Arial', '12', 'B', '#000000', '#f0f0f0');
-            $tr->addStyle('data_cell', 'Arial', '11', '', '#333333', '#ffffff');
+            $tr->addStyle('data_cell', 'Arial', '12', '', '#333333', '#ffffff');
             $tr->addStyle('footer_cell', 'Arial', '10', '', '#222222', '#ffffff');
 
             $pathLogo = $_SERVER['DOCUMENT_ROOT'] . '/template/app/images/logo-fafram.png';
@@ -120,7 +120,7 @@ class ProgramaEnsinoDisciplinaList extends TPage
                     <td style="width: 20%; border: none !important; text-align: left; vertical-align: middle; padding: 0;">' . $logoHtmlWithPadding . '</td>
                     <td style="width: 80%; border: none !important; text-align: center; vertical-align: middle; padding: 0;">
                         <span style="font-family: Arial; font-size: 18px; font-weight: bold; color: #000000;">FACULDADE DR. FRANCISCO MAEDA - FAFRAM</span><br>
-                        <span style="font-family: Arial; font-size: 16px; font-weight: bold; color: #333333;">PLANO DE ENSINO</span>
+                        <span style="font-family: Arial; font-size: 17px; font-weight: bold; color: #333333;">PLANO DE ENSINO</span>
                     </td>
                     <td style="width: 20%; border: none !important; padding: 0;"></td>
                 </tr>

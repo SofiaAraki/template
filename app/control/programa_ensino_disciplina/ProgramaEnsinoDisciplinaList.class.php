@@ -176,10 +176,10 @@ class ProgramaEnsinoDisciplinaList extends TPage
             // Blocos Textuais Dinâmicos
             $blocosTextuais = [
                 'Ementa:' => $object->ementa ?? '',
-                'Objetivos: (Ao término da disciplina o aluno deverá ser capaz de: )' => $object->objetivos ?? '',
-                'Conteúdo Programático: (Título e discriminação das unidades)' => $object->conteudo_programatico ?? '',
+                'Objetivos:' => $object->objetivos ?? '',
+                'Conteúdo Programático: ' => $object->conteudo_programatico ?? '',
                 'Metodologia de Ensino:' => $object->metodologia ?? '',
-                'Critérios de Avaliação de Aprendizagem:' => $object->criterio_avaliacao ?? '',
+                'Critérios de Avaliação da Aprendizagem:' => $object->criterio_avaliacao ?? '',
                 'Recursos de Apoio:' => $object->recusos ?? '',
                 'Bibliografia Básica:' => $object->bibliografia_basica ?? '',
                 'Bibliografia Complementar:' => $object->bibliografia_complementar ?? ''
@@ -198,9 +198,6 @@ class ProgramaEnsinoDisciplinaList extends TPage
             }
 
             // Assinatura
-            $tr->addRow();
-            $tr->addCell('Assinatura', 'center', 'th_header', 2);
-            
             $tr->addRow();
             $assinaturaHtml = "<br>_________________________________________<br>" . "PROF. " .($object->system_user_id ?? '') . "</b>";
             $tr->addCell($assinaturaHtml, 'center', 'data_cell', 2);
@@ -224,8 +221,9 @@ class ProgramaEnsinoDisciplinaList extends TPage
             $wrapStyle = '<style>
                             body { font-family: Arial, sans-serif; margin: 10px; }
                             table { border-collapse: collapse !important; table-layout: fixed !important; }
-                            th, td { border: 1px solid #cccccc !important; padding: 6px !important;
+                            th, td { border: 1px solid #000000 !important; padding: 6px !important;
                                      word-wrap: break-word !important; overflow: hidden !important; }
+                            .footer_cell, .footer_cell td, .footer_cell th { border: none !important; }
                            </style>';
             
             if (strpos($content, '</head>') !== false) {
